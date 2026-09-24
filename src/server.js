@@ -1657,6 +1657,644 @@ app.post(
 
 
 /* =====================================================
+   CONVERSE
+   CREATE / GET PRIVATE CONVERSATION
+===================================================== */
+
+app.post(
+  "/api/conversations",
+  requireAuth,
+  async (req, res) => {
+    const client =
+      await pool.connect();
+
+    try {
+      const targetUserId =
+        Number(req.body.user_id);
+
+      if (!Number.isInteger(targetUserId)) {
+        return res.status(400).json({
+          error:
+            "Invalid user ID."
+        });
+      }
+
+      if (
+        targetUserId ===
+        Number(req.user.id)
+      ) {
+        return res.status(400).json({
+          error:
+            "You cannot start a conversation with yourself."
+        });
+      }
+
+      await client.query(
+        "BEGIN"
+      );
+
+      const targetResult =
+        await client.query(
+          `
+          SELECT
+            id,
+            name,
+            email,
+            country
+          FROM users
+          WHERE id = $1
+          `,
+          [targetUserId]
+        );
+
+      if (targetResult.rows.length === 0) {
+        await client.query(
+          "ROLLBACK"
+        );
+
+        return res.status(404).json({
+          error:
+            "User not found."
+        });
+      }
+
+      /*
+        Find an existing private conversation
+        that contains exactly these two users.
+      */
+
+      const existingResult =
+        await client.query(
+          `
+          SELECT
+            c.id
+          FROM conversations c
+
+          JOIN conversation_members cm
+            ON cm.conversation_id = c.id
+
+          WHERE cm.user_id IN ($1, $2)
+
+          GROUP BY c.id
+
+          HAVING COUNT(DISTINCT cm.user_id) = 2
+
+             AND COUNT(*) = 2
+
+          ORDER BY c.id ASC
+
+          LIMIT 1
+          `,
+          [
+            req.user.id,
+            targetUserId
+          ]
+        );
+
+      let conversationId;
+
+      if (existingResult.rows.length > 0) {
+
+        conversationId =
+          existingResult.rows[0].id;
+
+      } else {
+
+        const conversationResult =
+          await client.query(
+            `
+            INSERT INTO conversations
+              DEFAULT VALUES
+
+            RETURNING id
+            `
+          );
+
+        conversationId =
+          conversationResult.rows[0].id;
+
+        await client.query(
+          `
+          INSERT INTO conversation_members
+            (
+              conversation_id,
+              user_id
+            )
+          VALUES
+            ($1, $2),
+            ($1, $3)
+          `,
+          [
+            conversationId,
+            req.user.id,
+            targetUserId
+          ]
+        );
+      }
+
+      await client.query(
+        "COMMIT"
+      );
+
+      res.status(200).json({
+        conversation: {
+          id: conversationId
+        },
+
+        user:
+          targetResult.rows[0]
+      });
+
+    } catch (error) {
+
+      try {
+        await client.query(
+          "ROLLBACK"
+        );
+      } catch {}
+
+      console.error(
+        "CREATE CONVERSATION ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Unable to create conversation."
+      });
+
+    } finally {
+      client.release();
+    }
+  }
+);
+
+
+/* =====================================================
+   CONVERSE
+   GET MY CONVERSATIONS
+===================================================== */
+
+app.get(
+  "/api/conversations",
+  requireAuth,
+  async (req, res) => {
+    try {
+      const result =
+        await pool.query(
+          `
+          SELECT
+            c.id AS conversation_id,
+
+            u.id AS user_id,
+            u.name,
+            u.email,
+            u.country,
+
+            lm.body AS last_message,
+            lm.created_at AS last_message_at,
+
+            COALESCE(
+              unread.unread_count,
+              0
+            )::int AS unread_count
+
+          FROM conversations c
+
+          JOIN conversation_members my_member
+            ON my_member.conversation_id = c.id
+           AND my_member.user_id = $1
+
+          JOIN conversation_members other_member
+            ON other_member.conversation_id = c.id
+           AND other_member.user_id <> $1
+
+          JOIN users u
+            ON u.id = other_member.user_id
+
+          LEFT JOIN LATERAL (
+            SELECT
+              m.body,
+              m.created_at
+            FROM messages m
+            WHERE m.conversation_id = c.id
+            ORDER BY m.created_at DESC
+            LIMIT 1
+          ) lm ON TRUE
+
+          LEFT JOIN LATERAL (
+            SELECT
+              COUNT(*) AS unread_count
+            FROM messages m
+            WHERE m.conversation_id = c.id
+              AND m.sender_id <> $1
+              AND (
+                my_member.last_read_at IS NULL
+                OR m.created_at > my_member.last_read_at
+              )
+          ) unread ON TRUE
+
+          ORDER BY
+            COALESCE(
+              lm.created_at,
+              c.created_at
+            ) DESC
+
+          LIMIT 100
+          `,
+          [req.user.id]
+        );
+
+      res.json({
+        conversations:
+          result.rows
+      });
+
+    } catch (error) {
+      console.error(
+        "GET CONVERSATIONS ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Unable to load conversations."
+      });
+    }
+  }
+);
+
+
+/* =====================================================
+   CONVERSE
+   GET MESSAGE HISTORY
+===================================================== */
+
+app.get(
+  "/api/conversations/:id/messages",
+  requireAuth,
+  async (req, res) => {
+    try {
+      const conversationId =
+        Number(req.params.id);
+
+      if (!Number.isInteger(conversationId)) {
+        return res.status(400).json({
+          error:
+            "Invalid conversation ID."
+        });
+      }
+
+      const access =
+        await pool.query(
+          `
+          SELECT 1
+          FROM conversation_members
+          WHERE conversation_id = $1
+            AND user_id = $2
+          `,
+          [
+            conversationId,
+            req.user.id
+          ]
+        );
+
+      if (access.rows.length === 0) {
+        return res.status(403).json({
+          error:
+            "You do not have access to this conversation."
+        });
+      }
+
+      const result =
+        await pool.query(
+          `
+          SELECT
+            m.id,
+            m.conversation_id,
+            m.sender_id,
+            m.body,
+            m.created_at,
+
+            u.name AS sender_name,
+            u.country AS sender_country
+
+          FROM messages m
+
+          JOIN users u
+            ON u.id = m.sender_id
+
+          WHERE m.conversation_id = $1
+
+          ORDER BY
+            m.created_at ASC
+
+          LIMIT 500
+          `,
+          [conversationId]
+        );
+
+      res.json({
+        messages:
+          result.rows
+      });
+
+    } catch (error) {
+      console.error(
+        "GET MESSAGES ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Unable to load messages."
+      });
+    }
+  }
+);
+
+
+/* =====================================================
+   CONVERSE
+   SEND MESSAGE
+===================================================== */
+
+app.post(
+  "/api/conversations/:id/messages",
+  requireAuth,
+  async (req, res) => {
+    const client =
+      await pool.connect();
+
+    try {
+      const conversationId =
+        Number(req.params.id);
+
+      const body =
+        String(
+          req.body.body || ""
+        ).trim();
+
+      if (!Number.isInteger(conversationId)) {
+        return res.status(400).json({
+          error:
+            "Invalid conversation ID."
+        });
+      }
+
+      if (!body) {
+        return res.status(400).json({
+          error:
+            "Message cannot be empty."
+        });
+      }
+
+      if (body.length > 5000) {
+        return res.status(400).json({
+          error:
+            "Message is too long."
+        });
+      }
+
+      await client.query(
+        "BEGIN"
+      );
+
+      const memberResult =
+        await client.query(
+          `
+          SELECT
+            cm.user_id
+          FROM conversation_members cm
+          WHERE cm.conversation_id = $1
+          `,
+          [conversationId]
+        );
+
+      if (memberResult.rows.length === 0) {
+        await client.query(
+          "ROLLBACK"
+        );
+
+        return res.status(404).json({
+          error:
+            "Conversation not found."
+        });
+      }
+
+      const isMember =
+        memberResult.rows.some(
+          row =>
+            Number(row.user_id) ===
+            Number(req.user.id)
+        );
+
+      if (!isMember) {
+        await client.query(
+          "ROLLBACK"
+        );
+
+        return res.status(403).json({
+          error:
+            "You do not have access to this conversation."
+        });
+      }
+
+      const result =
+        await client.query(
+          `
+          INSERT INTO messages
+            (
+              conversation_id,
+              sender_id,
+              body
+            )
+          VALUES
+            (
+              $1,
+              $2,
+              $3
+            )
+          RETURNING
+            id,
+            conversation_id,
+            sender_id,
+            body,
+            created_at
+          `,
+          [
+            conversationId,
+            req.user.id,
+            body
+          ]
+        );
+
+      const receiver =
+        memberResult.rows.find(
+          row =>
+            Number(row.user_id) !==
+            Number(req.user.id)
+        );
+
+      if (receiver) {
+
+        const actorResult =
+          await client.query(
+            `
+            SELECT
+              name
+            FROM users
+            WHERE id = $1
+            `,
+            [req.user.id]
+          );
+
+        const actorName =
+          actorResult.rows[0]?.name ||
+          "Someone";
+
+        await client.query(
+          `
+          INSERT INTO notifications
+            (
+              user_id,
+              actor_id,
+              type,
+              message
+            )
+          VALUES
+            (
+              $1,
+              $2,
+              'message',
+              $3
+            )
+          `,
+          [
+            receiver.user_id,
+            req.user.id,
+            `${actorName} sent you a message.`
+          ]
+        );
+      }
+
+      await client.query(
+        `
+        UPDATE conversation_members
+        SET last_read_at = NOW()
+        WHERE conversation_id = $1
+          AND user_id = $2
+        `,
+        [
+          conversationId,
+          req.user.id
+        ]
+      );
+
+      await client.query(
+        "COMMIT"
+      );
+
+      res.status(201).json({
+        message:
+          result.rows[0]
+      });
+
+    } catch (error) {
+
+      try {
+        await client.query(
+          "ROLLBACK"
+        );
+      } catch {}
+
+      console.error(
+        "SEND MESSAGE ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Unable to send message."
+      });
+
+    } finally {
+      client.release();
+    }
+  }
+);
+
+
+/* =====================================================
+   CONVERSE
+   MARK CONVERSATION AS READ
+===================================================== */
+
+app.post(
+  "/api/conversations/:id/read",
+  requireAuth,
+  async (req, res) => {
+    try {
+      const conversationId =
+        Number(req.params.id);
+
+      if (!Number.isInteger(conversationId)) {
+        return res.status(400).json({
+          error:
+            "Invalid conversation ID."
+        });
+      }
+
+      const result =
+        await pool.query(
+          `
+          UPDATE conversation_members
+
+          SET last_read_at = NOW()
+
+          WHERE conversation_id = $1
+            AND user_id = $2
+
+          RETURNING
+            conversation_id,
+            user_id,
+            last_read_at
+          `,
+          [
+            conversationId,
+            req.user.id
+          ]
+        );
+
+      if (result.rows.length === 0) {
+        return res.status(403).json({
+          error:
+            "You do not have access to this conversation."
+        });
+      }
+
+      res.json({
+        ok: true,
+        conversation:
+          result.rows[0]
+      });
+
+    } catch (error) {
+      console.error(
+        "MARK CONVERSATION READ ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Unable to mark conversation as read."
+      });
+    }
+  }
+);
+
+
+/* =====================================================
    STATIC FRONTEND
 ===================================================== */
 
