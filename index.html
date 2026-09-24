@@ -1,0 +1,22 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WorldConnect</title>
+<style>
+body{font-family:Arial;margin:0;background:#f0f2f5;color:#1c1e21}.bar{background:#1877f2;color:#fff;padding:16px;font-size:24px;font-weight:bold}.wrap{max-width:700px;margin:25px auto}.card{background:#fff;padding:18px;border-radius:12px;margin:12px 0;box-shadow:0 1px 3px #0002}input,textarea{width:100%;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:8px;box-sizing:border-box}button{padding:10px 15px;border:0;border-radius:8px;background:#1877f2;color:white;font-weight:bold;margin:4px 0}.muted{color:#65676b;font-size:13px}
+</style></head><body>
+<div class="bar">🌎 WorldConnect</div><div class="wrap">
+<div class="card"><h2>Global Social Network</h2><input id="name" placeholder="Name"><input id="email" placeholder="Email"><input id="password" type="password" placeholder="Password (8+ characters)"><input id="country" placeholder="Country"><button onclick="register()">Create account</button> <button onclick="login()">Login</button><p id="msg"></p></div>
+<div class="card"><textarea id="body" rows="3" placeholder="What's on your mind?"></textarea><button onclick="post()">Post</button></div>
+<div id="feed"></div></div>
+<script>
+let token=localStorage.token||"";
+const $=id=>document.getElementById(id);
+async function api(url,opt={}){opt.headers={...(opt.headers||{}), "Content-Type":"application/json"};if(token)opt.headers.Authorization="Bearer "+token;let r=await fetch(url,opt);let j=await r.json();if(!r.ok)throw Error(j.error||"Request failed");return j}
+async function register(){try{let u=await api("/api/auth/register",{method:"POST",body:JSON.stringify({name:$("name").value,email:$("email").value,password:$("password").value,country:$("country").value})});token=u.token;localStorage.token=token;$("msg").textContent="Account created!";load()}catch(e){$("msg").textContent=e.message}}
+async function login(){try{let u=await api("/api/auth/login",{method:"POST",body:JSON.stringify({email:$("email").value,password:$("password").value})});token=u.token;localStorage.token=token;$("msg").textContent="Logged in!";load()}catch(e){$("msg").textContent=e.message}}
+async function post(){try{await api("/api/posts",{method:"POST",body:JSON.stringify({body:$("body").value})});$("body").value="";load()}catch(e){alert(e.message)}}
+async function like(id){try{await api("/api/posts/"+id+"/like",{method:"POST"});load()}catch(e){alert(e.message)}}
+async function load(){let posts=await api("/api/posts");$("feed").innerHTML=posts.map(p=>`<div class="card"><b>${esc(p.name)}</b> <span class="muted">${esc(p.country||"")}</span><p>${esc(p.body)}</p><span class="muted">${new Date(p.created_at).toLocaleString()} · ${p.likes} likes · ${p.comments} comments</span><br><button onclick="like(${p.id})">👍 Like</button></div>`).join("")}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+load();
+</script></body></html>
