@@ -203,18 +203,18 @@ app.post("/api/auth/login", async (req, res) => {
 app.get("/api/me", auth, async (req, res) => {
   try {
     const q = await pool.query(
-  `
-  SELECT
-    id,
-    name,
-    email,
-    country,
-    created_at
-  FROM users
-  WHERE id = $1
-  `,
-  [req.user.id]
-);
+      `
+      SELECT
+        id,
+        name,
+        email,
+        country,
+        created_at
+      FROM users
+      WHERE id = $1
+      `,
+      [req.user.id]
+    );
 
     if (!q.rows[0]) {
       return res.status(404).json({
