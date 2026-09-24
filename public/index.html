@@ -49,7 +49,9 @@
       display: none !important;
     }
 
-    /* AUTH */
+    /* =========================================================
+       AUTH
+       ========================================================= */
 
     #authScreen {
       min-height: 100vh;
@@ -144,7 +146,9 @@
       font-weight: 700;
     }
 
-    /* TOPBAR */
+    /* =========================================================
+       TOPBAR
+       ========================================================= */
 
     #appScreen {
       min-height: 100vh;
@@ -215,7 +219,9 @@
       background: var(--primary);
     }
 
-    /* LAYOUT */
+    /* =========================================================
+       LAYOUT
+       ========================================================= */
 
     .layout {
       display: grid;
@@ -332,7 +338,9 @@
       background: var(--primary-dark);
     }
 
-    /* POSTS */
+    /* =========================================================
+       POSTS
+       ========================================================= */
 
     .post-card {
       padding: 18px;
@@ -435,7 +443,9 @@
       padding: 0 14px;
     }
 
-    /* RIGHT */
+    /* =========================================================
+       RIGHT PANEL
+       ========================================================= */
 
     .right-panel {
       position: sticky;
@@ -467,7 +477,9 @@
       font-size: 12px;
     }
 
-    /* DISCOVER */
+    /* =========================================================
+       DISCOVER
+       ========================================================= */
 
     .discover-grid {
       display: grid;
@@ -528,7 +540,9 @@
       border: 1px solid #bbf7d0;
     }
 
-    /* NOTIFICATIONS */
+    /* =========================================================
+       NOTIFICATIONS
+       ========================================================= */
 
     .notification-panel {
       position: fixed;
@@ -628,7 +642,9 @@
       color: var(--muted);
     }
 
-    /* CHAT */
+    /* =========================================================
+       CHAT
+       ========================================================= */
 
     .converse-card {
       background: #fff;
@@ -639,6 +655,7 @@
       display: grid;
       grid-template-columns: 310px minmax(0, 1fr);
       min-height: 620px;
+      height: 620px;
     }
 
     .conversation-sidebar {
@@ -647,6 +664,7 @@
       flex-direction: column;
       min-width: 0;
       background: #fbfdff;
+      height: 620px;
     }
 
     .conversation-sidebar-header {
@@ -744,6 +762,7 @@
       background: transparent;
       text-align: left;
       border-bottom: 1px solid #f1f5f9;
+      transition: background 0.15s ease;
     }
 
     .conversation-item:hover {
@@ -828,6 +847,7 @@
       display: flex;
       flex-direction: column;
       background: #fff;
+      height: 620px;
     }
 
     .chat-empty {
@@ -856,9 +876,27 @@
       display: flex;
       align-items: center;
       gap: 11px;
-      padding: 14px 16px;
+      padding: 12px 16px;
       border-bottom: 1px solid var(--line);
       min-height: 70px;
+      flex-shrink: 0;
+      background: #fff;
+    }
+
+    .chat-back-btn {
+      display: none;
+      border: 0;
+      background: #f3f4f6;
+      color: #374151;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .chat-back-btn:hover {
+      background: #e5e7eb;
     }
 
     .chat-header-avatar {
@@ -871,14 +909,19 @@
       align-items: center;
       justify-content: center;
       font-weight: 800;
+      flex-shrink: 0;
     }
 
     .chat-header-info {
       min-width: 0;
+      flex: 1;
     }
 
     .chat-header-name {
       font-weight: 800;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .chat-header-country {
@@ -895,7 +938,7 @@
         rgba(244, 247, 251, 0.7),
         rgba(244, 247, 251, 0.7)
       );
-      min-height: 450px;
+      min-height: 0;
     }
 
     .message-row {
@@ -951,6 +994,7 @@
       padding: 12px;
       border-top: 1px solid var(--line);
       background: #fff;
+      flex-shrink: 0;
     }
 
     .message-input {
@@ -972,6 +1016,7 @@
       padding: 0 17px;
       border-radius: 12px;
       font-weight: 700;
+      flex-shrink: 0;
     }
 
     .send-message-btn:hover {
@@ -983,7 +1028,9 @@
       cursor: not-allowed;
     }
 
-    /* GENERAL */
+    /* =========================================================
+       GENERAL
+       ========================================================= */
 
     .conversation-empty {
       padding: 35px 20px;
@@ -1021,7 +1068,9 @@
       color: var(--muted);
     }
 
-    /* RESPONSIVE */
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
 
     @media (max-width: 1050px) {
       .layout {
@@ -1037,20 +1086,49 @@
       .converse-card {
         grid-template-columns: 1fr;
         min-height: 650px;
+        height: 650px;
+      }
+
+      /*
+        MOBILE CHAT:
+        By default show the conversation list.
+        Once a chat is opened, JS adds .chat-open
+        and hides the list.
+      */
+      .converse-card.chat-open .conversation-sidebar {
+        display: none;
+      }
+
+      .converse-card.chat-open .chat-area {
+        display: flex;
+        height: 650px;
       }
 
       .conversation-sidebar {
         border-right: 0;
         border-bottom: 1px solid var(--line);
-        max-height: 330px;
+        max-height: none;
+        height: 650px;
+      }
+
+      .chat-area {
+        height: 650px;
       }
 
       .chat-empty {
         min-height: 400px;
       }
 
+      .chat-header {
+        min-height: 64px;
+      }
+
+      .chat-back-btn {
+        display: block;
+      }
+
       .messages-list {
-        min-height: 400px;
+        min-height: 0;
       }
     }
 
@@ -1105,10 +1183,15 @@
 
       .converse-card {
         border-radius: 14px;
+        height: 650px;
       }
 
       .conversation-sidebar {
-        max-height: 360px;
+        height: 650px;
+      }
+
+      .chat-area {
+        height: 650px;
       }
 
       .message-bubble {
@@ -1122,13 +1205,23 @@
       .send-message-btn {
         padding: 0 13px;
       }
+
+      .chat-header {
+        padding: 10px;
+      }
+
+      .messages-list {
+        padding: 12px;
+      }
     }
   </style>
 </head>
 
 <body>
 
-<!-- ================= AUTH ================= -->
+<!-- =========================================================
+     AUTH
+     ========================================================= -->
 
 <div id="authScreen">
   <div class="auth-card">
@@ -1223,7 +1316,9 @@
   </div>
 </div>
 
-<!-- ================= APP ================= -->
+<!-- =========================================================
+     APP
+     ========================================================= -->
 
 <div id="appScreen" class="hidden">
 
@@ -1241,6 +1336,7 @@
         title="Messages"
       >
         💬
+
         <span
           id="messageBadge"
           class="message-badge hidden"
@@ -1255,6 +1351,7 @@
         title="Notifications"
       >
         🔔
+
         <span
           id="notificationBadge"
           class="notification-badge hidden"
@@ -1267,7 +1364,9 @@
 
   </header>
 
-  <!-- ================= NOTIFICATIONS ================= -->
+  <!-- =======================================================
+       NOTIFICATIONS
+       ======================================================= -->
 
   <div
     id="notificationPanel"
@@ -1295,13 +1394,16 @@
 
   <div class="layout">
 
-    <!-- ================= SIDEBAR ================= -->
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
 
     <aside class="sidebar">
 
       <div class="side-card">
 
         <div class="profile-mini">
+
           <div
             class="profile-name"
             id="sidebarName"
@@ -1315,6 +1417,7 @@
           >
             World
           </div>
+
         </div>
 
         <button
@@ -1377,7 +1480,9 @@
 
     </aside>
 
-    <!-- ================= MAIN ================= -->
+    <!-- =====================================================
+         MAIN
+         ===================================================== -->
 
     <main class="main">
 
@@ -1493,7 +1598,9 @@
 
       </section>
 
-      <!-- ================= CONVERSE ================= -->
+      <!-- ===================================================
+           CONVERSE
+           =================================================== -->
 
       <section
         id="converseSection"
@@ -1508,11 +1615,19 @@
           Chat privately with people on WorldConnect.
         </p>
 
-        <div class="converse-card">
+        <div
+          id="converseCard"
+          class="converse-card"
+        >
 
-          <!-- CONVERSATION LIST -->
+          <!-- =================================================
+               CHAT LIST
+               ================================================= -->
 
-          <div class="conversation-sidebar">
+          <div
+            id="conversationSidebar"
+            class="conversation-sidebar"
+          >
 
             <div class="conversation-sidebar-header">
 
@@ -1549,16 +1664,22 @@
               id="conversationList"
               class="conversation-list"
             >
+
               <div class="loading">
                 Loading conversations...
               </div>
+
             </div>
 
           </div>
 
-          <!-- CHAT AREA -->
+          <!-- =================================================
+               ACTUAL CONVERSATION
+               ================================================= -->
 
           <div class="chat-area">
+
+            <!-- EMPTY / START CHAT -->
 
             <div
               id="chatEmpty"
@@ -1574,11 +1695,13 @@
               </h3>
 
               <p>
-                Search for a WorldConnect user on the left
-                and choose them to start chatting.
+                Click a chat on the left or search for a
+                WorldConnect user to start chatting.
               </p>
 
             </div>
+
+            <!-- OPEN CHAT -->
 
             <div
               id="chatWindow"
@@ -1587,11 +1710,26 @@
                 height:100%;
                 display:flex;
                 flex-direction:column;
-                min-height:620px;
               "
             >
 
+              <!-- CHAT HEADER -->
+
               <div class="chat-header">
+
+                <!--
+                  This button only appears on mobile.
+                  It returns to the chat list.
+                -->
+
+                <button
+                  id="backToChatsBtn"
+                  class="chat-back-btn"
+                  type="button"
+                  title="Back to chats"
+                >
+                  ←
+                </button>
 
                 <div
                   id="chatHeaderAvatar"
@@ -1620,14 +1758,20 @@
 
               </div>
 
+              <!-- MESSAGES -->
+
               <div
                 id="messagesList"
                 class="messages-list"
               >
+
                 <div class="loading">
                   Loading messages...
                 </div>
+
               </div>
+
+              <!-- MESSAGE INPUT -->
 
               <div class="message-composer">
 
@@ -1642,6 +1786,7 @@
                 <button
                   id="sendMessageBtn"
                   class="send-message-btn"
+                  type="button"
                 >
                   Send
                 </button>
@@ -1734,7 +1879,9 @@
 
     </main>
 
-    <!-- ================= RIGHT PANEL ================= -->
+    <!-- =====================================================
+         RIGHT PANEL
+         ===================================================== -->
 
     <aside class="right-panel">
 
@@ -1828,24 +1975,19 @@
   let allDiscoverUsers = [];
 
   /*
-    Important chat protection:
-    Every time the user clicks another conversation,
-    this number changes.
-
-    Old async requests are ignored if they belong
-    to the previous conversation.
+    Protects against old chat requests.
   */
   let chatRequestVersion = 0;
 
   /*
-    Prevent an older conversation-list request from
-    overwriting a newer one.
+    Protects conversation-list requests.
   */
   let conversationLoadVersion = 0;
 
   let activeSection = "feed";
 
-  const $ = (id) => document.getElementById(id);
+  const $ = (id) =>
+    document.getElementById(id);
 
   /* =========================================================
      HELPERS
@@ -1891,13 +2033,15 @@
   }
 
   function getInitials(name) {
-    const text = String(name || "U").trim();
+    const text =
+      String(name || "U").trim();
 
     if (!text) {
       return "U";
     }
 
-    const parts = text.split(/\s+/);
+    const parts =
+      text.split(/\s+/);
 
     if (parts.length === 1) {
       return parts[0]
@@ -1916,6 +2060,7 @@
      ========================================================= */
 
   async function api(url, options = {}) {
+
     options.headers = {
       ...(options.headers || {}),
       "Content-Type": "application/json"
@@ -1926,7 +2071,8 @@
         `Bearer ${token}`;
     }
 
-    const response = await fetch(url, options);
+    const response =
+      await fetch(url, options);
 
     let data = {};
 
@@ -1937,8 +2083,13 @@
     }
 
     if (response.status === 401) {
+
       token = null;
-      localStorage.removeItem("token");
+
+      localStorage.removeItem(
+        "token"
+      );
+
       currentUser = null;
 
       showAuth();
@@ -1963,79 +2114,114 @@
      ========================================================= */
 
   function showAuth() {
-    $("authScreen").classList.remove("hidden");
-    $("appScreen").classList.add("hidden");
+
+    $("authScreen")
+      .classList.remove("hidden");
+
+    $("appScreen")
+      .classList.add("hidden");
 
     if (notificationTimer) {
-      clearInterval(notificationTimer);
+
+      clearInterval(
+        notificationTimer
+      );
+
       notificationTimer = null;
     }
 
     stopConversationPolling();
+
+    resetChatView();
   }
 
   function showApp() {
-    $("authScreen").classList.add("hidden");
-    $("appScreen").classList.remove("hidden");
+
+    $("authScreen")
+      .classList.add("hidden");
+
+    $("appScreen")
+      .classList.remove("hidden");
 
     startNotificationPolling();
   }
 
-  $("showRegisterBtn").addEventListener(
-    "click",
-    () => {
-      $("loginBox").classList.add("hidden");
-      $("registerBox").classList.remove("hidden");
-    }
-  );
+  $("showRegisterBtn")
+    .addEventListener(
+      "click",
+      () => {
 
-  $("showLoginBtn").addEventListener(
-    "click",
-    () => {
-      $("registerBox").classList.add("hidden");
-      $("loginBox").classList.remove("hidden");
-    }
-  );
+        $("loginBox")
+          .classList.add("hidden");
 
-  $("loginBtn").addEventListener(
-    "click",
-    login
-  );
+        $("registerBox")
+          .classList.remove("hidden");
+      }
+    );
 
-  $("registerBtn").addEventListener(
-    "click",
-    register
-  );
+  $("showLoginBtn")
+    .addEventListener(
+      "click",
+      () => {
+
+        $("registerBox")
+          .classList.add("hidden");
+
+        $("loginBox")
+          .classList.remove("hidden");
+      }
+    );
+
+  $("loginBtn")
+    .addEventListener(
+      "click",
+      login
+    );
+
+  $("registerBtn")
+    .addEventListener(
+      "click",
+      register
+    );
 
   async function login() {
+
     const email =
-      $("loginEmail").value.trim();
+      $("loginEmail")
+        .value
+        .trim();
 
     const password =
-      $("loginPassword").value;
+      $("loginPassword")
+        .value;
 
     if (!email || !password) {
+
       showToast(
         "Please enter your email and password."
       );
+
       return;
     }
 
     try {
+
       $("loginBtn").disabled = true;
+
       $("loginBtn").textContent =
         "Logging in...";
 
-      const data = await api(
-        "/api/auth/login",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            email,
-            password
-          })
-        }
-      );
+      const data =
+        await api(
+          "/api/auth/login",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              email,
+              password
+            })
+          }
+        );
 
       token = data.token;
 
@@ -2049,51 +2235,76 @@
       await afterLogin();
 
     } catch (error) {
-      showToast(error.message);
+
+      showToast(
+        error.message
+      );
 
     } finally {
+
       $("loginBtn").disabled = false;
-      $("loginBtn").textContent = "Login";
+
+      $("loginBtn").textContent =
+        "Login";
     }
   }
 
   async function register() {
+
     const name =
-      $("registerName").value.trim();
+      $("registerName")
+        .value
+        .trim();
 
     const email =
-      $("registerEmail").value.trim();
+      $("registerEmail")
+        .value
+        .trim();
 
     const password =
-      $("registerPassword").value;
+      $("registerPassword")
+        .value;
 
     const country =
-      $("registerCountry").value.trim();
+      $("registerCountry")
+        .value
+        .trim();
 
-    if (!name || !email || !password) {
+    if (
+      !name ||
+      !email ||
+      !password
+    ) {
+
       showToast(
         "Please complete the required fields."
       );
+
       return;
     }
 
     try {
-      $("registerBtn").disabled = true;
-      $("registerBtn").textContent =
+
+      $("registerBtn")
+        .disabled = true;
+
+      $("registerBtn")
+        .textContent =
         "Creating account...";
 
-      const data = await api(
-        "/api/auth/register",
-        {
-          method: "POST",
-          body: JSON.stringify({
-            name,
-            email,
-            password,
-            country
-          })
-        }
-      );
+      const data =
+        await api(
+          "/api/auth/register",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              name,
+              email,
+              password,
+              country
+            })
+          }
+        );
 
       token = data.token;
 
@@ -2107,40 +2318,56 @@
       await afterLogin();
 
     } catch (error) {
-      showToast(error.message);
+
+      showToast(
+        error.message
+      );
 
     } finally {
-      $("registerBtn").disabled = false;
-      $("registerBtn").textContent =
+
+      $("registerBtn")
+        .disabled = false;
+
+      $("registerBtn")
+        .textContent =
         "Create Account";
     }
   }
 
   async function afterLogin() {
+
     showApp();
 
     updateUserUI();
 
     await loadMyProfile();
+
     await loadFeed();
+
     await loadNotifications(false);
   }
 
-  $("logoutBtn").addEventListener(
-    "click",
-    logout
-  );
+  $("logoutBtn")
+    .addEventListener(
+      "click",
+      logout
+    );
 
-  $("controlLogoutBtn").addEventListener(
-    "click",
-    logout
-  );
+  $("controlLogoutBtn")
+    .addEventListener(
+      "click",
+      logout
+    );
 
   function logout() {
+
     token = null;
+
     currentUser = null;
 
-    localStorage.removeItem("token");
+    localStorage.removeItem(
+      "token"
+    );
 
     currentConversationId = null;
     currentChatUser = null;
@@ -2156,6 +2383,8 @@
 
     stopConversationPolling();
 
+    resetChatView();
+
     showAuth();
 
     showToast(
@@ -2168,43 +2397,50 @@
      ========================================================= */
 
   function updateUserUI() {
+
     if (!currentUser) return;
 
     const name =
-      currentUser.name || "User";
+      currentUser.name ||
+      "User";
 
     const country =
-      currentUser.country || "World";
+      currentUser.country ||
+      "World";
 
-    $("sidebarName").textContent =
-      name;
+    $("sidebarName")
+      .textContent = name;
 
-    $("sidebarCountry").textContent =
-      country;
+    $("sidebarCountry")
+      .textContent = country;
 
-    $("rightProfileName").textContent =
-      name;
+    $("rightProfileName")
+      .textContent = name;
 
-    $("rightProfileCountry").textContent =
-      country;
+    $("rightProfileCountry")
+      .textContent = country;
 
-    $("myProfileName").textContent =
-      name;
+    $("myProfileName")
+      .textContent = name;
 
-    $("myProfileEmail").textContent =
+    $("myProfileEmail")
+      .textContent =
       currentUser.email || "";
 
-    $("myProfileCountry").textContent =
-      country;
+    $("myProfileCountry")
+      .textContent = country;
   }
 
   async function loadMyProfile() {
+
     if (!currentUser) return;
 
     try {
-      const data = await api(
-        `/api/users/${currentUser.id}`
-      );
+
+      const data =
+        await api(
+          `/api/users/${currentUser.id}`
+        );
 
       const user = data.user;
 
@@ -2215,19 +2451,24 @@
 
       updateUserUI();
 
-      $("myFollowers").textContent =
+      $("myFollowers")
+        .textContent =
         user.follower_count || 0;
 
-      $("myFollowing").textContent =
+      $("myFollowing")
+        .textContent =
         user.following_count || 0;
 
-      $("rightFollowers").textContent =
+      $("rightFollowers")
+        .textContent =
         user.follower_count || 0;
 
-      $("rightFollowing").textContent =
+      $("rightFollowing")
+        .textContent =
         user.following_count || 0;
 
     } catch (error) {
+
       console.error(
         "PROFILE ERROR:",
         error
@@ -2250,30 +2491,37 @@
   ];
 
   function showSection(name) {
+
     activeSection = name;
 
-    sections.forEach((section) => {
-      const element =
-        $(`${section}Section`);
+    sections.forEach(
+      (section) => {
 
-      if (!element) return;
+        const element =
+          $(`${section}Section`);
 
-      element.classList.toggle(
-        "hidden",
-        section !== name
-      );
-    });
+        if (!element) return;
+
+        element.classList.toggle(
+          "hidden",
+          section !== name
+        );
+      }
+    );
 
     document
       .querySelectorAll(
         ".nav-btn[data-section]"
       )
-      .forEach((button) => {
-        button.classList.toggle(
-          "active",
-          button.dataset.section === name
-        );
-      });
+      .forEach(
+        (button) => {
+
+          button.classList.toggle(
+            "active",
+            button.dataset.section === name
+          );
+        }
+      );
 
     if (name === "feed") {
       loadFeed();
@@ -2284,14 +2532,19 @@
     }
 
     if (name === "discover") {
-      loadDiscover("discoverList");
+      loadDiscover(
+        "discoverList"
+      );
     }
 
     if (name === "connect") {
-      loadDiscover("connectList");
+      loadDiscover(
+        "connectList"
+      );
     }
 
     if (name === "converse") {
+
       loadConversations({
         rerender: true,
         keepActive: true
@@ -2302,6 +2555,7 @@
       startConversationPolling();
 
     } else {
+
       stopConversationPolling();
     }
   }
@@ -2310,27 +2564,33 @@
     .querySelectorAll(
       ".nav-btn[data-section]"
     )
-    .forEach((button) => {
-      button.addEventListener(
-        "click",
-        () => {
-          showSection(
-            button.dataset.section
-          );
-        }
-      );
-    });
+    .forEach(
+      (button) => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            showSection(
+              button.dataset.section
+            );
+          }
+        );
+      }
+    );
 
   /* =========================================================
      POSTS
      ========================================================= */
 
-  $("createPostBtn").addEventListener(
-    "click",
-    createPost
-  );
+  $("createPostBtn")
+    .addEventListener(
+      "click",
+      createPost
+    );
 
   async function createPost() {
+
     const textarea =
       $("postInput");
 
@@ -2338,14 +2598,18 @@
       textarea.value.trim();
 
     if (!body) {
+
       showToast(
         "Write something first."
       );
+
       return;
     }
 
     try {
-      $("createPostBtn").disabled = true;
+
+      $("createPostBtn")
+        .disabled = true;
 
       await api(
         "/api/posts",
@@ -2366,29 +2630,40 @@
       await loadFeed();
 
     } catch (error) {
-      showToast(error.message);
+
+      showToast(
+        error.message
+      );
 
     } finally {
-      $("createPostBtn").disabled = false;
+
+      $("createPostBtn")
+        .disabled = false;
     }
   }
 
   async function loadFeed() {
+
     if (!token) return;
 
-    const feed = $("feed");
+    const feed =
+      $("feed");
 
     feed.innerHTML =
       '<div class="loading">Loading posts...</div>';
 
     try {
+
       const data =
-        await api("/api/posts");
+        await api(
+          "/api/posts"
+        );
 
       const posts =
         data.posts || [];
 
       if (!posts.length) {
+
         feed.innerHTML =
           '<div class="empty">No posts yet. Be the first to share something!</div>';
 
@@ -2403,6 +2678,7 @@
       attachPostEvents();
 
     } catch (error) {
+
       feed.innerHTML =
         `<div class="empty">${escapeHtml(
           error.message
@@ -2411,6 +2687,7 @@
   }
 
   function renderPost(post) {
+
     const liked =
       Boolean(post.liked_by_me);
 
@@ -2518,65 +2795,88 @@
   }
 
   function attachPostEvents() {
+
     document
       .querySelectorAll(".like-btn")
-      .forEach((button) => {
-        button.addEventListener(
-          "click",
-          () =>
-            toggleLike(
-              Number(button.dataset.id),
-              button
-            )
-        );
-      });
+      .forEach(
+        (button) => {
+
+          button.addEventListener(
+            "click",
+            () =>
+              toggleLike(
+                Number(
+                  button.dataset.id
+                ),
+                button
+              )
+          );
+        }
+      );
 
     document
       .querySelectorAll(
         ".comment-toggle-btn"
       )
-      .forEach((button) => {
-        button.addEventListener(
-          "click",
-          () =>
-            toggleComments(
-              Number(button.dataset.id)
-            )
-        );
-      });
+      .forEach(
+        (button) => {
+
+          button.addEventListener(
+            "click",
+            () =>
+              toggleComments(
+                Number(
+                  button.dataset.id
+                )
+              )
+          );
+        }
+      );
 
     document
       .querySelectorAll(
         ".comment-submit-btn"
       )
-      .forEach((button) => {
-        button.addEventListener(
-          "click",
-          () =>
-            addComment(
-              Number(button.dataset.id)
-            )
-        );
-      });
+      .forEach(
+        (button) => {
+
+          button.addEventListener(
+            "click",
+            () =>
+              addComment(
+                Number(
+                  button.dataset.id
+                )
+              )
+          );
+        }
+      );
 
     document
       .querySelectorAll(".share-btn")
-      .forEach((button) => {
-        button.addEventListener(
-          "click",
-          () =>
-            sharePost(
-              Number(button.dataset.id)
-            )
-        );
-      });
+      .forEach(
+        (button) => {
+
+          button.addEventListener(
+            "click",
+            () =>
+              sharePost(
+                Number(
+                  button.dataset.id
+                )
+              )
+          );
+        }
+      );
   }
 
   async function toggleLike(
     postId,
     button
   ) {
+
     try {
+
       const data =
         await api(
           `/api/posts/${postId}/like`,
@@ -2589,6 +2889,7 @@
         button.querySelector("span");
 
       if (count) {
+
         count.textContent =
           data.like_count || 0;
       }
@@ -2601,13 +2902,17 @@
       await loadNotifications(false);
 
     } catch (error) {
-      showToast(error.message);
+
+      showToast(
+        error.message
+      );
     }
   }
 
   async function toggleComments(
     postId
   ) {
+
     const box =
       $(`comments-${postId}`);
 
@@ -2623,7 +2928,10 @@
     );
 
     if (hidden) {
-      await loadComments(postId);
+
+      await loadComments(
+        postId
+      );
 
       $(
         `comment-input-${postId}`
@@ -2634,6 +2942,7 @@
   async function loadComments(
     postId
   ) {
+
     const list =
       $(`comments-list-${postId}`);
 
@@ -2643,6 +2952,7 @@
       '<div class="loading">Loading comments...</div>';
 
     try {
+
       const data =
         await api(
           `/api/posts/${postId}/comments`
@@ -2652,6 +2962,7 @@
         data.comments || [];
 
       if (!comments.length) {
+
         list.innerHTML =
           '<div class="empty" style="padding:15px">No comments yet.</div>';
 
@@ -2682,6 +2993,7 @@
           .join("");
 
     } catch (error) {
+
       list.innerHTML =
         `<div class="empty">${escapeHtml(
           error.message
@@ -2692,6 +3004,7 @@
   async function addComment(
     postId
   ) {
+
     const input =
       $(`comment-input-${postId}`);
 
@@ -2701,13 +3014,16 @@
       input.value.trim();
 
     if (!body) {
+
       showToast(
         "Write a comment first."
       );
+
       return;
     }
 
     try {
+
       await api(
         `/api/posts/${postId}/comments`,
         {
@@ -2720,7 +3036,10 @@
 
       input.value = "";
 
-      await loadComments(postId);
+      await loadComments(
+        postId
+      );
+
       await loadFeed();
 
       showToast(
@@ -2730,14 +3049,19 @@
       await loadNotifications(false);
 
     } catch (error) {
-      showToast(error.message);
+
+      showToast(
+        error.message
+      );
     }
   }
 
   async function sharePost(
     postId
   ) {
+
     try {
+
       const data =
         await api(
           `/api/posts/${postId}/share`,
@@ -2750,7 +3074,9 @@
         data.url;
 
       if (navigator.share) {
+
         try {
+
           await navigator.share({
             title: "WorldConnect",
             text: data.share_text,
@@ -2763,6 +3089,7 @@
       }
 
       if (navigator.clipboard) {
+
         await navigator.clipboard.writeText(
           shareUrl
         );
@@ -2780,7 +3107,10 @@
       );
 
     } catch (error) {
-      showToast(error.message);
+
+      showToast(
+        error.message
+      );
     }
   }
 
@@ -2791,6 +3121,7 @@
   async function loadDiscover(
     containerId
   ) {
+
     const container =
       $(containerId);
 
@@ -2800,6 +3131,7 @@
       '<div class="loading">Loading people...</div>';
 
     try {
+
       const data =
         await api(
           "/api/users/discover"
@@ -2809,6 +3141,7 @@
         data.users || [];
 
       if (!users.length) {
+
         container.innerHTML =
           '<div class="empty">No other users found yet.</div>';
 
@@ -2823,6 +3156,7 @@
       attachFollowEvents();
 
     } catch (error) {
+
       container.innerHTML =
         `<div class="empty">${escapeHtml(
           error.message
@@ -2833,6 +3167,7 @@
   function renderUserCard(
     user
   ) {
+
     const following =
       Boolean(user.following_me);
 
@@ -2895,27 +3230,35 @@
   }
 
   function attachFollowEvents() {
+
     document
       .querySelectorAll(
         ".follow-btn"
       )
-      .forEach((button) => {
-        button.addEventListener(
-          "click",
-          () =>
-            toggleFollow(
-              Number(button.dataset.id),
-              button
-            )
-        );
-      });
+      .forEach(
+        (button) => {
+
+          button.addEventListener(
+            "click",
+            () =>
+              toggleFollow(
+                Number(
+                  button.dataset.id
+                ),
+                button
+              )
+          );
+        }
+      );
   }
 
   async function toggleFollow(
     userId,
     button
   ) {
+
     try {
+
       button.disabled = true;
 
       const data =
@@ -2937,11 +3280,13 @@
         );
 
       if (count) {
+
         count.textContent =
           data.follower_count || 0;
       }
 
       if (data.following) {
+
         button.textContent =
           "✓ Following";
 
@@ -2950,6 +3295,7 @@
         );
 
       } else {
+
         button.textContent =
           "🤝 Follow";
 
@@ -2959,12 +3305,17 @@
       }
 
       await loadMyProfile();
+
       await loadNotifications(false);
 
     } catch (error) {
-      showToast(error.message);
+
+      showToast(
+        error.message
+      );
 
     } finally {
+
       button.disabled = false;
     }
   }
@@ -2976,6 +3327,7 @@
   function getNotificationIcon(
     type
   ) {
+
     if (type === "follow") {
       return "🤝";
     }
@@ -2998,9 +3350,11 @@
   async function loadNotifications(
     openPanel = false
   ) {
+
     if (!token) return;
 
     try {
+
       const data =
         await api(
           "/api/notifications"
@@ -3028,6 +3382,7 @@
       );
 
       if (openPanel) {
+
         $("notificationPanel")
           .classList.remove(
             "hidden"
@@ -3035,12 +3390,14 @@
       }
 
     } catch (error) {
+
       console.error(
         "NOTIFICATIONS ERROR:",
         error
       );
 
       if (openPanel) {
+
         showToast(
           error.message
         );
@@ -3051,12 +3408,14 @@
   function updateNotificationBadge(
     count
   ) {
+
     const badge =
       $("notificationBadge");
 
     if (!badge) return;
 
     if (count > 0) {
+
       badge.textContent =
         count > 99
           ? "99+"
@@ -3067,6 +3426,7 @@
       );
 
     } else {
+
       badge.classList.add(
         "hidden"
       );
@@ -3077,12 +3437,14 @@
     unreadCount,
     totalCount
   ) {
+
     const element =
       $("notificationSummary");
 
     if (!element) return;
 
     if (unreadCount > 0) {
+
       element.textContent =
         `${unreadCount} unread notification${
           unreadCount === 1
@@ -3091,10 +3453,12 @@
         }.`;
 
     } else if (totalCount > 0) {
+
       element.textContent =
         "You're all caught up.";
 
     } else {
+
       element.textContent =
         "No new notifications.";
     }
@@ -3103,12 +3467,14 @@
   function renderNotifications(
     notifications
   ) {
+
     const list =
       $("notificationList");
 
     if (!list) return;
 
     if (!notifications.length) {
+
       list.innerHTML = `
         <div class="empty-notifications">
 
@@ -3202,26 +3568,32 @@
       .querySelectorAll(
         ".notification-read"
       )
-      .forEach((button) => {
-        button.addEventListener(
-          "click",
-          (event) => {
-            event.stopPropagation();
+      .forEach(
+        (button) => {
 
-            markNotificationRead(
-              Number(
-                button.dataset.id
-              )
-            );
-          }
-        );
-      });
+          button.addEventListener(
+            "click",
+            (event) => {
+
+              event.stopPropagation();
+
+              markNotificationRead(
+                Number(
+                  button.dataset.id
+                )
+              );
+            }
+          );
+        }
+      );
   }
 
   async function markNotificationRead(
     id
   ) {
+
     try {
+
       await api(
         `/api/notifications/${id}/read`,
         {
@@ -3234,6 +3606,7 @@
       );
 
     } catch (error) {
+
       showToast(
         error.message
       );
@@ -3241,7 +3614,9 @@
   }
 
   async function markAllNotificationsRead() {
+
     try {
+
       await api(
         "/api/notifications/read-all",
         {
@@ -3258,6 +3633,7 @@
       );
 
     } catch (error) {
+
       showToast(
         error.message
       );
@@ -3268,6 +3644,7 @@
     .addEventListener(
       "click",
       async (event) => {
+
         event.stopPropagation();
 
         const panel =
@@ -3279,10 +3656,13 @@
           );
 
         if (willOpen) {
+
           await loadNotifications(
             true
           );
+
         } else {
+
           panel.classList.add(
             "hidden"
           );
@@ -3294,6 +3674,7 @@
     .addEventListener(
       "click",
       async () => {
+
         await loadNotifications(
           true
         );
@@ -3304,6 +3685,7 @@
     .addEventListener(
       "click",
       (event) => {
+
         event.stopPropagation();
 
         markAllNotificationsRead();
@@ -3314,6 +3696,7 @@
     .addEventListener(
       "click",
       (event) => {
+
         event.stopPropagation();
       }
     );
@@ -3321,6 +3704,7 @@
   document.addEventListener(
     "click",
     () => {
+
       $("notificationPanel")
         .classList.add(
           "hidden"
@@ -3329,7 +3713,9 @@
   );
 
   function startNotificationPolling() {
+
     if (notificationTimer) {
+
       clearInterval(
         notificationTimer
       );
@@ -3338,9 +3724,11 @@
     notificationTimer =
       setInterval(
         () => {
+
           if (token) {
             loadNotifications(false);
           }
+
         },
         15000
       );
@@ -3353,6 +3741,7 @@
   async function loadConversations(
     options = {}
   ) {
+
     if (!token) return;
 
     const list =
@@ -3370,14 +3759,12 @@
       ++conversationLoadVersion;
 
     try {
+
       const data =
         await api(
           "/api/conversations"
         );
 
-      /*
-        Ignore an older request.
-      */
       if (
         requestId !==
         conversationLoadVersion
@@ -3395,6 +3782,7 @@
       updateMessageBadge();
 
       if (rerender) {
+
         renderConversationList(
           allConversations,
           keepActive
@@ -3402,6 +3790,7 @@
       }
 
     } catch (error) {
+
       if (
         requestId !==
         conversationLoadVersion
@@ -3415,6 +3804,7 @@
       );
 
       if (rerender) {
+
         list.innerHTML =
           `<div class="conversation-empty">${escapeHtml(
             error.message
@@ -3427,12 +3817,14 @@
     conversations,
     keepActive = true
   ) {
+
     const list =
       $("conversationList");
 
     if (!list) return;
 
     if (!conversations.length) {
+
       list.innerHTML = `
         <div class="conversation-empty">
 
@@ -3473,6 +3865,7 @@
       conversations
         .map(
           (conversation) => {
+
             const id =
               Number(
                 conversation.id
@@ -3573,25 +3966,32 @@
       .querySelectorAll(
         ".conversation-item"
       )
-      .forEach((button) => {
-        button.addEventListener(
-          "click",
-          async (event) => {
-            event.preventDefault();
-            event.stopPropagation();
+      .forEach(
+        (button) => {
 
-            await openConversation(
-              Number(
-                button.dataset
-                  .conversationId
-              )
-            );
-          }
-        );
-      });
+          button.addEventListener(
+            "click",
+            async (event) => {
+
+              event.preventDefault();
+
+              event.stopPropagation();
+
+              const id =
+                Number(
+                  button.dataset
+                    .conversationId
+                );
+
+              await openConversation(id);
+            }
+          );
+        }
+      );
   }
 
   function updateMessageBadge() {
+
     const badge =
       $("messageBadge");
 
@@ -3612,6 +4012,7 @@
       );
 
     if (total > 0) {
+
       badge.textContent =
         total > 99
           ? "99+"
@@ -3622,6 +4023,7 @@
       );
 
     } else {
+
       badge.classList.add(
         "hidden"
       );
@@ -3629,9 +4031,11 @@
   }
 
   async function loadDiscoverUsersForChat() {
+
     if (!token) return;
 
     try {
+
       const data =
         await api(
           "/api/users/discover"
@@ -3646,6 +4050,7 @@
       );
 
     } catch (error) {
+
       console.error(
         "CHAT USER SEARCH ERROR:",
         error
@@ -3656,6 +4061,7 @@
   function renderChatUserSearch(
     searchTerm
   ) {
+
     const container =
       $("searchUsers");
 
@@ -3669,37 +4075,43 @@
         .toLowerCase();
 
     if (!term) {
+
       container.innerHTML = "";
+
       return;
     }
 
     const users =
       allDiscoverUsers
-        .filter((user) => {
-          const name =
-            String(
-              user.name || ""
-            ).toLowerCase();
+        .filter(
+          (user) => {
 
-          const email =
-            String(
-              user.email || ""
-            ).toLowerCase();
+            const name =
+              String(
+                user.name || ""
+              ).toLowerCase();
 
-          const country =
-            String(
-              user.country || ""
-            ).toLowerCase();
+            const email =
+              String(
+                user.email || ""
+              ).toLowerCase();
 
-          return (
-            name.includes(term) ||
-            email.includes(term) ||
-            country.includes(term)
-          );
-        })
+            const country =
+              String(
+                user.country || ""
+              ).toLowerCase();
+
+            return (
+              name.includes(term) ||
+              email.includes(term) ||
+              country.includes(term)
+            );
+          }
+        )
         .slice(0, 10);
 
     if (!users.length) {
+
       container.innerHTML =
         '<div class="search-empty">No user found.</div>';
 
@@ -3751,25 +4163,30 @@
       .querySelectorAll(
         ".search-user"
       )
-      .forEach((button) => {
-        button.addEventListener(
-          "click",
-          () =>
-            startConversationWithUser(
-              Number(
-                button.dataset.userId
+      .forEach(
+        (button) => {
+
+          button.addEventListener(
+            "click",
+            () =>
+              startConversationWithUser(
+                Number(
+                  button.dataset.userId
+                )
               )
-            )
-        );
-      });
+          );
+        }
+      );
   }
 
   async function startConversationWithUser(
     userId
   ) {
+
     if (!userId) return;
 
     try {
+
       showToast(
         "Opening conversation..."
       );
@@ -3786,14 +4203,21 @@
         );
 
       if (!data.conversation) {
+
         throw new Error(
           "Conversation could not be created."
         );
       }
 
       $("userSearch").value = "";
-      $("searchUsers").innerHTML = "";
 
+      $("searchUsers")
+        .innerHTML = "";
+
+      /*
+        Load the new conversation
+        into our local list first.
+      */
       await loadConversations({
         rerender: true,
         keepActive: true
@@ -3806,6 +4230,7 @@
       );
 
     } catch (error) {
+
       showToast(
         error.message
       );
@@ -3813,12 +4238,13 @@
   }
 
   /* =========================================================
-     OPEN CHAT
+     OPEN CONVERSATION
      ========================================================= */
 
   async function openConversation(
     conversationId
   ) {
+
     const id =
       Number(conversationId);
 
@@ -3829,13 +4255,35 @@
       return;
     }
 
-    const conversation =
+    /*
+      Find the selected chat.
+    */
+    let conversation =
       allConversations.find(
         (item) =>
           Number(item.id) === id
       );
 
+    /*
+      If not found locally, reload the
+      conversation list once.
+    */
     if (!conversation) {
+
+      await loadConversations({
+        rerender: true,
+        keepActive: false
+      });
+
+      conversation =
+        allConversations.find(
+          (item) =>
+            Number(item.id) === id
+        );
+    }
+
+    if (!conversation) {
+
       showToast(
         "Conversation not found."
       );
@@ -3844,18 +4292,22 @@
     }
 
     /*
-      Every click creates a new request version.
-      This is the main protection against
-      the wrong chat appearing.
+      New request version.
     */
     const myVersion =
       ++chatRequestVersion;
 
+    /*
+      Set active conversation BEFORE
+      any asynchronous work.
+    */
     currentConversationId = id;
 
     currentChatUser = {
       id:
-        conversation.other_user_id,
+        Number(
+          conversation.other_user_id
+        ),
 
       name:
         conversation.other_user_name ||
@@ -3870,6 +4322,9 @@
         "World"
     };
 
+    /*
+      Open actual conversation UI.
+    */
     updateChatHeader(
       currentChatUser
     );
@@ -3888,7 +4343,17 @@
       .style.display = "flex";
 
     /*
-      Immediately highlight the clicked conversation.
+      MOBILE:
+      hide chat list and enter
+      the actual conversation.
+    */
+    $("converseCard")
+      .classList.add(
+        "chat-open"
+      );
+
+    /*
+      Highlight immediately.
     */
     renderConversationList(
       allConversations,
@@ -3896,16 +4361,26 @@
     );
 
     /*
+      Clear old messages while
+      the new conversation loads.
+    */
+    $("messagesList").innerHTML =
+      '<div class="loading">Loading messages...</div>';
+
+    /*
       Mark as read.
     */
     try {
+
       await api(
         `/api/conversations/${id}/read`,
         {
           method: "POST"
         }
       );
+
     } catch (error) {
+
       console.error(
         "MARK CHAT READ ERROR:",
         error
@@ -3913,9 +4388,8 @@
     }
 
     /*
-      If user clicked another chat
-      while the request was running,
-      stop this old request.
+      If another chat was clicked
+      while waiting, stop.
     */
     if (
       myVersion !== chatRequestVersion ||
@@ -3924,6 +4398,9 @@
       return;
     }
 
+    /*
+      Load actual messages.
+    */
     await loadMessages(
       id,
       true,
@@ -3938,8 +4415,8 @@
     }
 
     /*
-      Refresh conversation list AFTER
-      opening the selected conversation.
+      Refresh list to update
+      preview + unread count.
     */
     await loadConversations({
       rerender: true,
@@ -3959,11 +4436,27 @@
     );
 
     startConversationPolling();
+
+    /*
+      Focus message box automatically
+      when the chat is opened.
+    */
+    setTimeout(() => {
+
+      if (
+        currentConversationId === id &&
+        chatRequestVersion === myVersion
+      ) {
+        $("messageInput")?.focus();
+      }
+
+    }, 50);
   }
 
   function updateChatHeader(
     user
   ) {
+
     if (!user) return;
 
     $("chatHeaderAvatar")
@@ -3982,6 +4475,113 @@
   }
 
   /* =========================================================
+     BACK TO CHAT LIST
+     ========================================================= */
+
+  function backToChats() {
+
+    /*
+      Cancel all old chat requests.
+    */
+    chatRequestVersion++;
+
+    currentConversationId = null;
+
+    currentChatUser = null;
+
+    /*
+      Mobile returns to list.
+    */
+    $("converseCard")
+      .classList.remove(
+        "chat-open"
+      );
+
+    /*
+      Show empty screen again.
+    */
+    $("chatWindow")
+      .classList.add(
+        "hidden"
+      );
+
+    $("chatWindow")
+      .style.display = "none";
+
+    $("chatEmpty")
+      .classList.remove(
+        "hidden"
+      );
+
+    $("messagesList").innerHTML =
+      '<div class="empty">Choose a conversation to start chatting.</div>';
+
+    $("messageInput").value = "";
+
+    $("messageInput").style.height =
+      "44px";
+
+    renderConversationList(
+      allConversations,
+      false
+    );
+
+    /*
+      Keep polling conversation
+      list while in Converse.
+    */
+    if (activeSection === "converse") {
+      startConversationPolling();
+    }
+  }
+
+  $("backToChatsBtn")
+    .addEventListener(
+      "click",
+      backToChats
+    );
+
+  /* =========================================================
+     RESET CHAT VIEW
+     ========================================================= */
+
+  function resetChatView() {
+
+    chatRequestVersion++;
+
+    currentConversationId = null;
+
+    currentChatUser = null;
+
+    $("converseCard")
+      ?.classList.remove(
+        "chat-open"
+      );
+
+    $("chatWindow")
+      ?.classList.add(
+        "hidden"
+      );
+
+    if ($("chatWindow")) {
+      $("chatWindow")
+        .style.display = "none";
+    }
+
+    $("chatEmpty")
+      ?.classList.remove(
+        "hidden"
+      );
+
+    if ($("messageInput")) {
+      $("messageInput").value = "";
+
+      $("messageInput").style.height =
+        "44px";
+    }
+  }
+
+  /* =========================================================
      LOAD MESSAGES
      ========================================================= */
 
@@ -3990,6 +4590,7 @@
     scrollToBottom = false,
     version = chatRequestVersion
   ) {
+
     const id =
       Number(conversationId);
 
@@ -4001,8 +4602,8 @@
     }
 
     /*
-      Do not allow a request for another
-      conversation to touch the current UI.
+      Never allow an old request
+      to update the wrong chat.
     */
     if (
       currentConversationId !== id ||
@@ -4017,15 +4618,14 @@
     if (!list) return;
 
     try {
+
       const data =
         await api(
           `/api/conversations/${id}/messages`
         );
 
       /*
-        This is critical.
-        If user switched chat while fetch
-        was running, ignore the response.
+        Critical protection.
       */
       if (
         currentConversationId !== id ||
@@ -4064,12 +4664,14 @@
     messages,
     scrollToBottom = false
   ) {
+
     const list =
       $("messagesList");
 
     if (!list) return;
 
     if (!messages.length) {
+
       list.innerHTML =
         '<div class="empty">No messages yet. Say hello! 👋</div>';
 
@@ -4086,6 +4688,7 @@
       messages
         .map(
           (message) => {
+
             const mine =
               Number(
                 message.sender_id
@@ -4129,8 +4732,10 @@
       scrollToBottom ||
       wasNearBottom
     ) {
+
       requestAnimationFrame(
         () => {
+
           list.scrollTop =
             list.scrollHeight;
         }
@@ -4143,11 +4748,10 @@
      ========================================================= */
 
   async function sendMessage() {
+
     /*
-      Capture the conversation ID NOW.
-      This prevents a message from accidentally
-      using another conversation if the user
-      switches chats while sending.
+      Capture the current conversation
+      before starting the request.
     */
     const id =
       Number(
@@ -4155,6 +4759,7 @@
       );
 
     if (!id) {
+
       showToast(
         "Choose someone to chat with first."
       );
@@ -4174,6 +4779,7 @@
       chatRequestVersion;
 
     try {
+
       $("sendMessageBtn")
         .disabled = true;
 
@@ -4188,8 +4794,8 @@
       );
 
       /*
-        User may have switched chats
-        while sending.
+        User may have changed chats
+        while message was sending.
       */
       if (
         currentConversationId !== id ||
@@ -4199,7 +4805,9 @@
       }
 
       input.value = "";
-      input.style.height = "44px";
+
+      input.style.height =
+        "44px";
 
       await loadMessages(
         id,
@@ -4223,6 +4831,7 @@
         currentConversationId === id &&
         version === chatRequestVersion
       ) {
+
         renderConversationList(
           allConversations,
           true
@@ -4234,15 +4843,22 @@
       );
 
     } catch (error) {
+
       showToast(
         error.message
       );
 
     } finally {
+
       $("sendMessageBtn")
         .disabled = false;
 
-      input.focus();
+      if (
+        currentConversationId === id &&
+        version === chatRequestVersion
+      ) {
+        input.focus();
+      }
     }
   }
 
@@ -4251,6 +4867,7 @@
      ========================================================= */
 
   function startConversationPolling() {
+
     stopConversationPolling();
 
     conversationTimer =
@@ -4275,18 +4892,18 @@
             chatRequestVersion;
 
           /*
-            VERY IMPORTANT:
-            Polling does NOT rerender the
-            conversation list.
-
-            Therefore it cannot steal the
-            selected chat.
+            Update conversation previews
+            without rebuilding the list.
           */
           await loadConversations({
             rerender: false,
             keepActive: true
           });
 
+          /*
+            Only refresh messages if the
+            same conversation is still open.
+          */
           if (
             id &&
             currentConversationId === id &&
@@ -4303,13 +4920,16 @@
               currentConversationId === id &&
               version === chatRequestVersion
             ) {
+
               try {
+
                 await api(
                   `/api/conversations/${id}/read`,
                   {
                     method: "POST"
                   }
                 );
+
               } catch {}
             }
           }
@@ -4320,7 +4940,9 @@
   }
 
   function stopConversationPolling() {
+
     if (conversationTimer) {
+
       clearInterval(
         conversationTimer
       );
@@ -4337,6 +4959,7 @@
     .addEventListener(
       "input",
       (event) => {
+
         renderChatUserSearch(
           event.target.value
         );
@@ -4354,6 +4977,7 @@
             .toLowerCase();
 
         if (!term) {
+
           renderConversationList(
             allConversations,
             true
@@ -4408,13 +5032,14 @@
       (event) => {
 
         /*
-          Enter = send
-          Shift + Enter = new line
+          Enter = Send
+          Shift + Enter = New line
         */
         if (
           event.key === "Enter" &&
           !event.shiftKey
         ) {
+
           event.preventDefault();
 
           sendMessage();
@@ -4455,6 +5080,12 @@
             "hidden"
           );
 
+        /*
+          This button simply opens the
+          Converse/chat list.
+          It does NOT become the actual
+          messaging area.
+        */
         showSection(
           "converse"
         );
@@ -4505,6 +5136,7 @@
       if (
         Number.isInteger(postId)
       ) {
+
         addComment(postId);
       }
     }
@@ -4517,7 +5149,9 @@
   async function initialize() {
 
     if (!token) {
+
       showAuth();
+
       return;
     }
 
