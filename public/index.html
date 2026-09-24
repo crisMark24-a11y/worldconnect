@@ -2,11 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WorldConnect</title>
 
   <style>
@@ -17,22 +13,23 @@
     }
 
     body {
-      font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-      background: #f4f7fb;
-      color: #1f2937;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f3f6fa;
+      color: #172033;
     }
 
     button,
-    input,
-    textarea {
-      font-family: inherit;
+    textarea,
+    input {
+      font: inherit;
     }
 
     button {
       cursor: pointer;
+    }
+
+    .hidden {
+      display: none !important;
     }
 
     /* =========================
@@ -46,11 +43,9 @@
       justify-content: center;
       padding: 20px;
       background:
-        linear-gradient(
-          135deg,
-          #eef6ff,
-          #f8fbff
-        );
+        radial-gradient(circle at top left, #dbeafe, transparent 35%),
+        radial-gradient(circle at bottom right, #e0e7ff, transparent 35%),
+        #f5f7fb;
     }
 
     .auth-card {
@@ -59,85 +54,97 @@
       background: white;
       border-radius: 22px;
       padding: 32px;
-      box-shadow:
-        0 15px 45px
-        rgba(0, 0, 0, 0.10);
+      box-shadow: 0 15px 45px rgba(15, 23, 42, 0.12);
     }
 
-    .auth-logo {
+    .brand {
       text-align: center;
       margin-bottom: 25px;
     }
 
-    .auth-logo .globe {
-      font-size: 54px;
+    .brand-logo {
+      font-size: 42px;
+      margin-bottom: 8px;
     }
 
-    .auth-logo h1 {
-      margin-top: 8px;
-      font-size: 28px;
-      color: #1877f2;
+    .brand h1 {
+      font-size: 30px;
+      color: #2563eb;
     }
 
-    .auth-logo p {
-      color: #6b7280;
+    .brand p {
+      color: #64748b;
       margin-top: 6px;
-      font-size: 14px;
     }
 
-    .auth-form h2 {
-      margin-bottom: 18px;
-      text-align: center;
-    }
-
-    .auth-form input {
-      width: 100%;
-      padding: 14px;
-      border: 1px solid #d6dce5;
+    .auth-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      background: #f1f5f9;
+      padding: 5px;
       border-radius: 12px;
-      margin-bottom: 12px;
-      font-size: 15px;
+    }
+
+    .auth-tab {
+      flex: 1;
+      border: 0;
+      background: transparent;
+      padding: 11px;
+      border-radius: 9px;
+      color: #64748b;
+      font-weight: 700;
+    }
+
+    .auth-tab.active {
+      background: white;
+      color: #2563eb;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 13px 14px;
+      border: 1px solid #dbe2ea;
+      border-radius: 11px;
       outline: none;
     }
 
-    .auth-form input:focus {
-      border-color: #1877f2;
+    .field input:focus {
+      border-color: #2563eb;
     }
 
-    .primary {
+    .primary-btn {
       width: 100%;
-      border: none;
-      background: #1877f2;
+      border: 0;
+      background: #2563eb;
       color: white;
-      padding: 14px;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: bold;
+      padding: 13px;
+      border-radius: 11px;
+      font-weight: 700;
+      margin-top: 5px;
     }
 
-    .primary:hover {
-      opacity: 0.92;
+    .primary-btn:hover {
+      background: #1d4ed8;
     }
 
-    .switch {
+    .auth-message {
+      min-height: 22px;
       text-align: center;
-      margin-top: 18px;
-      color: #6b7280;
+      margin-top: 13px;
       font-size: 14px;
-    }
-
-    .switch button {
-      border: none;
-      background: none;
-      color: #1877f2;
-      font-weight: bold;
-    }
-
-    #authMessage {
-      text-align: center;
-      margin-top: 15px;
-      font-size: 14px;
-      color: #dc2626;
     }
 
     /* =========================
@@ -145,11 +152,13 @@
     ========================= */
 
     #appScreen {
-      display: none;
       min-height: 100vh;
     }
 
     .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
       height: 64px;
       background: white;
       border-bottom: 1px solid #e5e7eb;
@@ -157,15 +166,12 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 22px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
     }
 
-    .brand {
+    .top-brand {
       font-size: 21px;
-      font-weight: bold;
-      color: #1877f2;
+      font-weight: 800;
+      color: #2563eb;
     }
 
     .top-actions {
@@ -174,152 +180,110 @@
       gap: 8px;
     }
 
-    .top-icon {
+    .icon-btn {
       width: 40px;
       height: 40px;
-      border-radius: 50%;
-      border: none;
+      border: 0;
       background: #f1f5f9;
-      font-size: 18px;
+      border-radius: 50%;
+      color: #334155;
+      font-size: 17px;
     }
 
-    .top-icon:hover {
-      background: #e2e8f0;
+    .logout-btn {
+      border: 0;
+      background: #fee2e2;
+      color: #dc2626;
+      padding: 10px 14px;
+      border-radius: 9px;
+      font-weight: 700;
     }
 
-    .profile-mini {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-left: 5px;
-      padding: 6px 10px;
-      border-radius: 20px;
-      background: #f8fafc;
-      font-size: 14px;
-      font-weight: bold;
+    .layout {
+      max-width: 1400px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 240px minmax(0, 680px) 260px;
+      gap: 20px;
+      padding: 22px;
     }
 
     /* =========================
-       LAYOUT
+       SIDEBAR
     ========================= */
 
-    .app-layout {
-      display: grid;
-      grid-template-columns:
-        240px
-        minmax(0, 1fr)
-        280px;
-      max-width: 1500px;
-      margin: auto;
+    .sidebar,
+    .rightbar {
+      position: sticky;
+      top: 84px;
+      align-self: start;
     }
 
-    .sidebar {
-      min-height: calc(100vh - 64px);
+    .side-card {
       background: white;
-      border-right: 1px solid #e5e7eb;
-      padding: 20px 12px;
-      position: sticky;
-      top: 64px;
-      align-self: start;
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid #e7ebf0;
+    }
+
+    .side-welcome {
+      padding: 12px;
+      margin-bottom: 10px;
+      background: #eff6ff;
+      border-radius: 12px;
+    }
+
+    .side-welcome strong {
+      display: block;
+      color: #1e40af;
+      margin-bottom: 4px;
     }
 
     .nav-item {
       width: 100%;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 13px 14px;
-      margin-bottom: 5px;
-      border: none;
-      border-radius: 12px;
+      border: 0;
       background: transparent;
-      color: #374151;
       text-align: left;
-      font-size: 15px;
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 3px;
+      color: #475569;
+      font-weight: 600;
     }
 
     .nav-item:hover,
     .nav-item.active {
-      background: #eaf3ff;
-      color: #1877f2;
-    }
-
-    .nav-item span:first-child {
-      width: 24px;
-      text-align: center;
-      font-size: 18px;
-    }
-
-    .nav-badge {
-      margin-left: auto;
-      background: #1877f2;
-      color: white;
-      min-width: 20px;
-      height: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 10px;
-      font-size: 11px;
-    }
-
-    .nav-divider {
-      height: 1px;
-      background: #e5e7eb;
-      margin: 15px 5px;
-    }
-
-    .logout-navigation {
-      color: #dc2626;
+      background: #eff6ff;
+      color: #2563eb;
     }
 
     /* =========================
-       MAIN
+       FEED
     ========================= */
 
-    .main {
-      min-width: 0;
-      padding: 25px;
+    .feed-title {
+      margin-bottom: 15px;
     }
 
-    .welcome {
-      background:
-        linear-gradient(
-          135deg,
-          #1877f2,
-          #4f9cff
-        );
-      color: white;
-      border-radius: 18px;
-      padding: 25px;
-      margin-bottom: 20px;
-    }
-
-    .welcome h1 {
+    .feed-title h2 {
       font-size: 24px;
-      margin-bottom: 8px;
     }
 
-    .welcome p {
-      opacity: 0.92;
+    .feed-title p {
+      color: #64748b;
+      margin-top: 4px;
       font-size: 14px;
     }
 
-    /* =========================
-       POST BOX
-    ========================= */
-
-    .post-box {
+    .composer {
       background: white;
-      border-radius: 18px;
-      padding: 18px;
-      margin-bottom: 20px;
-      box-shadow:
-        0 3px 15px
-        rgba(0, 0, 0, 0.04);
+      border: 1px solid #e7ebf0;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 18px;
     }
 
-    .post-user {
+    .composer-head {
       display: flex;
       align-items: center;
       gap: 10px;
@@ -329,116 +293,70 @@
     .avatar {
       width: 42px;
       height: 42px;
+      flex: 0 0 42px;
       border-radius: 50%;
-      background: #1877f2;
+      background: #2563eb;
       color: white;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: bold;
-      flex-shrink: 0;
+      font-weight: 800;
     }
 
-    .post-user-name {
-      font-weight: bold;
+    .composer-name {
+      font-weight: 700;
     }
 
-    .post-user-country {
-      color: #9ca3af;
-      font-size: 12px;
-      margin-top: 2px;
-    }
-
-    #postText {
+    .composer textarea {
       width: 100%;
       min-height: 95px;
       resize: vertical;
-      border: 1px solid #e5e7eb;
-      border-radius: 14px;
-      padding: 14px;
+      border: 1px solid #dbe2ea;
+      border-radius: 12px;
+      padding: 13px;
       outline: none;
-      font-size: 15px;
     }
 
-    #postText:focus {
-      border-color: #1877f2;
+    .composer textarea:focus {
+      border-color: #2563eb;
     }
 
-    .post-tools {
+    .composer-bottom {
       display: flex;
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .tool-button {
-      flex: 1;
-      border: none;
-      background: #f8fafc;
-      padding: 11px;
-      border-radius: 10px;
-      color: #4b5563;
-    }
-
-    .tool-button:hover {
-      background: #eef2f7;
-    }
-
-    .post-submit {
-      margin-top: 12px;
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 11px;
-      background: #1877f2;
-      color: white;
-      font-weight: bold;
-      font-size: 15px;
-    }
-
-    .post-submit:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    #postMessage {
+      justify-content: space-between;
+      align-items: center;
       margin-top: 10px;
-      text-align: center;
+    }
+
+    .post-message {
       font-size: 13px;
     }
 
+    .post-btn {
+      border: 0;
+      background: #2563eb;
+      color: white;
+      padding: 10px 22px;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+
     /* =========================
-       POSTS
+       POST
     ========================= */
-
-    #feed {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .feed-loading,
-    .empty-feed {
-      background: white;
-      border-radius: 16px;
-      padding: 30px;
-      text-align: center;
-      color: #6b7280;
-    }
 
     .post-card {
       background: white;
-      border-radius: 18px;
-      padding: 18px;
-      box-shadow:
-        0 3px 15px
-        rgba(0, 0, 0, 0.04);
+      border: 1px solid #e7ebf0;
+      border-radius: 16px;
+      padding: 17px;
+      margin-bottom: 16px;
     }
 
     .post-header {
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 14px;
     }
 
     .post-meta {
@@ -446,150 +364,270 @@
     }
 
     .post-name {
-      font-weight: bold;
-      font-size: 15px;
+      font-weight: 800;
     }
 
     .post-time {
-      color: #9ca3af;
+      color: #64748b;
       font-size: 12px;
       margin-top: 3px;
     }
 
     .post-body {
       white-space: pre-wrap;
-      word-break: break-word;
-      line-height: 1.6;
-      font-size: 15px;
-      color: #374151;
+      overflow-wrap: anywhere;
+      line-height: 1.55;
+      margin: 17px 0;
+      color: #273449;
     }
 
     .post-actions {
-      display: flex;
-      gap: 8px;
-      border-top: 1px solid #f1f5f9;
-      margin-top: 15px;
-      padding-top: 12px;
+      border-top: 1px solid #edf0f3;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
+      padding-top: 8px;
     }
 
     .post-action {
-      flex: 1;
-      border: none;
-      background: #f8fafc;
+      border: 0;
+      background: transparent;
+      padding: 10px 5px;
       border-radius: 9px;
-      padding: 9px;
-      color: #4b5563;
+      color: #475569;
+      font-weight: 600;
+    }
+
+    .post-action:hover {
+      background: #f1f5f9;
+    }
+
+    .post-action.liked {
+      color: #2563eb;
+      background: #eff6ff;
+    }
+
+    .loading,
+    .empty {
+      background: white;
+      padding: 30px;
+      text-align: center;
+      border-radius: 16px;
+      color: #64748b;
+      border: 1px solid #e7ebf0;
     }
 
     /* =========================
-       RIGHT SIDEBAR
+       COMMENTS
     ========================= */
 
-    .rightbar {
-      padding: 25px 15px;
+    .comments-area {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #edf0f3;
     }
 
-    .side-card {
+    .comment-loading {
+      color: #64748b;
+      font-size: 13px;
+      padding: 8px 0;
+    }
+
+    .comment {
+      display: flex;
+      gap: 9px;
+      margin-bottom: 10px;
+    }
+
+    .comment .avatar {
+      width: 32px;
+      height: 32px;
+      flex-basis: 32px;
+      font-size: 13px;
+    }
+
+    .comment-bubble {
+      background: #f1f5f9;
+      border-radius: 12px;
+      padding: 8px 11px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .comment-name {
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .comment-text {
+      font-size: 14px;
+      margin-top: 3px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .comment-time {
+      color: #94a3b8;
+      font-size: 11px;
+      margin-top: 4px;
+    }
+
+    .comment-form {
+      display: flex;
+      gap: 7px;
+      margin-top: 10px;
+    }
+
+    .comment-input {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid #dbe2ea;
+      border-radius: 10px;
+      padding: 10px;
+      outline: none;
+    }
+
+    .comment-input:focus {
+      border-color: #2563eb;
+    }
+
+    .comment-send {
+      border: 0;
+      background: #2563eb;
+      color: white;
+      border-radius: 10px;
+      padding: 0 14px;
+      font-weight: 700;
+    }
+
+    /* =========================
+       RIGHTBAR
+    ========================= */
+
+    .profile-card {
       background: white;
-      border-radius: 17px;
+      border: 1px solid #e7ebf0;
+      border-radius: 16px;
       padding: 18px;
-      margin-bottom: 15px;
-      box-shadow:
-        0 3px 15px
-        rgba(0, 0, 0, 0.04);
+      text-align: center;
     }
 
-    .side-card h3 {
-      font-size: 16px;
-      margin-bottom: 12px;
+    .profile-card .avatar {
+      margin: 0 auto 10px;
+      width: 62px;
+      height: 62px;
+      font-size: 24px;
     }
 
-    .side-card p {
-      color: #6b7280;
+    .profile-name {
+      font-weight: 800;
+      font-size: 18px;
+    }
+
+    .profile-email,
+    .profile-country {
+      color: #64748b;
+      font-size: 13px;
+      margin-top: 5px;
+      overflow-wrap: anywhere;
+    }
+
+    .right-info {
+      background: white;
+      border: 1px solid #e7ebf0;
+      border-radius: 16px;
+      padding: 17px;
+      margin-top: 15px;
+    }
+
+    .right-info h3 {
+      font-size: 15px;
+      margin-bottom: 8px;
+    }
+
+    .right-info p {
+      color: #64748b;
       font-size: 13px;
       line-height: 1.5;
     }
 
     /* =========================
-       SECTIONS
+       MODAL
     ========================= */
 
-    .page-section {
-      display: none;
-    }
-
-    .page-section.active {
-      display: block;
-    }
-
-    .profile-card {
-      background: white;
-      border-radius: 20px;
-      overflow: hidden;
-    }
-
-    .profile-cover {
-      height: 150px;
-      background:
-        linear-gradient(
-          135deg,
-          #1877f2,
-          #6ea8fe
-        );
-    }
-
-    .profile-content {
-      padding: 0 22px 25px;
-    }
-
-    .profile-avatar {
-      width: 90px;
-      height: 90px;
-      margin-top: -45px;
-      border: 5px solid white;
-      border-radius: 50%;
-      background: #1877f2;
-      color: white;
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, .55);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 32px;
-      font-weight: bold;
+      padding: 18px;
+      z-index: 999;
     }
 
-    .profile-content h2 {
-      margin-top: 12px;
-    }
-
-    .profile-email {
-      color: #6b7280;
-      margin-top: 4px;
-      font-size: 14px;
-    }
-
-    .profile-country {
-      margin-top: 8px;
-      color: #4b5563;
-    }
-
-    .coming-soon {
+    .modal {
+      width: 100%;
+      max-width: 520px;
+      max-height: 85vh;
+      overflow-y: auto;
       background: white;
-      border-radius: 20px;
-      padding: 45px 25px;
-      text-align: center;
+      border-radius: 18px;
+      padding: 20px;
     }
 
-    .coming-soon .icon {
-      font-size: 50px;
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       margin-bottom: 15px;
     }
 
-    .coming-soon h2 {
-      margin-bottom: 8px;
+    .modal-head h3 {
+      font-size: 20px;
     }
 
-    .coming-soon p {
-      color: #6b7280;
+    .close-btn {
+      width: 35px;
+      height: 35px;
+      border: 0;
+      background: #f1f5f9;
+      border-radius: 50%;
+      font-size: 18px;
+    }
+
+    .share-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 14px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .share-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .share-buttons button {
+      flex: 1;
+      border: 0;
+      padding: 11px;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+
+    .copy-btn {
+      background: #e2e8f0;
+      color: #334155;
+    }
+
+    .native-share-btn {
+      background: #2563eb;
+      color: white;
     }
 
     /* =========================
@@ -597,10 +635,8 @@
     ========================= */
 
     @media (max-width: 1050px) {
-      .app-layout {
-        grid-template-columns:
-          210px
-          minmax(0, 1fr);
+      .layout {
+        grid-template-columns: 210px minmax(0, 1fr);
       }
 
       .rightbar {
@@ -608,75 +644,64 @@
       }
     }
 
-    @media (max-width: 750px) {
+    @media (max-width: 720px) {
       .topbar {
         padding: 0 12px;
       }
 
-      .brand {
+      .top-brand {
         font-size: 18px;
       }
 
-      .profile-mini {
+      .top-actions .icon-btn {
         display: none;
       }
 
-      .app-layout {
+      .logout-btn {
+        padding: 9px 11px;
+      }
+
+      .layout {
         display: block;
+        padding: 12px;
       }
 
       .sidebar {
-        position: fixed;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        top: auto;
-        min-height: auto;
-        height: 65px;
-        z-index: 200;
-        border-right: none;
-        border-top: 1px solid #e5e7eb;
-        padding: 5px;
+        position: static;
+        margin-bottom: 14px;
+      }
+
+      .side-card {
         display: flex;
-        justify-content: space-around;
         overflow-x: auto;
+        gap: 4px;
+        padding: 8px;
       }
 
-      .nav-item {
-        min-width: 65px;
-        width: auto;
-        height: 55px;
-        margin: 0;
-        padding: 5px;
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-        justify-content: center;
-        align-items: center;
-        font-size: 10px;
-      }
-
-      .nav-item span:first-child {
-        font-size: 17px;
-      }
-
-      .nav-badge {
-        position: absolute;
-        margin-left: 25px;
-        margin-top: -25px;
-      }
-
-      .nav-divider {
+      .side-welcome {
         display: none;
       }
 
-      .main {
-        padding: 15px;
-        padding-bottom: 85px;
+      .nav-item {
+        min-width: max-content;
+        margin: 0;
       }
 
-      .welcome h1 {
+      .feed-title h2 {
         font-size: 21px;
+      }
+
+      .composer,
+      .post-card {
+        border-radius: 13px;
+      }
+
+      .post-actions {
+        font-size: 13px;
+      }
+
+      .auth-card {
+        padding: 24px 18px;
       }
     }
   </style>
@@ -688,170 +713,166 @@
        AUTH SCREEN
   ========================= -->
 
-  <div id="authScreen">
+  <section id="authScreen">
 
     <div class="auth-card">
 
-      <div class="auth-logo">
-        <div class="globe">🌎</div>
+      <div class="brand">
+        <div class="brand-logo">🌎</div>
         <h1>WorldConnect</h1>
-        <p>
-          One World. One Connection.
-        </p>
+        <p>One World. One Connection.</p>
+      </div>
+
+      <div class="auth-tabs">
+        <button
+          id="loginTab"
+          class="auth-tab active"
+          onclick="showLoginForm()">
+          Login
+        </button>
+
+        <button
+          id="registerTab"
+          class="auth-tab"
+          onclick="showRegisterForm()">
+          Register
+        </button>
       </div>
 
       <!-- LOGIN -->
 
-      <div
-        id="loginForm"
-        class="auth-form"
-      >
+      <form id="loginForm" onsubmit="login(event)">
 
-        <h2>Login</h2>
+        <div class="field">
+          <label>Email</label>
+          <input
+            id="loginEmail"
+            type="email"
+            placeholder="Enter your email"
+            required>
+        </div>
 
-        <input
-          id="loginEmail"
-          type="email"
-          placeholder="Email"
-          autocomplete="email"
-        >
-
-        <input
-          id="loginPassword"
-          type="password"
-          placeholder="Password"
-          autocomplete="current-password"
-        >
+        <div class="field">
+          <label>Password</label>
+          <input
+            id="loginPassword"
+            type="password"
+            placeholder="Enter your password"
+            required>
+        </div>
 
         <button
-          class="primary"
-          onclick="login()"
-        >
+          id="loginButton"
+          class="primary-btn"
+          type="submit">
           Login
         </button>
 
-        <div class="switch">
-          Don't have an account?
-          <button
-            onclick="showRegister()"
-          >
-            Register
-          </button>
-        </div>
-
-      </div>
+      </form>
 
       <!-- REGISTER -->
 
-      <div
+      <form
         id="registerForm"
-        class="auth-form"
-        style="display:none;"
-      >
+        class="hidden"
+        onsubmit="register(event)">
 
-        <h2>Create Account</h2>
+        <div class="field">
+          <label>Name</label>
+          <input
+            id="registerName"
+            type="text"
+            placeholder="Your name"
+            maxlength="80"
+            required>
+        </div>
 
-        <input
-          id="registerName"
-          type="text"
-          placeholder="Full name"
-          autocomplete="name"
-        >
+        <div class="field">
+          <label>Email</label>
+          <input
+            id="registerEmail"
+            type="email"
+            placeholder="Your email"
+            required>
+        </div>
 
-        <input
-          id="registerEmail"
-          type="email"
-          placeholder="Email"
-          autocomplete="email"
-        >
+        <div class="field">
+          <label>Country</label>
+          <input
+            id="registerCountry"
+            type="text"
+            placeholder="Your country"
+            maxlength="80">
+        </div>
 
-        <input
-          id="registerCountry"
-          type="text"
-          placeholder="Country"
-        >
-
-        <input
-          id="registerPassword"
-          type="password"
-          placeholder="Password (minimum 8 characters)"
-          autocomplete="new-password"
-        >
+        <div class="field">
+          <label>Password</label>
+          <input
+            id="registerPassword"
+            type="password"
+            placeholder="Create a password"
+            required>
+        </div>
 
         <button
-          class="primary"
-          onclick="register()"
-        >
+          id="registerButton"
+          class="primary-btn"
+          type="submit">
           Create Account
         </button>
 
-        <div class="switch">
-          Already have an account?
-          <button
-            onclick="showLogin()"
-          >
-            Login
-          </button>
-        </div>
+      </form>
 
+      <div
+        id="authMessage"
+        class="auth-message">
       </div>
-
-      <div id="authMessage"></div>
 
     </div>
 
-  </div>
+  </section>
 
 
   <!-- =========================
        APP SCREEN
   ========================= -->
 
-  <div id="appScreen">
+  <section
+    id="appScreen"
+    style="display:none;">
 
-    <!-- TOPBAR -->
+    <!-- TOP BAR -->
 
     <header class="topbar">
 
-      <div class="brand">
-        WorldConnect
+      <div class="top-brand">
+        🌎 WorldConnect
       </div>
 
       <div class="top-actions">
 
         <button
-          class="top-icon"
-          onclick="showPage('moments')"
-        >
+          class="icon-btn"
+          onclick="showComingSoon('Notifications')">
           🔔
         </button>
 
         <button
-          class="top-icon"
-          onclick="showPage('converse')"
-        >
+          class="icon-btn"
+          onclick="showComingSoon('Messages')">
           💬
         </button>
 
         <button
-          class="top-icon"
-          onclick="showComingSoon('Help')"
-        >
+          class="icon-btn"
+          onclick="showComingSoon('Help')">
           ?
         </button>
 
-        <div
-          class="profile-mini"
-          id="topProfileName"
-        >
-          👤
-        </div>
-
         <button
-          class="top-icon"
-          onclick="logout()"
-        >
-          🚪
+          class="logout-btn"
+          onclick="logout()">
+          Logout
         </button>
 
       </div>
@@ -859,411 +880,175 @@
     </header>
 
 
-    <div class="app-layout">
+    <!-- MAIN LAYOUT -->
 
-      <!-- =========================
-           LEFT NAVIGATION
-      ========================= -->
+    <div class="layout">
+
+      <!-- LEFT -->
 
       <aside class="sidebar">
 
-        <button
-          class="nav-item active"
-          data-page="feed"
-          onclick="showPage('feed')"
-        >
-          <span>🌎</span>
-          <span>World Feed</span>
-        </button>
+        <div class="side-card">
 
-        <button
-          class="nav-item"
-          data-page="profile"
-          onclick="showPage('profile')"
-        >
-          <span>✦</span>
-          <span>My Space</span>
-        </button>
+          <div
+            id="sideWelcome"
+            class="side-welcome">
+          </div>
 
-        <button
-          class="nav-item"
-          data-page="moments"
-          onclick="showPage('moments')"
-        >
-          <span>✨</span>
-          <span>Moments</span>
-          <span class="nav-badge">0</span>
-        </button>
+          <button
+            class="nav-item active"
+            onclick="showFeed()">
+            🌎 World Feed
+          </button>
 
-        <button
-          class="nav-item"
-          data-page="converse"
-          onclick="showPage('converse')"
-        >
-          <span>💬</span>
-          <span>Converse</span>
-        </button>
+          <button
+            class="nav-item"
+            onclick="showComingSoon('My Space')">
+            ✦ My Space
+          </button>
 
-        <button
-          class="nav-item"
-          data-page="connect"
-          onclick="showPage('connect')"
-        >
-          <span>🤝</span>
-          <span>Connect</span>
-        </button>
+          <button
+            class="nav-item"
+            onclick="showComingSoon('Moments')">
+            ✨ Moments
+          </button>
 
-        <button
-          class="nav-item"
-          data-page="discover"
-          onclick="showPage('discover')"
-        >
-          <span>🧭</span>
-          <span>Discover</span>
-        </button>
+          <button
+            class="nav-item"
+            onclick="showComingSoon('Converse')">
+            💬 Converse
+          </button>
 
-        <div class="nav-divider"></div>
+          <button
+            class="nav-item"
+            onclick="showComingSoon('Connect')">
+            🤝 Connect
+          </button>
 
-        <button
-          class="nav-item"
-          data-page="settings"
-          onclick="showPage('settings')"
-        >
-          <span>⚙️</span>
-          <span>Control Center</span>
-        </button>
+          <button
+            class="nav-item"
+            onclick="showComingSoon('Discover')">
+            🧭 Discover
+          </button>
 
-        <button
-          class="nav-item logout-navigation"
-          onclick="logout()"
-        >
-          <span>🚪</span>
-          <span>Logout</span>
-        </button>
+          <button
+            class="nav-item"
+            onclick="showComingSoon('Control Center')">
+            ⚙️ Control Center
+          </button>
+
+        </div>
 
       </aside>
 
 
-      <!-- =========================
-           MAIN CONTENT
-      ========================= -->
+      <!-- CENTER -->
 
-      <main class="main">
+      <main>
 
-        <!-- WORLD FEED -->
+        <div class="feed-title">
+          <h2>🌎 World Feed</h2>
+          <p>Share your thoughts with the world.</p>
+        </div>
 
-        <section
-          id="page-feed"
-          class="page-section active"
-        >
 
-          <div class="welcome">
+        <!-- COMPOSER -->
 
-            <h1>
-              Welcome to WorldConnect 🌎
-            </h1>
+        <div class="composer">
 
-            <p>
-              Connect with people around
-              the world and share what's
-              on your mind.
-            </p>
+          <div class="composer-head">
+
+            <div
+              id="composerAvatar"
+              class="avatar">
+              U
+            </div>
+
+            <div
+              id="composerName"
+              class="composer-name">
+              WorldConnect User
+            </div>
 
           </div>
 
+          <textarea
+            id="postText"
+            maxlength="5000"
+            placeholder="What's on your mind?">
+          </textarea>
 
-          <!-- CREATE POST -->
+          <div class="composer-bottom">
 
-          <div class="post-box">
-
-            <div class="post-user">
-
-              <div
-                class="avatar"
-                id="composerAvatar"
-              >
-                ?
-              </div>
-
-              <div>
-
-                <div
-                  class="post-user-name"
-                  id="composerName"
-                >
-                  User
-                </div>
-
-                <div class="post-user-country">
-                  Public
-                </div>
-
-              </div>
-
-            </div>
-
-            <textarea
-              id="postText"
-              maxlength="5000"
-              placeholder="Hello everyone..."
-            ></textarea>
-
-            <div class="post-tools">
-
-              <button
-                class="tool-button"
-                onclick="showComingSoon('Photo / Video')"
-              >
-                🖼️ Photo/Video
-              </button>
-
-              <button
-                class="tool-button"
-                onclick="showComingSoon('Feeling')"
-              >
-                😊 Feeling
-              </button>
-
+            <div
+              id="postMessage"
+              class="post-message">
             </div>
 
             <button
               id="postButton"
-              class="post-submit"
-              onclick="createPost()"
-            >
+              class="post-btn"
+              onclick="createPost()">
               Post
             </button>
 
-            <div id="postMessage"></div>
-
           </div>
 
+        </div>
 
-          <!-- FEED -->
 
-          <div id="feed">
+        <!-- POSTS -->
 
-            <div class="feed-loading">
-              Loading World Feed...
-            </div>
+        <div id="postsContainer">
 
+          <div class="loading">
+            Loading World Feed...
           </div>
 
-        </section>
-
-
-        <!-- MY SPACE -->
-
-        <section
-          id="page-profile"
-          class="page-section"
-        >
-
-          <div class="profile-card">
-
-            <div class="profile-cover"></div>
-
-            <div class="profile-content">
-
-              <div
-                class="profile-avatar"
-                id="profileAvatar"
-              >
-                ?
-              </div>
-
-              <h2 id="profileName">
-                User
-              </h2>
-
-              <div
-                class="profile-email"
-                id="profileEmail"
-              >
-                -
-              </div>
-
-              <div
-                class="profile-country"
-                id="profileCountry"
-              >
-                🌎
-              </div>
-
-            </div>
-
-          </div>
-
-        </section>
-
-
-        <!-- MOMENTS -->
-
-        <section
-          id="page-moments"
-          class="page-section"
-        >
-
-          <div class="coming-soon">
-
-            <div class="icon">✨</div>
-
-            <h2>
-              Moments
-            </h2>
-
-            <p>
-              Notifications and activity
-              will appear here.
-            </p>
-
-          </div>
-
-        </section>
-
-
-        <!-- CONVERSE -->
-
-        <section
-          id="page-converse"
-          class="page-section"
-        >
-
-          <div class="coming-soon">
-
-            <div class="icon">💬</div>
-
-            <h2>
-              Converse
-            </h2>
-
-            <p>
-              Private messaging is
-              coming soon.
-            </p>
-
-          </div>
-
-        </section>
-
-
-        <!-- CONNECT -->
-
-        <section
-          id="page-connect"
-          class="page-section"
-        >
-
-          <div class="coming-soon">
-
-            <div class="icon">🤝</div>
-
-            <h2>
-              Connect
-            </h2>
-
-            <p>
-              Find and connect with
-              people around the world.
-            </p>
-
-          </div>
-
-        </section>
-
-
-        <!-- DISCOVER -->
-
-        <section
-          id="page-discover"
-          class="page-section"
-        >
-
-          <div class="coming-soon">
-
-            <div class="icon">🧭</div>
-
-            <h2>
-              Discover
-            </h2>
-
-            <p>
-              Discover posts and people
-              from around the world.
-            </p>
-
-          </div>
-
-        </section>
-
-
-        <!-- SETTINGS -->
-
-        <section
-          id="page-settings"
-          class="page-section"
-        >
-
-          <div class="coming-soon">
-
-            <div class="icon">⚙️</div>
-
-            <h2>
-              Control Center
-            </h2>
-
-            <p>
-              Account settings and
-              preferences will appear here.
-            </p>
-
-          </div>
-
-        </section>
+        </div>
 
       </main>
 
 
-      <!-- =========================
-           RIGHT SIDEBAR
-      ========================= -->
+      <!-- RIGHT -->
 
       <aside class="rightbar">
 
-        <div class="side-card">
+        <div class="profile-card">
 
-          <h3>
-            🌎 WorldConnect
-          </h3>
+          <div
+            id="profileAvatar"
+            class="avatar">
+            U
+          </div>
 
-          <p>
-            One World. One Connection.
-          </p>
+          <div
+            id="profileName"
+            class="profile-name">
+            WorldConnect User
+          </div>
+
+          <div
+            id="profileEmail"
+            class="profile-email">
+          </div>
+
+          <div
+            id="profileCountry"
+            class="profile-country">
+          </div>
 
         </div>
 
-        <div class="side-card">
 
-          <h3>
-            💡 Tip
-          </h3>
+        <div class="right-info">
+
+          <h3>🌎 About WorldConnect</h3>
 
           <p>
-            Share something positive
-            with the WorldConnect
-            community.
-          </p>
-
-        </div>
-
-        <div class="side-card">
-
-          <h3>
-            👋 Welcome
-          </h3>
-
-          <p id="sideWelcome">
-            Welcome to WorldConnect.
+            Connect with people, share your thoughts,
+            discover new conversations and build
+            connections around the world.
           </p>
 
         </div>
@@ -1272,824 +1057,1304 @@
 
     </div>
 
+  </section>
+
+
+  <!-- =========================
+       MODAL
+  ========================= -->
+
+  <div
+    id="modalOverlay"
+    class="modal-overlay hidden"
+    onclick="closeModalOutside(event)">
+
+    <div class="modal">
+
+      <div class="modal-head">
+
+        <h3 id="modalTitle">
+          WorldConnect
+        </h3>
+
+        <button
+          class="close-btn"
+          onclick="closeModal()">
+          ×
+        </button>
+
+      </div>
+
+      <div id="modalContent"></div>
+
+    </div>
+
   </div>
 
 
-  <script>
+<script>
+/* =====================================================
+   GLOBAL
+===================================================== */
 
-    // =========================
-    // GLOBAL VARIABLES
-    // =========================
-
-    let token =
-      localStorage.getItem("token");
-
-    let currentUser = null;
+let token = localStorage.getItem("token");
+let currentUser = null;
 
 
-    // =========================
-    // API HELPER
-    // =========================
+/* =====================================================
+   API HELPER
+===================================================== */
 
-    async function api(
-      url,
-      options = {}
-    ) {
+async function api(url, options = {}) {
 
-      options.headers = {
-        ...(options.headers || {}),
-        "Content-Type":
-          "application/json"
-      };
+  options.headers = {
+    ...(options.headers || {}),
+    "Content-Type": "application/json"
+  };
 
-      if (token) {
-        options.headers.Authorization =
-          `Bearer ${token}`;
-      }
+  if (token) {
+    options.headers.Authorization = `Bearer ${token}`;
+  }
 
-      const response =
-        await fetch(url, options);
+  const response = await fetch(url, options);
 
-      let data = {};
+  let data = {};
 
-      try {
-        data = await response.json();
-      } catch {
-        data = {};
-      }
+  try {
+    data = await response.json();
+  } catch {
+    data = {};
+  }
 
-      if (!response.ok) {
+  if (!response.ok) {
+    throw new Error(
+      data.error || `Request failed (${response.status})`
+    );
+  }
 
-        throw new Error(
-          data.error ||
-          `Request failed (${response.status})`
-        );
+  return data;
+}
 
-      }
 
-      return data;
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value) {
+
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+/* =====================================================
+   DATE
+===================================================== */
+
+function formatDate(dateString) {
+
+  if (!dateString) {
+    return "";
+  }
+
+  const date = new Date(dateString);
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  return date.toLocaleString([], {
+    dateStyle: "medium",
+    timeStyle: "short"
+  });
+}
+
+
+/* =====================================================
+   AUTH TABS
+===================================================== */
+
+function showLoginForm() {
+
+  document.getElementById("loginForm")
+    .classList.remove("hidden");
+
+  document.getElementById("registerForm")
+    .classList.add("hidden");
+
+  document.getElementById("loginTab")
+    .classList.add("active");
+
+  document.getElementById("registerTab")
+    .classList.remove("active");
+
+  document.getElementById("authMessage")
+    .textContent = "";
+}
+
+
+function showRegisterForm() {
+
+  document.getElementById("loginForm")
+    .classList.add("hidden");
+
+  document.getElementById("registerForm")
+    .classList.remove("hidden");
+
+  document.getElementById("loginTab")
+    .classList.remove("active");
+
+  document.getElementById("registerTab")
+    .classList.add("active");
+
+  document.getElementById("authMessage")
+    .textContent = "";
+}
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+async function login(event) {
+
+  event.preventDefault();
+
+  const email =
+    document.getElementById("loginEmail")
+      .value.trim();
+
+  const password =
+    document.getElementById("loginPassword")
+      .value;
+
+  const button =
+    document.getElementById("loginButton");
+
+  const message =
+    document.getElementById("authMessage");
+
+  try {
+
+    button.disabled = true;
+    button.textContent = "Logging in...";
+
+    message.style.color = "#64748b";
+    message.textContent = "";
+
+    const data = await api("/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify({
+        email,
+        password
+      })
+    });
+
+    token = data.token;
+
+    localStorage.setItem("token", token);
+
+    await startApp();
+
+  } catch (error) {
+
+    console.error("LOGIN ERROR:", error);
+
+    message.style.color = "#dc2626";
+    message.textContent =
+      error.message || "Login failed.";
+
+  } finally {
+
+    button.disabled = false;
+    button.textContent = "Login";
+  }
+}
+
+
+/* =====================================================
+   REGISTER
+===================================================== */
+
+async function register(event) {
+
+  event.preventDefault();
+
+  const name =
+    document.getElementById("registerName")
+      .value.trim();
+
+  const email =
+    document.getElementById("registerEmail")
+      .value.trim();
+
+  const country =
+    document.getElementById("registerCountry")
+      .value.trim();
+
+  const password =
+    document.getElementById("registerPassword")
+      .value;
+
+  const button =
+    document.getElementById("registerButton");
+
+  const message =
+    document.getElementById("authMessage");
+
+  try {
+
+    button.disabled = true;
+    button.textContent = "Creating...";
+
+    message.style.color = "#64748b";
+    message.textContent = "";
+
+    const data = await api("/api/auth/register", {
+      method: "POST",
+      body: JSON.stringify({
+        name,
+        email,
+        password,
+        country
+      })
+    });
+
+    token = data.token;
+
+    localStorage.setItem("token", token);
+
+    await startApp();
+
+  } catch (error) {
+
+    console.error("REGISTER ERROR:", error);
+
+    message.style.color = "#dc2626";
+    message.textContent =
+      error.message || "Registration failed.";
+
+  } finally {
+
+    button.disabled = false;
+    button.textContent = "Create Account";
+  }
+}
+
+
+/* =====================================================
+   START APP
+===================================================== */
+
+async function startApp() {
+
+  try {
+
+    if (!token) {
+      showAuth();
+      return;
     }
 
+    const data = await api("/api/me");
 
-    // =========================
-    // AUTH SCREEN
-    // =========================
+    currentUser = data.user;
 
-    function showRegister() {
+    updateUserInterface();
 
-      document
-        .getElementById("loginForm")
-        .style.display = "none";
+    document.getElementById("authScreen")
+      .style.display = "none";
 
-      document
-        .getElementById("registerForm")
-        .style.display = "block";
+    document.getElementById("appScreen")
+      .style.display = "block";
 
-      document
-        .getElementById("authMessage")
-        .textContent = "";
-    }
+    await loadPosts();
 
+  } catch (error) {
 
-    function showLogin() {
+    console.error("START APP ERROR:", error);
 
-      document
-        .getElementById("registerForm")
-        .style.display = "none";
+    localStorage.removeItem("token");
 
-      document
-        .getElementById("loginForm")
-        .style.display = "block";
+    token = null;
+    currentUser = null;
 
-      document
-        .getElementById("authMessage")
-        .textContent = "";
-    }
+    showAuth();
+  }
+}
 
 
-    // =========================
-    // REGISTER
-    // =========================
+/* =====================================================
+   SHOW AUTH
+===================================================== */
 
-    async function register() {
+function showAuth() {
 
-      const name =
-        document
-          .getElementById("registerName")
-          .value
-          .trim();
+  document.getElementById("authScreen")
+    .style.display = "flex";
 
-      const email =
-        document
-          .getElementById("registerEmail")
-          .value
-          .trim();
+  document.getElementById("appScreen")
+    .style.display = "none";
+}
 
-      const country =
-        document
-          .getElementById("registerCountry")
-          .value
-          .trim();
 
-      const password =
-        document
-          .getElementById("registerPassword")
-          .value;
+/* =====================================================
+   UPDATE USER UI
+===================================================== */
 
-      const message =
-        document
-          .getElementById("authMessage");
+function updateUserInterface() {
 
-      if (!name || !email || !password) {
+  if (!currentUser) {
+    return;
+  }
 
-        message.textContent =
-          "Please complete all required fields.";
+  const name =
+    currentUser.name || "WorldConnect User";
 
-        return;
-      }
+  const email =
+    currentUser.email || "";
 
-      if (password.length < 8) {
+  const country =
+    currentUser.country || "";
 
-        message.textContent =
-          "Password must be at least 8 characters.";
+  const firstLetter =
+    name.charAt(0).toUpperCase() || "U";
 
-        return;
-      }
 
-      try {
+  document.getElementById("composerName")
+    .textContent = name;
 
-        message.style.color =
-          "#1877f2";
+  document.getElementById("composerAvatar")
+    .textContent = firstLetter;
 
-        message.textContent =
-          "Creating account...";
+  document.getElementById("profileAvatar")
+    .textContent = firstLetter;
 
-        await api(
-          "/api/auth/register",
-          {
-            method: "POST",
+  document.getElementById("profileName")
+    .textContent = name;
 
-            body: JSON.stringify({
-              name,
-              email,
-              password,
-              country
-            })
-          }
-        );
+  document.getElementById("profileEmail")
+    .textContent = email;
 
-        message.style.color =
-          "#16a34a";
+  document.getElementById("profileCountry")
+    .textContent =
+      country ? `🌎 ${country}` : "🌎 WorldConnect";
 
-        message.textContent =
-          "Account created successfully! Please login.";
 
-        document
-          .getElementById("registerPassword")
-          .value = "";
+  document.getElementById("sideWelcome")
+    .innerHTML = `
+      <strong>Welcome!</strong>
+      <span>${escapeHtml(name)}</span>
+    `;
+}
 
-        setTimeout(
-          showLogin,
-          1000
-        );
 
-      } catch (error) {
+/* =====================================================
+   LOGOUT
+===================================================== */
 
-        message.style.color =
-          "#dc2626";
+function logout() {
 
-        message.textContent =
-          error.message ||
-          "Registration failed.";
+  localStorage.removeItem("token");
 
-      }
-    }
+  token = null;
+  currentUser = null;
 
+  document.getElementById("appScreen")
+    .style.display = "none";
 
-    // =========================
-    // LOGIN
-    // =========================
+  document.getElementById("authScreen")
+    .style.display = "flex";
 
-    async function login() {
+  document.getElementById("loginForm")
+    .reset();
 
-      const email =
-        document
-          .getElementById("loginEmail")
-          .value
-          .trim();
+  document.getElementById("registerForm")
+    .reset();
 
-      const password =
-        document
-          .getElementById("loginPassword")
-          .value;
+  showLoginForm();
+}
 
-      const message =
-        document
-          .getElementById("authMessage");
 
-      if (!email || !password) {
+/* =====================================================
+   LOAD POSTS
+===================================================== */
 
-        message.textContent =
-          "Please enter your email and password.";
+async function loadPosts() {
 
-        return;
-      }
+  const container =
+    document.getElementById("postsContainer");
 
-      try {
+  container.innerHTML = `
+    <div class="loading">
+      Loading World Feed...
+    </div>
+  `;
 
-        message.style.color =
-          "#1877f2";
+  try {
 
-        message.textContent =
-          "Logging in...";
+    const data =
+      await api("/api/posts");
 
-        const data =
-          await api(
-            "/api/auth/login",
-            {
-              method: "POST",
+    const posts =
+      Array.isArray(data)
+        ? data
+        : (data.posts || []);
 
-              body: JSON.stringify({
-                email,
-                password
-              })
-            }
-          );
+    if (!posts.length) {
 
-        token = data.token;
-
-        localStorage.setItem(
-          "token",
-          token
-        );
-
-        currentUser =
-          data.user;
-
-        await startApp();
-
-      } catch (error) {
-
-        console.error(
-          "LOGIN ERROR:",
-          error
-        );
-
-        message.style.color =
-          "#dc2626";
-
-        message.textContent =
-          error.message ||
-          "Something went wrong.";
-
-      }
-    }
-
-
-    // =========================
-    // START APP
-    // =========================
-
-    async function startApp() {
-
-      try {
-
-        if (!token) {
-          showAuth();
-          return;
-        }
-
-        const data =
-          await api("/api/me");
-
-        currentUser =
-          data.user;
-
-        updateUserInterface();
-
-        document
-          .getElementById("authScreen")
-          .style.display = "none";
-
-        document
-          .getElementById("appScreen")
-          .style.display = "block";
-
-        await loadPosts();
-
-      } catch (error) {
-
-        console.error(
-          "START APP ERROR:",
-          error
-        );
-
-        localStorage.removeItem(
-          "token"
-        );
-
-        token = null;
-        currentUser = null;
-
-        showAuth();
-
-      }
-    }
-
-
-    // =========================
-    // SHOW AUTH
-    // =========================
-
-    function showAuth() {
-
-      document
-        .getElementById("authScreen")
-        .style.display = "flex";
-
-      document
-        .getElementById("appScreen")
-        .style.display = "none";
-    }
-
-
-    // =========================
-    // UPDATE PROFILE UI
-    // =========================
-
-    function updateUserInterface() {
-
-      if (!currentUser) {
-        return;
-      }
-
-      const name =
-        currentUser.name ||
-        "User";
-
-      const email =
-        currentUser.email ||
-        "";
-
-      const country =
-        currentUser.country ||
-        "WorldConnect member";
-
-      const firstLetter =
-        name
-          .charAt(0)
-          .toUpperCase();
-
-      document
-        .getElementById("topProfileName")
-        .textContent =
-        `👤 ${name}`;
-
-      document
-        .getElementById("composerName")
-        .textContent =
-        name;
-
-      document
-        .getElementById("composerAvatar")
-        .textContent =
-        firstLetter;
-
-      document
-        .getElementById("profileAvatar")
-        .textContent =
-        firstLetter;
-
-      document
-        .getElementById("profileName")
-        .textContent =
-        name;
-
-      document
-        .getElementById("profileEmail")
-        .textContent =
-        email;
-
-      document
-        .getElementById("profileCountry")
-        .textContent =
-        `🌎 ${country}`;
-
-      document
-        .getElementById("sideWelcome")
-        .textContent =
-        `Welcome, ${name}!`;
-    }
-
-
-    // =========================
-    // CREATE POST
-    // =========================
-
-    async function createPost() {
-
-      const textArea =
-        document
-          .getElementById("postText");
-
-      const button =
-        document
-          .getElementById("postButton");
-
-      const message =
-        document
-          .getElementById("postMessage");
-
-      const body =
-        textArea.value.trim();
-
-      if (!body) {
-
-        message.style.color =
-          "#dc2626";
-
-        message.textContent =
-          "Please write something first.";
-
-        return;
-      }
-
-      try {
-
-        button.disabled = true;
-
-        button.textContent =
-          "Posting...";
-
-        message.textContent = "";
-
-        await api(
-          "/api/posts",
-          {
-            method: "POST",
-
-            body: JSON.stringify({
-              body
-            })
-          }
-        );
-
-        textArea.value = "";
-
-        message.style.color =
-          "#16a34a";
-
-        message.textContent =
-          "Posted successfully!";
-
-        await loadPosts();
-
-        setTimeout(() => {
-          message.textContent = "";
-        }, 2000);
-
-      } catch (error) {
-
-        console.error(
-          "CREATE POST ERROR:",
-          error
-        );
-
-        message.style.color =
-          "#dc2626";
-
-        message.textContent =
-          error.message ||
-          "Something went wrong.";
-
-      } finally {
-
-        button.disabled = false;
-
-        button.textContent =
-          "Post";
-      }
-    }
-
-
-    // =========================
-    // LOAD POSTS
-    // =========================
-
-    async function loadPosts() {
-
-      const feed =
-        document.getElementById(
-          "feed"
-        );
-
-      feed.innerHTML = `
-        <div class="feed-loading">
-          Loading World Feed...
+      container.innerHTML = `
+        <div class="empty">
+          🌎 No posts yet.<br><br>
+          Be the first person to share something!
         </div>
       `;
 
-      try {
-
-        const data =
-          await api("/api/posts");
-
-        const posts =
-          data.posts || [];
-
-        if (!posts.length) {
-
-          feed.innerHTML = `
-            <div class="empty-feed">
-              🌎 No posts yet.<br>
-              Be the first to share something!
-            </div>
-          `;
-
-          return;
-        }
-
-        feed.innerHTML =
-          posts
-            .map(renderPost)
-            .join("");
-
-      } catch (error) {
-
-        console.error(
-          "LOAD POSTS ERROR:",
-          error
-        );
-
-        feed.innerHTML = `
-          <div class="empty-feed">
-            ⚠️ Unable to load World Feed.<br><br>
-            ${escapeHtml(error.message)}
-          </div>
-        `;
-      }
+      return;
     }
 
+    container.innerHTML =
+      posts.map(renderPost).join("");
 
-    // =========================
-    // RENDER POST
-    // =========================
+  } catch (error) {
 
-    function renderPost(post) {
+    console.error("LOAD POSTS ERROR:", error);
 
-      const name =
-        post.name ||
-        "WorldConnect User";
+    container.innerHTML = `
+      <div class="empty">
+        ❌ Unable to load posts.<br><br>
+        ${escapeHtml(error.message)}
+      </div>
+    `;
+  }
+}
 
-      const firstLetter =
-        name
-          .charAt(0)
-          .toUpperCase();
 
-      const country =
-        post.country
-          ? `🌎 ${escapeHtml(post.country)}`
-          : "🌎 WorldConnect";
+/* =====================================================
+   RENDER POST
+===================================================== */
 
-      const time =
-        formatDate(post.created_at);
+function renderPost(post) {
 
-      return `
-        <article class="post-card">
+  const name =
+    post.name || "WorldConnect User";
 
-          <div class="post-header">
+  const firstLetter =
+    name.charAt(0).toUpperCase();
 
-            <div class="avatar">
-              ${escapeHtml(firstLetter)}
-            </div>
+  const country =
+    post.country
+      ? `🌎 ${escapeHtml(post.country)}`
+      : "🌎 WorldConnect";
 
-            <div class="post-meta">
+  const time =
+    formatDate(post.created_at);
 
-              <div class="post-name">
-                ${escapeHtml(name)}
-              </div>
+  const likeCount =
+    Number(post.like_count || 0);
 
-              <div class="post-time">
-                ${country} · ${escapeHtml(time)}
-              </div>
+  const commentCount =
+    Number(post.comment_count || 0);
 
-            </div>
+  const liked =
+    post.liked_by_me ||
+    post.liked ||
+    false;
 
+  return `
+    <article
+      class="post-card"
+      id="post-${post.id}">
+
+      <div class="post-header">
+
+        <div class="avatar">
+          ${escapeHtml(firstLetter)}
+        </div>
+
+        <div class="post-meta">
+
+          <div class="post-name">
+            ${escapeHtml(name)}
           </div>
 
-          <div class="post-body">
-            ${escapeHtml(post.body)}
+          <div class="post-time">
+            ${country} · ${escapeHtml(time)}
           </div>
 
-          <div class="post-actions">
+        </div>
 
-            <button
-              class="post-action"
-              onclick="showComingSoon('Likes')"
-            >
-              ❤️ ${post.like_count || 0}
-            </button>
-
-            <button
-              class="post-action"
-              onclick="showComingSoon('Comments')"
-            >
-              💬 ${post.comment_count || 0}
-            </button>
-
-            <button
-              class="post-action"
-              onclick="showComingSoon('Share')"
-            >
-              ↗️ Share
-            </button>
-
-          </div>
-
-        </article>
-      `;
-    }
+      </div>
 
 
-    // =========================
-    // PAGE NAVIGATION
-    // =========================
+      <div class="post-body">
+        ${escapeHtml(post.body)}
+      </div>
 
-    function showPage(page) {
 
-      document
-        .querySelectorAll(".page-section")
-        .forEach(section => {
+      <div class="post-actions">
 
-          section.classList.remove(
-            "active"
-          );
+        <button
+          class="post-action ${liked ? "liked" : ""}"
+          id="like-btn-${post.id}"
+          onclick="toggleLike(${post.id}, this)">
 
-        });
+          ${liked ? "💙 Liked" : "❤️ Like"}
+          <span id="like-count-${post.id}">
+            ${likeCount}
+          </span>
 
-      const target =
-        document.getElementById(
-          `page-${page}`
-        );
+        </button>
 
-      if (target) {
 
-        target.classList.add(
-          "active"
-        );
-      }
+        <button
+          class="post-action"
+          onclick="toggleComments(${post.id})">
 
-      document
-        .querySelectorAll(".nav-item[data-page]")
-        .forEach(button => {
+          💬 Comments
+          <span id="comment-count-${post.id}">
+            ${commentCount}
+          </span>
 
-          button.classList.remove(
-            "active"
-          );
+        </button>
 
-          if (
-            button.dataset.page === page
-          ) {
 
-            button.classList.add(
-              "active"
-            );
-          }
+        <button
+          class="post-action"
+          onclick="sharePost(${post.id})">
 
-        });
+          ↗️ Share
 
-      if (page === "feed") {
-        loadPosts();
-      }
+        </button>
 
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth"
+      </div>
+
+
+      <div
+        id="comments-${post.id}"
+        class="comments-area hidden">
+
+        <div
+          id="comments-list-${post.id}">
+        </div>
+
+        <div class="comment-form">
+
+          <input
+            id="comment-input-${post.id}"
+            class="comment-input"
+            maxlength="1000"
+            placeholder="Write a comment..."
+            onkeydown="handleCommentKey(event, ${post.id})">
+
+          <button
+            class="comment-send"
+            onclick="addComment(${post.id})">
+
+            Send
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </article>
+  `;
+}
+
+
+/* =====================================================
+   LIKE / UNLIKE
+===================================================== */
+
+async function toggleLike(postId, button) {
+
+  try {
+
+    button.disabled = true;
+
+    const data =
+      await api(`/api/posts/${postId}/like`, {
+        method: "POST"
       });
-    }
 
-
-    // =========================
-    // COMING SOON
-    // =========================
-
-    function showComingSoon(feature) {
-
-      alert(
-        `${feature} is coming soon to WorldConnect.`
-      );
-    }
-
-
-    // =========================
-    // LOGOUT
-    // =========================
-
-    function logout() {
-
-      localStorage.removeItem(
-        "token"
+    const countElement =
+      document.getElementById(
+        `like-count-${postId}`
       );
 
-      token = null;
-      currentUser = null;
+    if (countElement) {
 
-      document
-        .getElementById("loginEmail")
-        .value = "";
-
-      document
-        .getElementById("loginPassword")
-        .value = "";
-
-      showLogin();
-      showAuth();
+      countElement.textContent =
+        Number(
+          data.like_count ??
+          data.likes ??
+          0
+        );
     }
 
 
-    // =========================
-    // HELPERS
-    // =========================
-
-    function escapeHtml(value) {
-
-      const div =
-        document.createElement("div");
-
-      div.textContent =
-        value ?? "";
-
-      return div.innerHTML;
-    }
+    const liked =
+      data.liked === true ||
+      data.is_liked === true;
 
 
-    function formatDate(value) {
+    if (liked) {
 
-      if (!value) {
-        return "Just now";
-      }
+      button.classList.add("liked");
 
-      const date =
-        new Date(value);
-
-      if (
-        Number.isNaN(
-          date.getTime()
-        )
-      ) {
-        return "Just now";
-      }
-
-      return date.toLocaleString(
-        undefined,
-        {
-          dateStyle: "medium",
-          timeStyle: "short"
-        }
-      );
-    }
-
-
-    // =========================
-    // ENTER KEY
-    // =========================
-
-    document
-      .getElementById("postText")
-      .addEventListener(
-        "keydown",
-        function(event) {
-
-          if (
-            event.key === "Enter" &&
-            (event.ctrlKey ||
-             event.metaKey)
-          ) {
-
-            event.preventDefault();
-
-            createPost();
-          }
-
-        }
-      );
-
-
-    // =========================
-    // AUTO START
-    // =========================
-
-    if (token) {
-
-      startApp();
+      button.innerHTML = `
+        💙 Liked
+        <span id="like-count-${postId}">
+          ${Number(
+            data.like_count ??
+            data.likes ??
+            0
+          )}
+        </span>
+      `;
 
     } else {
 
-      showAuth();
+      button.classList.remove("liked");
 
+      button.innerHTML = `
+        ❤️ Like
+        <span id="like-count-${postId}">
+          ${Number(
+            data.like_count ??
+            data.likes ??
+            0
+          )}
+        </span>
+      `;
     }
 
-  </script>
+  } catch (error) {
+
+    console.error("LIKE ERROR:", error);
+
+    alert(
+      error.message ||
+      "Unable to like this post."
+    );
+
+  } finally {
+
+    button.disabled = false;
+  }
+}
+
+
+/* =====================================================
+   COMMENTS TOGGLE
+===================================================== */
+
+async function toggleComments(postId) {
+
+  const area =
+    document.getElementById(
+      `comments-${postId}`
+    );
+
+  if (!area) {
+    return;
+  }
+
+
+  if (!area.classList.contains("hidden")) {
+
+    area.classList.add("hidden");
+
+    return;
+  }
+
+
+  area.classList.remove("hidden");
+
+  await loadComments(postId);
+}
+
+
+/* =====================================================
+   LOAD COMMENTS
+===================================================== */
+
+async function loadComments(postId) {
+
+  const list =
+    document.getElementById(
+      `comments-list-${postId}`
+    );
+
+  if (!list) {
+    return;
+  }
+
+  list.innerHTML = `
+    <div class="comment-loading">
+      Loading comments...
+    </div>
+  `;
+
+
+  try {
+
+    const data =
+      await api(
+        `/api/posts/${postId}/comments`
+      );
+
+    const comments =
+      Array.isArray(data)
+        ? data
+        : (data.comments || []);
+
+
+    if (!comments.length) {
+
+      list.innerHTML = `
+        <div class="comment-loading">
+          No comments yet. Be the first!
+        </div>
+      `;
+
+      return;
+    }
+
+
+    list.innerHTML =
+      comments.map(renderComment).join("");
+
+
+  } catch (error) {
+
+    console.error(
+      "LOAD COMMENTS ERROR:",
+      error
+    );
+
+    list.innerHTML = `
+      <div class="comment-loading">
+        ❌ ${escapeHtml(error.message)}
+      </div>
+    `;
+  }
+}
+
+
+/* =====================================================
+   RENDER COMMENT
+===================================================== */
+
+function renderComment(comment) {
+
+  const name =
+    comment.name ||
+    comment.user_name ||
+    "WorldConnect User";
+
+  const firstLetter =
+    name.charAt(0).toUpperCase();
+
+  const body =
+    comment.body ||
+    "";
+
+  const time =
+    comment.created_at
+      ? formatDate(comment.created_at)
+      : "";
+
+
+  return `
+    <div class="comment">
+
+      <div class="avatar">
+        ${escapeHtml(firstLetter)}
+      </div>
+
+      <div class="comment-bubble">
+
+        <div class="comment-name">
+          ${escapeHtml(name)}
+        </div>
+
+        <div class="comment-text">
+          ${escapeHtml(body)}
+        </div>
+
+        ${
+          time
+            ? `
+              <div class="comment-time">
+                ${escapeHtml(time)}
+              </div>
+            `
+            : ""
+        }
+
+      </div>
+
+    </div>
+  `;
+}
+
+
+/* =====================================================
+   ADD COMMENT
+===================================================== */
+
+async function addComment(postId) {
+
+  const input =
+    document.getElementById(
+      `comment-input-${postId}`
+    );
+
+  if (!input) {
+    return;
+  }
+
+  const body =
+    input.value.trim();
+
+  if (!body) {
+    return;
+  }
+
+
+  const sendButton =
+    input.parentElement
+      .querySelector(".comment-send");
+
+
+  try {
+
+    input.disabled = true;
+
+    if (sendButton) {
+      sendButton.disabled = true;
+      sendButton.textContent = "...";
+    }
+
+
+    const data =
+      await api(
+        `/api/posts/${postId}/comments`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            body
+          })
+        }
+      );
+
+
+    input.value = "";
+
+
+    const countElement =
+      document.getElementById(
+        `comment-count-${postId}`
+      );
+
+
+    if (countElement) {
+
+      let newCount;
+
+      if (data.comment_count !== undefined) {
+
+        newCount =
+          Number(data.comment_count);
+
+      } else if (data.commentCount !== undefined) {
+
+        newCount =
+          Number(data.commentCount);
+
+      } else {
+
+        newCount =
+          Number(countElement.textContent || 0) + 1;
+      }
+
+      countElement.textContent =
+        newCount;
+    }
+
+
+    await loadComments(postId);
+
+
+  } catch (error) {
+
+    console.error(
+      "ADD COMMENT ERROR:",
+      error
+    );
+
+    alert(
+      error.message ||
+      "Unable to add comment."
+    );
+
+  } finally {
+
+    input.disabled = false;
+
+    if (sendButton) {
+
+      sendButton.disabled = false;
+      sendButton.textContent = "Send";
+
+    }
+  }
+}
+
+
+/* =====================================================
+   COMMENT ENTER KEY
+===================================================== */
+
+function handleCommentKey(event, postId) {
+
+  if (
+    event.key === "Enter" &&
+    !event.shiftKey
+  ) {
+
+    event.preventDefault();
+
+    addComment(postId);
+  }
+}
+
+
+/* =====================================================
+   SHARE
+===================================================== */
+
+async function sharePost(postId) {
+
+  try {
+
+    const data =
+      await api(
+        `/api/posts/${postId}/share`,
+        {
+          method: "POST"
+        }
+      );
+
+
+    const shareText =
+      data.share_text ||
+      data.text ||
+      data.message ||
+      "Check out this post on WorldConnect!";
+
+
+    const shareUrl =
+      data.url ||
+      data.share_url ||
+      window.location.href;
+
+
+    /* Native phone sharing */
+
+    if (
+      navigator.share &&
+      typeof navigator.share === "function"
+    ) {
+
+      try {
+
+        await navigator.share({
+          title: "WorldConnect",
+          text: shareText,
+          url: shareUrl
+        });
+
+        return;
+
+      } catch (shareError) {
+
+        if (
+          shareError &&
+          shareError.name === "AbortError"
+        ) {
+          return;
+        }
+      }
+    }
+
+
+    /* Show share modal */
+
+    openShareModal(
+      shareText,
+      shareUrl
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "SHARE ERROR:",
+      error
+    );
+
+    openShareModal(
+      "Check out this post on WorldConnect!",
+      window.location.href
+    );
+  }
+}
+
+
+/* =====================================================
+   SHARE MODAL
+===================================================== */
+
+function openShareModal(text, url) {
+
+  const content =
+    document.getElementById(
+      "modalContent"
+    );
+
+  document.getElementById(
+    "modalTitle"
+  ).textContent = "↗️ Share Post";
+
+
+  content.innerHTML = `
+
+    <div class="share-box">
+      ${escapeHtml(text)}
+
+      ${url
+        ? `\n\n${escapeHtml(url)}`
+        : ""
+      }
+    </div>
+
+
+    <div class="share-buttons">
+
+      <button
+        class="copy-btn"
+        onclick="copyShareText(${JSON.stringify(
+          text + (url ? "\n\n" + url : "")
+        )})">
+
+        📋 Copy
+
+      </button>
+
+
+      <button
+        class="native-share-btn"
+        onclick="nativeShare(
+          ${JSON.stringify(text)},
+          ${JSON.stringify(url)}
+        )">
+
+        📤 Share
+
+      </button>
+
+    </div>
+  `;
+
+
+  document.getElementById(
+    "modalOverlay"
+  ).classList.remove("hidden");
+}
+
+
+/* =====================================================
+   COPY SHARE
+===================================================== */
+
+async function copyShareText(text) {
+
+  try {
+
+    await navigator.clipboard.writeText(text);
+
+    alert("Share text copied!");
+
+  } catch (error) {
+
+    prompt(
+      "Copy this text:",
+      text
+    );
+  }
+}
+
+
+/* =====================================================
+   NATIVE SHARE
+===================================================== */
+
+async function nativeShare(text, url) {
+
+  if (
+    navigator.share &&
+    typeof navigator.share === "function"
+  ) {
+
+    try {
+
+      await navigator.share({
+        title: "WorldConnect",
+        text,
+        url
+      });
+
+      closeModal();
+
+    } catch (error) {
+
+      if (
+        error &&
+        error.name !== "AbortError"
+      ) {
+        alert("Unable to share.");
+      }
+    }
+
+  } else {
+
+    await copyShareText(
+      text + (url ? "\n\n" + url : "")
+    );
+  }
+}
+
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+function closeModal() {
+
+  document.getElementById(
+    "modalOverlay"
+  ).classList.add("hidden");
+}
+
+
+function closeModalOutside(event) {
+
+  if (
+    event.target.id ===
+    "modalOverlay"
+  ) {
+
+    closeModal();
+  }
+}
+
+
+/* =====================================================
+   COMING SOON
+===================================================== */
+
+function showComingSoon(feature) {
+
+  document.getElementById(
+    "modalTitle"
+  ).textContent = feature;
+
+
+  document.getElementById(
+    "modalContent"
+  ).innerHTML = `
+
+    <div
+      style="
+        text-align:center;
+        padding:25px 10px;
+        color:#64748b;
+      ">
+
+      <div
+        style="
+          font-size:40px;
+          margin-bottom:12px;
+        ">
+        🚀
+      </div>
+
+      <h3
+        style="
+          color:#172033;
+          margin-bottom:8px;
+        ">
+        ${escapeHtml(feature)}
+      </h3>
+
+      <p>
+        This WorldConnect feature is
+        coming in the next update.
+      </p>
+
+    </div>
+  `;
+
+
+  document.getElementById(
+    "modalOverlay"
+  ).classList.remove("hidden");
+}
+
+
+/* =====================================================
+   SHOW FEED
+===================================================== */
+
+function showFeed() {
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
+
+  loadPosts();
+}
+
+
+/* =====================================================
+   INITIALIZE
+===================================================== */
+
+document.addEventListener(
+  "DOMContentLoaded",
+  () => {
+
+    if (token) {
+      startApp();
+    } else {
+      showAuth();
+    }
+
+  }
+);
+</script>
 
 </body>
 </html>
