@@ -2750,83 +2750,150 @@
 
   function updateUserUI() {
 
-    if (!currentUser) return;
+  if (!currentUser) return;
 
-    const name =
-      currentUser.name ||
-      "User";
+  const name =
+    currentUser.name ||
+    "User";
 
-    const country =
-      currentUser.country ||
-      "World";
+  const country =
+    currentUser.country ||
+    "World";
 
-    $("sidebarName")
-      .textContent = name;
+  const bio =
+    currentUser.bio ||
+    "No bio yet.";
 
-    $("sidebarCountry")
-      .textContent = country;
+  $("sidebarName")
+    .textContent = name;
 
-    $("rightProfileName")
-      .textContent = name;
+  $("sidebarCountry")
+    .textContent = country;
 
-    $("rightProfileCountry")
-      .textContent = country;
+  $("rightProfileName")
+    .textContent = name;
 
-    $("myProfileName")
-      .textContent = name;
+  $("rightProfileCountry")
+    .textContent = country;
 
-    $("myProfileEmail")
-      .textContent =
-      currentUser.email || "";
+  $("myProfileName")
+    .textContent = name;
 
-    $("myProfileCountry")
-      .textContent = country;
+  $("myProfileEmail")
+    .textContent =
+    currentUser.email || "";
+
+  $("myProfileCountry")
+    .textContent = `🌎 ${country}`;
+
+  $("myProfileBio")
+    .textContent = bio;
+
+  const profilePhoto =
+    $("myProfilePhoto");
+
+  if (profilePhoto) {
+
+    profilePhoto.src =
+      currentUser.profile_photo_url ||
+      "";
+
+    profilePhoto.style.display =
+      currentUser.profile_photo_url
+        ? "block"
+        : "none";
   }
 
-  async function loadMyProfile() {
+  const coverPhoto =
+    $("myCoverPhoto");
 
-    if (!currentUser) return;
+  if (coverPhoto) {
 
-    try {
+    coverPhoto.src =
+      currentUser.cover_photo_url ||
+      "";
 
-      const data =
-        await api(
-          `/api/users/${currentUser.id}`
-        );
+    coverPhoto.style.display =
+      currentUser.cover_photo_url
+        ? "block"
+        : "none";
+  }
+}
 
-      const user = data.user;
 
-      currentUser = {
-        ...currentUser,
-        ...user
-      };
+async function loadMyProfile() {
 
-      updateUserUI();
+  if (!currentUser) return;
 
-      $("myFollowers")
-        .textContent =
-        user.follower_count || 0;
+  try {
 
-      $("myFollowing")
-        .textContent =
-        user.following_count || 0;
-
-      $("rightFollowers")
-        .textContent =
-        user.follower_count || 0;
-
-      $("rightFollowing")
-        .textContent =
-        user.following_count || 0;
-
-    } catch (error) {
-
-      console.error(
-        "PROFILE ERROR:",
-        error
+    const data =
+      await api(
+        `/api/users/${currentUser.id}`
       );
+
+    const user =
+      data.user;
+
+    currentUser = {
+      ...currentUser,
+      ...user
+    };
+
+    updateUserUI();
+
+    $("myPostCount")
+      .textContent =
+      user.post_count || 0;
+
+    $("myFollowers")
+      .textContent =
+      user.follower_count || 0;
+
+    $("myFollowing")
+      .textContent =
+      user.following_count || 0;
+
+    $("rightFollowers")
+      .textContent =
+      user.follower_count || 0;
+
+    $("rightFollowing")
+      .textContent =
+      user.following_count || 0;
+
+    const posts =
+      user.posts || [];
+
+    const postsContainer =
+      $("myPosts");
+
+    if (postsContainer) {
+
+      if (!posts.length) {
+
+        postsContainer.innerHTML =
+          '<div class="empty">No posts yet.</div>';
+
+      } else {
+
+        postsContainer.innerHTML =
+          posts
+            .map(renderPost)
+            .join("");
+
+        attachPostEvents();
+      }
     }
+
+  } catch (error) {
+
+    console.error(
+      "PROFILE ERROR:",
+      error
+    );
   }
+}
 
   /* =========================================================
      NAVIGATION
