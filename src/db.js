@@ -59,5 +59,55 @@ export async function initDb() {
       is_read BOOLEAN DEFAULT FALSE,
       created_at TIMESTAMPTZ DEFAULT NOW()
     );
+
+    CREATE TABLE IF NOT EXISTS conversations (
+      id BIGSERIAL PRIMARY KEY,
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS conversation_members (
+      conversation_id BIGINT NOT NULL
+        REFERENCES conversations(id)
+        ON DELETE CASCADE,
+
+      user_id BIGINT NOT NULL
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+
+      joined_at TIMESTAMPTZ DEFAULT NOW(),
+
+      last_read_at TIMESTAMPTZ,
+
+      PRIMARY KEY (
+        conversation_id,
+        user_id
+      )
+    );
+
+    CREATE TABLE IF NOT EXISTS messages (
+      id BIGSERIAL PRIMARY KEY,
+
+      conversation_id BIGINT NOT NULL
+        REFERENCES conversations(id)
+        ON DELETE CASCADE,
+
+      sender_id BIGINT NOT NULL
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+
+      body TEXT NOT NULL
+        CHECK (char_length(body) <= 5000),
+
+      created_at TIMESTAMPTZ DEFAULT NOW()
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_messages_conversation_id_created_at
+      ON messages(conversation_id, created_at);
+
+    CREATE INDEX IF NOT EXISTS idx_conversation_members_user_id
+      ON conversation_members(user_id);
+
+    CREATE INDEX IF NOT EXISTS idx_notifications_user_id_created_at
+      ON notifications(user_id, created_at);
   `);
 }
