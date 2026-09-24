@@ -18,8 +18,27 @@ export async function initDb() {
       email VARCHAR(255) UNIQUE NOT NULL,
       password_hash TEXT NOT NULL,
       country VARCHAR(80),
+      bio TEXT,
+      profile_photo_url TEXT,
+      cover_photo_url TEXT,
       created_at TIMESTAMPTZ DEFAULT NOW()
     );
+
+    /*
+      These ALTER statements make the update safe
+      even if the users table already existed before
+      the profile system was added.
+    */
+
+    ALTER TABLE users
+      ADD COLUMN IF NOT EXISTS bio TEXT;
+
+    ALTER TABLE users
+      ADD COLUMN IF NOT EXISTS profile_photo_url TEXT;
+
+    ALTER TABLE users
+      ADD COLUMN IF NOT EXISTS cover_photo_url TEXT;
+
 
     CREATE TABLE IF NOT EXISTS posts (
       id BIGSERIAL PRIMARY KEY,
@@ -28,11 +47,13 @@ export async function initDb() {
       created_at TIMESTAMPTZ DEFAULT NOW()
     );
 
+
     CREATE TABLE IF NOT EXISTS likes (
       user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
       post_id BIGINT NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
       PRIMARY KEY (user_id, post_id)
     );
+
 
     CREATE TABLE IF NOT EXISTS follows (
       follower_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -41,6 +62,7 @@ export async function initDb() {
       CHECK (follower_id <> following_id)
     );
 
+
     CREATE TABLE IF NOT EXISTS comments (
       id BIGSERIAL PRIMARY KEY,
       user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -48,6 +70,7 @@ export async function initDb() {
       body TEXT NOT NULL CHECK (char_length(body) <= 1000),
       created_at TIMESTAMPTZ DEFAULT NOW()
     );
+
 
     CREATE TABLE IF NOT EXISTS notifications (
       id BIGSERIAL PRIMARY KEY,
@@ -60,10 +83,12 @@ export async function initDb() {
       created_at TIMESTAMPTZ DEFAULT NOW()
     );
 
+
     CREATE TABLE IF NOT EXISTS conversations (
       id BIGSERIAL PRIMARY KEY,
       created_at TIMESTAMPTZ DEFAULT NOW()
     );
+
 
     CREATE TABLE IF NOT EXISTS conversation_members (
       conversation_id BIGINT NOT NULL
@@ -84,6 +109,7 @@ export async function initDb() {
       )
     );
 
+
     CREATE TABLE IF NOT EXISTS messages (
       id BIGSERIAL PRIMARY KEY,
 
@@ -101,13 +127,28 @@ export async function initDb() {
       created_at TIMESTAMPTZ DEFAULT NOW()
     );
 
+
     CREATE INDEX IF NOT EXISTS idx_messages_conversation_id_created_at
       ON messages(conversation_id, created_at);
+
 
     CREATE INDEX IF NOT EXISTS idx_conversation_members_user_id
       ON conversation_members(user_id);
 
+
     CREATE INDEX IF NOT EXISTS idx_notifications_user_id_created_at
       ON notifications(user_id, created_at);
+
+
+    CREATE INDEX IF NOT EXISTS idx_posts_user_id_created_at
+      ON posts(user_id, created_at);
+
+
+    CREATE INDEX IF NOT EXISTS idx_follows_following_id
+      ON follows(following_id);
+
+
+    CREATE INDEX IF NOT EXISTS idx_follows_follower_id
+      ON follows(follower_id);
   `);
 }
