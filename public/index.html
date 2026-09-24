@@ -2894,7 +2894,50 @@ async function loadMyProfile() {
     );
   }
 }
+/* =========================================================
+   EDIT PROFILE
+   ========================================================= */
 
+$("editProfileBtn")
+  .addEventListener(
+    "click",
+    () => {
+
+      $("editProfileName")
+        .value =
+        currentUser.name || "";
+
+      $("editProfileCountry")
+        .value =
+        currentUser.country || "";
+
+      $("editProfileBio")
+        .value =
+        currentUser.bio || "";
+
+      $("editProfilePhoto")
+        .value =
+        currentUser.profile_photo_url || "";
+
+      $("editCoverPhoto")
+        .value =
+        currentUser.cover_photo_url || "";
+
+      $("editProfileModal")
+        .classList.remove("hidden");
+    }
+  );
+
+
+$("cancelEditProfile")
+  .addEventListener(
+    "click",
+    () => {
+
+      $("editProfileModal")
+        .classList.add("hidden");
+    }
+  );
   /* =========================================================
      NAVIGATION
      ========================================================= */
