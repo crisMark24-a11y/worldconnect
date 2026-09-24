@@ -30,11 +30,20 @@ export async function initDb() {
       CHECK (follower_id <> following_id)
     );
     CREATE TABLE IF NOT EXISTS comments (
-      id BIGSERIAL PRIMARY KEY,
-      user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-      post_id BIGINT NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
-      body TEXT NOT NULL CHECK (char_length(body) <= 1000),
-      created_at TIMESTAMPTZ DEFAULT NOW()
-    );
-  `);
-}
+  id BIGSERIAL PRIMARY KEY,
+  user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  post_id BIGINT NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+  body TEXT NOT NULL CHECK (char_length(body) <= 1000),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS notifications (
+  id BIGSERIAL PRIMARY KEY,
+  user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  actor_id BIGINT REFERENCES users(id) ON DELETE CASCADE,
+  type VARCHAR(30) NOT NULL,
+  post_id BIGINT REFERENCES posts(id) ON DELETE CASCADE,
+  message TEXT NOT NULL,
+  is_read BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
