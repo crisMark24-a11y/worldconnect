@@ -569,12 +569,112 @@ app.post("/api/posts/:id/comment", auth, async (req, res) => {
         body
       ]
     );
+// Create notification for the post owner
+const postOwner = await pool.query(
+  `
+  SELECT user_id
+  FROM posts
+  WHERE id = $1
+  `,
+  [postId]
+);
 
+if (
+  postOwner.rowCount > 0 &&
+  postOwner.rows[0].user_id !== req.user.id
+) {
+  await pool.query(
+    `
+    INSERT INTO notifications
+      (user_id, actor_id, type, post_id, message)
+    VALUES
+      ($1, $2, $3, $4, $5)
+    `,
+    [
+      postOwner.rows[0].user_id,
+      req.user.id,
+      "comment",
+      postId,
+      "Someone commented on your post."
+    ]
+  );
+}
     res.status(201).json(q.rows[0]);
 
   } catch (e) {
 
     console.error("CREATE COMMENT ERROR:", e);
+
+    res.status(500).json({
+      error: "Server error"
+    });
+  }
+});
+
+// =========================
+// CREATE COMMENT NOTIFICATION
+// =========================
+
+app.post("/api/notifications/comment", auth, async (req, res) => {
+  try {
+
+    const postId = Number(req.body.postId);
+
+    if (!Number.isInteger(postId) || postId <= 0) {
+      return res.status(400).json({
+        error: "Invalid post ID"
+      });
+    }
+
+    const post = await pool.query(
+      `
+      SELECT user_id
+      FROM posts
+      WHERE id = $1
+      `,
+      [postId]
+    );
+
+    if (post.rowCount === 0) {
+      return res.status(404).json({
+        error: "Post not found"
+      });
+    }
+
+    const ownerId = post.rows[0].user_id;
+
+    if (ownerId === req.user.id) {
+      return res.json({
+        success: true
+      });
+    }
+
+    await pool.query(
+      `
+      INSERT INTO notifications
+        (user_id, actor_id, type, post_id, message)
+      VALUES
+        ($1, $2, $3, $4, $5)
+      `,
+      [
+        ownerId,
+        req.user.id,
+        "comment",
+        postId,
+        "Someone commented on your post."
+      ]
+    );
+
+    res.status(201).json({
+      success: true
+    });
+
+  } catch (e) {
+
+    console.error(
+      "CREATE COMMENT NOTIFICATION ERROR:",
+      e
+    );
 
     res.status(500).json({
       error: "Server error"
