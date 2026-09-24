@@ -128,7 +128,6 @@ app.post("/api/auth/register", async (req, res) => {
     });
 
   } catch (e) {
-
     if (e.code === "23505") {
       return res.status(409).json({
         error: "Email is already registered"
@@ -189,7 +188,6 @@ app.post("/api/auth/login", async (req, res) => {
     });
 
   } catch (e) {
-
     console.error("LOGIN ERROR:", e);
 
     res.status(500).json({
@@ -204,7 +202,6 @@ app.post("/api/auth/login", async (req, res) => {
 
 app.get("/api/me", auth, async (req, res) => {
   try {
-
     const q = await pool.query(
       `
       SELECT
@@ -228,7 +225,6 @@ app.get("/api/me", auth, async (req, res) => {
     res.json(q.rows[0]);
 
   } catch (e) {
-
     console.error("ME ERROR:", e);
 
     res.status(500).json({
@@ -243,10 +239,8 @@ app.get("/api/me", auth, async (req, res) => {
 
 app.get("/api/posts", async (req, res) => {
   try {
-
     let currentUserId = null;
 
-    // If logged in, detect which posts the user liked
     try {
       const header = req.headers.authorization || "";
 
@@ -312,7 +306,6 @@ app.get("/api/posts", async (req, res) => {
     res.json(q.rows);
 
   } catch (e) {
-
     console.error("GET POSTS ERROR:", e);
 
     res.status(500).json({
@@ -327,7 +320,6 @@ app.get("/api/posts", async (req, res) => {
 
 app.post("/api/posts", auth, async (req, res) => {
   try {
-
     const body = String(req.body.body || "").trim();
 
     if (!body) {
@@ -362,7 +354,6 @@ app.post("/api/posts", auth, async (req, res) => {
     res.status(201).json(q.rows[0]);
 
   } catch (e) {
-
     console.error("CREATE POST ERROR:", e);
 
     res.status(500).json({
@@ -377,7 +368,6 @@ app.post("/api/posts", auth, async (req, res) => {
 
 app.post("/api/posts/:id/like", auth, async (req, res) => {
   try {
-
     const postId = Number(req.params.id);
 
     if (!Number.isInteger(postId) || postId <= 0) {
@@ -386,7 +376,6 @@ app.post("/api/posts/:id/like", auth, async (req, res) => {
       });
     }
 
-    // Check if already liked
     const existing = await pool.query(
       `
       SELECT 1
@@ -403,8 +392,6 @@ app.post("/api/posts/:id/like", auth, async (req, res) => {
     let liked;
 
     if (existing.rowCount > 0) {
-
-      // Unlike
       await pool.query(
         `
         DELETE FROM likes
@@ -420,8 +407,6 @@ app.post("/api/posts/:id/like", auth, async (req, res) => {
       liked = false;
 
     } else {
-
-      // Like
       await pool.query(
         `
         INSERT INTO likes
@@ -455,7 +440,6 @@ app.post("/api/posts/:id/like", auth, async (req, res) => {
     });
 
   } catch (e) {
-
     console.error("LIKE ERROR:", e);
 
     res.status(500).json({
@@ -470,7 +454,6 @@ app.post("/api/posts/:id/like", auth, async (req, res) => {
 
 app.get("/api/posts/:id/comments", async (req, res) => {
   try {
-
     const postId = Number(req.params.id);
 
     if (!Number.isInteger(postId) || postId <= 0) {
@@ -505,7 +488,6 @@ app.get("/api/posts/:id/comments", async (req, res) => {
     res.json(q.rows);
 
   } catch (e) {
-
     console.error("GET COMMENTS ERROR:", e);
 
     res.status(500).json({
@@ -520,7 +502,6 @@ app.get("/api/posts/:id/comments", async (req, res) => {
 
 app.post("/api/posts/:id/comment", auth, async (req, res) => {
   try {
-
     const postId = Number(req.params.id);
     const body = String(req.body.body || "").trim();
 
@@ -536,10 +517,9 @@ app.post("/api/posts/:id/comment", auth, async (req, res) => {
       });
     }
 
-    // Make sure post exists
     const post = await pool.query(
       `
-      SELECT id
+      SELECT id, user_id
       FROM posts
       WHERE id = $1
       `,
@@ -569,40 +549,30 @@ app.post("/api/posts/:id/comment", auth, async (req, res) => {
         body
       ]
     );
-// Create notification for the post owner
-const postOwner = await pool.query(
-  `
-  SELECT user_id
-  FROM posts
-  WHERE id = $1
-  `,
-  [postId]
-);
 
-if (
-  postOwner.rowCount > 0 &&
-  postOwner.rows[0].user_id !== req.user.id
-) {
-  await pool.query(
-    `
-    INSERT INTO notifications
-      (user_id, actor_id, type, post_id, message)
-    VALUES
-      ($1, $2, $3, $4, $5)
-    `,
-    [
-      postOwner.rows[0].user_id,
-      req.user.id,
-      "comment",
-      postId,
-      "Someone commented on your post."
-    ]
-  );
-}
+    const postOwnerId = post.rows[0].user_id;
+
+    if (Number(postOwnerId) !== Number(req.user.id)) {
+      await pool.query(
+        `
+        INSERT INTO notifications
+          (user_id, actor_id, type, post_id, message)
+        VALUES
+          ($1, $2, $3, $4, $5)
+        `,
+        [
+          postOwnerId,
+          req.user.id,
+          "comment",
+          postId,
+          "Someone commented on your post."
+        ]
+      );
+    }
+
     res.status(201).json(q.rows[0]);
 
   } catch (e) {
-
     console.error("CREATE COMMENT ERROR:", e);
 
     res.status(500).json({
@@ -611,14 +581,12 @@ if (
   }
 });
 
-
 // =========================
 // FOLLOW / UNFOLLOW
 // =========================
 
 app.post("/api/users/:id/follow", auth, async (req, res) => {
   try {
-
     const userId = Number(req.params.id);
 
     if (!Number.isInteger(userId) || userId <= 0) {
@@ -633,7 +601,6 @@ app.post("/api/users/:id/follow", auth, async (req, res) => {
       });
     }
 
-    // Check target user
     const target = await pool.query(
       `
       SELECT id
@@ -649,7 +616,6 @@ app.post("/api/users/:id/follow", auth, async (req, res) => {
       });
     }
 
-    // Check existing follow
     const existing = await pool.query(
       `
       SELECT 1
@@ -666,8 +632,6 @@ app.post("/api/users/:id/follow", auth, async (req, res) => {
     let following;
 
     if (existing.rowCount > 0) {
-
-      // Unfollow
       await pool.query(
         `
         DELETE FROM follows
@@ -683,8 +647,6 @@ app.post("/api/users/:id/follow", auth, async (req, res) => {
       following = false;
 
     } else {
-
-      // Follow
       await pool.query(
         `
         INSERT INTO follows
@@ -707,7 +669,6 @@ app.post("/api/users/:id/follow", auth, async (req, res) => {
     });
 
   } catch (e) {
-
     console.error("FOLLOW ERROR:", e);
 
     res.status(500).json({
@@ -722,7 +683,6 @@ app.post("/api/users/:id/follow", auth, async (req, res) => {
 
 app.get("/api/users/:id", async (req, res) => {
   try {
-
     const userId = Number(req.params.id);
 
     if (!Number.isInteger(userId) || userId <= 0) {
@@ -774,7 +734,6 @@ app.get("/api/users/:id", async (req, res) => {
     res.json(q.rows[0]);
 
   } catch (e) {
-
     console.error("USER PROFILE ERROR:", e);
 
     res.status(500).json({
@@ -789,7 +748,6 @@ app.get("/api/users/:id", async (req, res) => {
 
 app.get("/api/notifications", auth, async (req, res) => {
   try {
-
     const q = await pool.query(
       `
       SELECT
@@ -819,11 +777,7 @@ app.get("/api/notifications", auth, async (req, res) => {
     res.json(q.rows);
 
   } catch (e) {
-
-    console.error(
-      "GET NOTIFICATIONS ERROR:",
-      e
-    );
+    console.error("GET NOTIFICATIONS ERROR:", e);
 
     res.status(500).json({
       error: "Server error"
