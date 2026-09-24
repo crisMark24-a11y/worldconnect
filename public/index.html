@@ -1,943 +1,2095 @@
-import "dotenv/config";
-import express from "express";
-import cors from "cors";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { pool, initDb } from "./db.js";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-const app = express();
+  <title>WorldConnect</title>
 
-// =========================
-// MIDDLEWARE
-// =========================
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-app.use(
-  cors({
-    origin: process.env.CORS_ORIGIN || "*"
-  })
-);
+    body {
+      font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+      background: #f4f7fb;
+      color: #1f2937;
+    }
 
-app.use(express.json());
-app.use(express.static("public"));
+    button,
+    input,
+    textarea {
+      font-family: inherit;
+    }
 
-// =========================
-// HEALTH CHECK
-// =========================
+    button {
+      cursor: pointer;
+    }
 
-app.get("/api/health", (req, res) => {
-  res.json({
-    ok: true,
-    service: "WorldConnect API"
-  });
-});
+    /* =========================
+       AUTH
+    ========================= */
 
-// =========================
-// AUTH HELPER
-// =========================
+    #authScreen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background:
+        linear-gradient(
+          135deg,
+          #eef6ff,
+          #f8fbff
+        );
+    }
 
-function getUserIdFromToken(req) {
-  const authHeader =
-    req.headers.authorization;
+    .auth-card {
+      width: 100%;
+      max-width: 430px;
+      background: white;
+      border-radius: 22px;
+      padding: 32px;
+      box-shadow:
+        0 15px 45px
+        rgba(0, 0, 0, 0.10);
+    }
 
-  if (
-    !authHeader ||
-    !authHeader.startsWith("Bearer ")
-  ) {
-    return null;
-  }
+    .auth-logo {
+      text-align: center;
+      margin-bottom: 25px;
+    }
 
-  const token =
-    authHeader.substring(7);
+    .auth-logo .globe {
+      font-size: 54px;
+    }
 
-  if (!process.env.JWT_SECRET) {
-    return null;
-  }
+    .auth-logo h1 {
+      margin-top: 8px;
+      font-size: 28px;
+      color: #1877f2;
+    }
 
-  try {
-    const decoded =
-      jwt.verify(
-        token,
-        process.env.JWT_SECRET
-      );
+    .auth-logo p {
+      color: #6b7280;
+      margin-top: 6px;
+      font-size: 14px;
+    }
 
-    return decoded.userId;
-  } catch {
-    return null;
-  }
-}
+    .auth-form h2 {
+      margin-bottom: 18px;
+      text-align: center;
+    }
 
-// =========================
-// REGISTER
-// =========================
+    .auth-form input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #d6dce5;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      font-size: 15px;
+      outline: none;
+    }
 
-app.post("/api/auth/register", async (req, res) => {
-  try {
-    const {
-      name,
-      email,
-      password,
-      country
-    } = req.body;
+    .auth-form input:focus {
+      border-color: #1877f2;
+    }
 
-    if (!name || !email || !password) {
-      return res.status(400).json({
-        error:
-          "Name, email, and password are required"
+    .primary {
+      width: 100%;
+      border: none;
+      background: #1877f2;
+      color: white;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .primary:hover {
+      opacity: 0.92;
+    }
+
+    .switch {
+      text-align: center;
+      margin-top: 18px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .switch button {
+      border: none;
+      background: none;
+      color: #1877f2;
+      font-weight: bold;
+    }
+
+    #authMessage {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+      color: #dc2626;
+    }
+
+    /* =========================
+       APP
+    ========================= */
+
+    #appScreen {
+      display: none;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: 64px;
+      background: white;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 22px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      font-size: 21px;
+      font-weight: bold;
+      color: #1877f2;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .top-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: #f1f5f9;
+      font-size: 18px;
+    }
+
+    .top-icon:hover {
+      background: #e2e8f0;
+    }
+
+    .profile-mini {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: 5px;
+      padding: 6px 10px;
+      border-radius: 20px;
+      background: #f8fafc;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    /* =========================
+       LAYOUT
+    ========================= */
+
+    .app-layout {
+      display: grid;
+      grid-template-columns:
+        240px
+        minmax(0, 1fr)
+        280px;
+      max-width: 1500px;
+      margin: auto;
+    }
+
+    .sidebar {
+      min-height: calc(100vh - 64px);
+      background: white;
+      border-right: 1px solid #e5e7eb;
+      padding: 20px 12px;
+      position: sticky;
+      top: 64px;
+      align-self: start;
+    }
+
+    .nav-item {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 14px;
+      margin-bottom: 5px;
+      border: none;
+      border-radius: 12px;
+      background: transparent;
+      color: #374151;
+      text-align: left;
+      font-size: 15px;
+    }
+
+    .nav-item:hover,
+    .nav-item.active {
+      background: #eaf3ff;
+      color: #1877f2;
+    }
+
+    .nav-item span:first-child {
+      width: 24px;
+      text-align: center;
+      font-size: 18px;
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      background: #1877f2;
+      color: white;
+      min-width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      font-size: 11px;
+    }
+
+    .nav-divider {
+      height: 1px;
+      background: #e5e7eb;
+      margin: 15px 5px;
+    }
+
+    .logout-navigation {
+      color: #dc2626;
+    }
+
+    /* =========================
+       MAIN
+    ========================= */
+
+    .main {
+      min-width: 0;
+      padding: 25px;
+    }
+
+    .welcome {
+      background:
+        linear-gradient(
+          135deg,
+          #1877f2,
+          #4f9cff
+        );
+      color: white;
+      border-radius: 18px;
+      padding: 25px;
+      margin-bottom: 20px;
+    }
+
+    .welcome h1 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .welcome p {
+      opacity: 0.92;
+      font-size: 14px;
+    }
+
+    /* =========================
+       POST BOX
+    ========================= */
+
+    .post-box {
+      background: white;
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 20px;
+      box-shadow:
+        0 3px 15px
+        rgba(0, 0, 0, 0.04);
+    }
+
+    .post-user {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #1877f2;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .post-user-name {
+      font-weight: bold;
+    }
+
+    .post-user-country {
+      color: #9ca3af;
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    #postText {
+      width: 100%;
+      min-height: 95px;
+      resize: vertical;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 14px;
+      outline: none;
+      font-size: 15px;
+    }
+
+    #postText:focus {
+      border-color: #1877f2;
+    }
+
+    .post-tools {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .tool-button {
+      flex: 1;
+      border: none;
+      background: #f8fafc;
+      padding: 11px;
+      border-radius: 10px;
+      color: #4b5563;
+    }
+
+    .tool-button:hover {
+      background: #eef2f7;
+    }
+
+    .post-submit {
+      margin-top: 12px;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 11px;
+      background: #1877f2;
+      color: white;
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    .post-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    #postMessage {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    /* =========================
+       POSTS
+    ========================= */
+
+    #feed {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .feed-loading,
+    .empty-feed {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      text-align: center;
+      color: #6b7280;
+    }
+
+    .post-card {
+      background: white;
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow:
+        0 3px 15px
+        rgba(0, 0, 0, 0.04);
+    }
+
+    .post-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .post-meta {
+      min-width: 0;
+    }
+
+    .post-name {
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    .post-time {
+      color: #9ca3af;
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .post-body {
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.6;
+      font-size: 15px;
+      color: #374151;
+    }
+
+    .post-actions {
+      display: flex;
+      gap: 8px;
+      border-top: 1px solid #f1f5f9;
+      margin-top: 15px;
+      padding-top: 12px;
+    }
+
+    .post-action {
+      flex: 1;
+      border: none;
+      background: #f8fafc;
+      border-radius: 9px;
+      padding: 9px;
+      color: #4b5563;
+    }
+
+    /* =========================
+       RIGHT SIDEBAR
+    ========================= */
+
+    .rightbar {
+      padding: 25px 15px;
+    }
+
+    .side-card {
+      background: white;
+      border-radius: 17px;
+      padding: 18px;
+      margin-bottom: 15px;
+      box-shadow:
+        0 3px 15px
+        rgba(0, 0, 0, 0.04);
+    }
+
+    .side-card h3 {
+      font-size: 16px;
+      margin-bottom: 12px;
+    }
+
+    .side-card p {
+      color: #6b7280;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* =========================
+       SECTIONS
+    ========================= */
+
+    .page-section {
+      display: none;
+    }
+
+    .page-section.active {
+      display: block;
+    }
+
+    .profile-card {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .profile-cover {
+      height: 150px;
+      background:
+        linear-gradient(
+          135deg,
+          #1877f2,
+          #6ea8fe
+        );
+    }
+
+    .profile-content {
+      padding: 0 22px 25px;
+    }
+
+    .profile-avatar {
+      width: 90px;
+      height: 90px;
+      margin-top: -45px;
+      border: 5px solid white;
+      border-radius: 50%;
+      background: #1877f2;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      font-weight: bold;
+    }
+
+    .profile-content h2 {
+      margin-top: 12px;
+    }
+
+    .profile-email {
+      color: #6b7280;
+      margin-top: 4px;
+      font-size: 14px;
+    }
+
+    .profile-country {
+      margin-top: 8px;
+      color: #4b5563;
+    }
+
+    .coming-soon {
+      background: white;
+      border-radius: 20px;
+      padding: 45px 25px;
+      text-align: center;
+    }
+
+    .coming-soon .icon {
+      font-size: 50px;
+      margin-bottom: 15px;
+    }
+
+    .coming-soon h2 {
+      margin-bottom: 8px;
+    }
+
+    .coming-soon p {
+      color: #6b7280;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 1050px) {
+      .app-layout {
+        grid-template-columns:
+          210px
+          minmax(0, 1fr);
+      }
+
+      .rightbar {
+        display: none;
+      }
+    }
+
+    @media (max-width: 750px) {
+      .topbar {
+        padding: 0 12px;
+      }
+
+      .brand {
+        font-size: 18px;
+      }
+
+      .profile-mini {
+        display: none;
+      }
+
+      .app-layout {
+        display: block;
+      }
+
+      .sidebar {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: auto;
+        min-height: auto;
+        height: 65px;
+        z-index: 200;
+        border-right: none;
+        border-top: 1px solid #e5e7eb;
+        padding: 5px;
+        display: flex;
+        justify-content: space-around;
+        overflow-x: auto;
+      }
+
+      .nav-item {
+        min-width: 65px;
+        width: auto;
+        height: 55px;
+        margin: 0;
+        padding: 5px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        justify-content: center;
+        align-items: center;
+        font-size: 10px;
+      }
+
+      .nav-item span:first-child {
+        font-size: 17px;
+      }
+
+      .nav-badge {
+        position: absolute;
+        margin-left: 25px;
+        margin-top: -25px;
+      }
+
+      .nav-divider {
+        display: none;
+      }
+
+      .main {
+        padding: 15px;
+        padding-bottom: 85px;
+      }
+
+      .welcome h1 {
+        font-size: 21px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================
+       AUTH SCREEN
+  ========================= -->
+
+  <div id="authScreen">
+
+    <div class="auth-card">
+
+      <div class="auth-logo">
+        <div class="globe">🌎</div>
+        <h1>WorldConnect</h1>
+        <p>
+          One World. One Connection.
+        </p>
+      </div>
+
+      <!-- LOGIN -->
+
+      <div
+        id="loginForm"
+        class="auth-form"
+      >
+
+        <h2>Login</h2>
+
+        <input
+          id="loginEmail"
+          type="email"
+          placeholder="Email"
+          autocomplete="email"
+        >
+
+        <input
+          id="loginPassword"
+          type="password"
+          placeholder="Password"
+          autocomplete="current-password"
+        >
+
+        <button
+          class="primary"
+          onclick="login()"
+        >
+          Login
+        </button>
+
+        <div class="switch">
+          Don't have an account?
+          <button
+            onclick="showRegister()"
+          >
+            Register
+          </button>
+        </div>
+
+      </div>
+
+      <!-- REGISTER -->
+
+      <div
+        id="registerForm"
+        class="auth-form"
+        style="display:none;"
+      >
+
+        <h2>Create Account</h2>
+
+        <input
+          id="registerName"
+          type="text"
+          placeholder="Full name"
+          autocomplete="name"
+        >
+
+        <input
+          id="registerEmail"
+          type="email"
+          placeholder="Email"
+          autocomplete="email"
+        >
+
+        <input
+          id="registerCountry"
+          type="text"
+          placeholder="Country"
+        >
+
+        <input
+          id="registerPassword"
+          type="password"
+          placeholder="Password (minimum 8 characters)"
+          autocomplete="new-password"
+        >
+
+        <button
+          class="primary"
+          onclick="register()"
+        >
+          Create Account
+        </button>
+
+        <div class="switch">
+          Already have an account?
+          <button
+            onclick="showLogin()"
+          >
+            Login
+          </button>
+        </div>
+
+      </div>
+
+      <div id="authMessage"></div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       APP SCREEN
+  ========================= -->
+
+  <div id="appScreen">
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+      <div class="brand">
+        WorldConnect
+      </div>
+
+      <div class="top-actions">
+
+        <button
+          class="top-icon"
+          onclick="showPage('moments')"
+        >
+          🔔
+        </button>
+
+        <button
+          class="top-icon"
+          onclick="showPage('converse')"
+        >
+          💬
+        </button>
+
+        <button
+          class="top-icon"
+          onclick="showComingSoon('Help')"
+        >
+          ?
+        </button>
+
+        <div
+          class="profile-mini"
+          id="topProfileName"
+        >
+          👤
+        </div>
+
+        <button
+          class="top-icon"
+          onclick="logout()"
+        >
+          🚪
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <div class="app-layout">
+
+      <!-- =========================
+           LEFT NAVIGATION
+      ========================= -->
+
+      <aside class="sidebar">
+
+        <button
+          class="nav-item active"
+          data-page="feed"
+          onclick="showPage('feed')"
+        >
+          <span>🌎</span>
+          <span>World Feed</span>
+        </button>
+
+        <button
+          class="nav-item"
+          data-page="profile"
+          onclick="showPage('profile')"
+        >
+          <span>✦</span>
+          <span>My Space</span>
+        </button>
+
+        <button
+          class="nav-item"
+          data-page="moments"
+          onclick="showPage('moments')"
+        >
+          <span>✨</span>
+          <span>Moments</span>
+          <span class="nav-badge">0</span>
+        </button>
+
+        <button
+          class="nav-item"
+          data-page="converse"
+          onclick="showPage('converse')"
+        >
+          <span>💬</span>
+          <span>Converse</span>
+        </button>
+
+        <button
+          class="nav-item"
+          data-page="connect"
+          onclick="showPage('connect')"
+        >
+          <span>🤝</span>
+          <span>Connect</span>
+        </button>
+
+        <button
+          class="nav-item"
+          data-page="discover"
+          onclick="showPage('discover')"
+        >
+          <span>🧭</span>
+          <span>Discover</span>
+        </button>
+
+        <div class="nav-divider"></div>
+
+        <button
+          class="nav-item"
+          data-page="settings"
+          onclick="showPage('settings')"
+        >
+          <span>⚙️</span>
+          <span>Control Center</span>
+        </button>
+
+        <button
+          class="nav-item logout-navigation"
+          onclick="logout()"
+        >
+          <span>🚪</span>
+          <span>Logout</span>
+        </button>
+
+      </aside>
+
+
+      <!-- =========================
+           MAIN CONTENT
+      ========================= -->
+
+      <main class="main">
+
+        <!-- WORLD FEED -->
+
+        <section
+          id="page-feed"
+          class="page-section active"
+        >
+
+          <div class="welcome">
+
+            <h1>
+              Welcome to WorldConnect 🌎
+            </h1>
+
+            <p>
+              Connect with people around
+              the world and share what's
+              on your mind.
+            </p>
+
+          </div>
+
+
+          <!-- CREATE POST -->
+
+          <div class="post-box">
+
+            <div class="post-user">
+
+              <div
+                class="avatar"
+                id="composerAvatar"
+              >
+                ?
+              </div>
+
+              <div>
+
+                <div
+                  class="post-user-name"
+                  id="composerName"
+                >
+                  User
+                </div>
+
+                <div class="post-user-country">
+                  Public
+                </div>
+
+              </div>
+
+            </div>
+
+            <textarea
+              id="postText"
+              maxlength="5000"
+              placeholder="Hello everyone..."
+            ></textarea>
+
+            <div class="post-tools">
+
+              <button
+                class="tool-button"
+                onclick="showComingSoon('Photo / Video')"
+              >
+                🖼️ Photo/Video
+              </button>
+
+              <button
+                class="tool-button"
+                onclick="showComingSoon('Feeling')"
+              >
+                😊 Feeling
+              </button>
+
+            </div>
+
+            <button
+              id="postButton"
+              class="post-submit"
+              onclick="createPost()"
+            >
+              Post
+            </button>
+
+            <div id="postMessage"></div>
+
+          </div>
+
+
+          <!-- FEED -->
+
+          <div id="feed">
+
+            <div class="feed-loading">
+              Loading World Feed...
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- MY SPACE -->
+
+        <section
+          id="page-profile"
+          class="page-section"
+        >
+
+          <div class="profile-card">
+
+            <div class="profile-cover"></div>
+
+            <div class="profile-content">
+
+              <div
+                class="profile-avatar"
+                id="profileAvatar"
+              >
+                ?
+              </div>
+
+              <h2 id="profileName">
+                User
+              </h2>
+
+              <div
+                class="profile-email"
+                id="profileEmail"
+              >
+                -
+              </div>
+
+              <div
+                class="profile-country"
+                id="profileCountry"
+              >
+                🌎
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- MOMENTS -->
+
+        <section
+          id="page-moments"
+          class="page-section"
+        >
+
+          <div class="coming-soon">
+
+            <div class="icon">✨</div>
+
+            <h2>
+              Moments
+            </h2>
+
+            <p>
+              Notifications and activity
+              will appear here.
+            </p>
+
+          </div>
+
+        </section>
+
+
+        <!-- CONVERSE -->
+
+        <section
+          id="page-converse"
+          class="page-section"
+        >
+
+          <div class="coming-soon">
+
+            <div class="icon">💬</div>
+
+            <h2>
+              Converse
+            </h2>
+
+            <p>
+              Private messaging is
+              coming soon.
+            </p>
+
+          </div>
+
+        </section>
+
+
+        <!-- CONNECT -->
+
+        <section
+          id="page-connect"
+          class="page-section"
+        >
+
+          <div class="coming-soon">
+
+            <div class="icon">🤝</div>
+
+            <h2>
+              Connect
+            </h2>
+
+            <p>
+              Find and connect with
+              people around the world.
+            </p>
+
+          </div>
+
+        </section>
+
+
+        <!-- DISCOVER -->
+
+        <section
+          id="page-discover"
+          class="page-section"
+        >
+
+          <div class="coming-soon">
+
+            <div class="icon">🧭</div>
+
+            <h2>
+              Discover
+            </h2>
+
+            <p>
+              Discover posts and people
+              from around the world.
+            </p>
+
+          </div>
+
+        </section>
+
+
+        <!-- SETTINGS -->
+
+        <section
+          id="page-settings"
+          class="page-section"
+        >
+
+          <div class="coming-soon">
+
+            <div class="icon">⚙️</div>
+
+            <h2>
+              Control Center
+            </h2>
+
+            <p>
+              Account settings and
+              preferences will appear here.
+            </p>
+
+          </div>
+
+        </section>
+
+      </main>
+
+
+      <!-- =========================
+           RIGHT SIDEBAR
+      ========================= -->
+
+      <aside class="rightbar">
+
+        <div class="side-card">
+
+          <h3>
+            🌎 WorldConnect
+          </h3>
+
+          <p>
+            One World. One Connection.
+          </p>
+
+        </div>
+
+        <div class="side-card">
+
+          <h3>
+            💡 Tip
+          </h3>
+
+          <p>
+            Share something positive
+            with the WorldConnect
+            community.
+          </p>
+
+        </div>
+
+        <div class="side-card">
+
+          <h3>
+            👋 Welcome
+          </h3>
+
+          <p id="sideWelcome">
+            Welcome to WorldConnect.
+          </p>
+
+        </div>
+
+      </aside>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    // =========================
+    // GLOBAL VARIABLES
+    // =========================
+
+    let token =
+      localStorage.getItem("token");
+
+    let currentUser = null;
+
+
+    // =========================
+    // API HELPER
+    // =========================
+
+    async function api(
+      url,
+      options = {}
+    ) {
+
+      options.headers = {
+        ...(options.headers || {}),
+        "Content-Type":
+          "application/json"
+      };
+
+      if (token) {
+        options.headers.Authorization =
+          `Bearer ${token}`;
+      }
+
+      const response =
+        await fetch(url, options);
+
+      let data = {};
+
+      try {
+        data = await response.json();
+      } catch {
+        data = {};
+      }
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.error ||
+          `Request failed (${response.status})`
+        );
+
+      }
+
+      return data;
+    }
+
+
+    // =========================
+    // AUTH SCREEN
+    // =========================
+
+    function showRegister() {
+
+      document
+        .getElementById("loginForm")
+        .style.display = "none";
+
+      document
+        .getElementById("registerForm")
+        .style.display = "block";
+
+      document
+        .getElementById("authMessage")
+        .textContent = "";
+    }
+
+
+    function showLogin() {
+
+      document
+        .getElementById("registerForm")
+        .style.display = "none";
+
+      document
+        .getElementById("loginForm")
+        .style.display = "block";
+
+      document
+        .getElementById("authMessage")
+        .textContent = "";
+    }
+
+
+    // =========================
+    // REGISTER
+    // =========================
+
+    async function register() {
+
+      const name =
+        document
+          .getElementById("registerName")
+          .value
+          .trim();
+
+      const email =
+        document
+          .getElementById("registerEmail")
+          .value
+          .trim();
+
+      const country =
+        document
+          .getElementById("registerCountry")
+          .value
+          .trim();
+
+      const password =
+        document
+          .getElementById("registerPassword")
+          .value;
+
+      const message =
+        document
+          .getElementById("authMessage");
+
+      if (!name || !email || !password) {
+
+        message.textContent =
+          "Please complete all required fields.";
+
+        return;
+      }
+
+      if (password.length < 8) {
+
+        message.textContent =
+          "Password must be at least 8 characters.";
+
+        return;
+      }
+
+      try {
+
+        message.style.color =
+          "#1877f2";
+
+        message.textContent =
+          "Creating account...";
+
+        await api(
+          "/api/auth/register",
+          {
+            method: "POST",
+
+            body: JSON.stringify({
+              name,
+              email,
+              password,
+              country
+            })
+          }
+        );
+
+        message.style.color =
+          "#16a34a";
+
+        message.textContent =
+          "Account created successfully! Please login.";
+
+        document
+          .getElementById("registerPassword")
+          .value = "";
+
+        setTimeout(
+          showLogin,
+          1000
+        );
+
+      } catch (error) {
+
+        message.style.color =
+          "#dc2626";
+
+        message.textContent =
+          error.message ||
+          "Registration failed.";
+
+      }
+    }
+
+
+    // =========================
+    // LOGIN
+    // =========================
+
+    async function login() {
+
+      const email =
+        document
+          .getElementById("loginEmail")
+          .value
+          .trim();
+
+      const password =
+        document
+          .getElementById("loginPassword")
+          .value;
+
+      const message =
+        document
+          .getElementById("authMessage");
+
+      if (!email || !password) {
+
+        message.textContent =
+          "Please enter your email and password.";
+
+        return;
+      }
+
+      try {
+
+        message.style.color =
+          "#1877f2";
+
+        message.textContent =
+          "Logging in...";
+
+        const data =
+          await api(
+            "/api/auth/login",
+            {
+              method: "POST",
+
+              body: JSON.stringify({
+                email,
+                password
+              })
+            }
+          );
+
+        token = data.token;
+
+        localStorage.setItem(
+          "token",
+          token
+        );
+
+        currentUser =
+          data.user;
+
+        await startApp();
+
+      } catch (error) {
+
+        console.error(
+          "LOGIN ERROR:",
+          error
+        );
+
+        message.style.color =
+          "#dc2626";
+
+        message.textContent =
+          error.message ||
+          "Something went wrong.";
+
+      }
+    }
+
+
+    // =========================
+    // START APP
+    // =========================
+
+    async function startApp() {
+
+      try {
+
+        if (!token) {
+          showAuth();
+          return;
+        }
+
+        const data =
+          await api("/api/me");
+
+        currentUser =
+          data.user;
+
+        updateUserInterface();
+
+        document
+          .getElementById("authScreen")
+          .style.display = "none";
+
+        document
+          .getElementById("appScreen")
+          .style.display = "block";
+
+        await loadPosts();
+
+      } catch (error) {
+
+        console.error(
+          "START APP ERROR:",
+          error
+        );
+
+        localStorage.removeItem(
+          "token"
+        );
+
+        token = null;
+        currentUser = null;
+
+        showAuth();
+
+      }
+    }
+
+
+    // =========================
+    // SHOW AUTH
+    // =========================
+
+    function showAuth() {
+
+      document
+        .getElementById("authScreen")
+        .style.display = "flex";
+
+      document
+        .getElementById("appScreen")
+        .style.display = "none";
+    }
+
+
+    // =========================
+    // UPDATE PROFILE UI
+    // =========================
+
+    function updateUserInterface() {
+
+      if (!currentUser) {
+        return;
+      }
+
+      const name =
+        currentUser.name ||
+        "User";
+
+      const email =
+        currentUser.email ||
+        "";
+
+      const country =
+        currentUser.country ||
+        "WorldConnect member";
+
+      const firstLetter =
+        name
+          .charAt(0)
+          .toUpperCase();
+
+      document
+        .getElementById("topProfileName")
+        .textContent =
+        `👤 ${name}`;
+
+      document
+        .getElementById("composerName")
+        .textContent =
+        name;
+
+      document
+        .getElementById("composerAvatar")
+        .textContent =
+        firstLetter;
+
+      document
+        .getElementById("profileAvatar")
+        .textContent =
+        firstLetter;
+
+      document
+        .getElementById("profileName")
+        .textContent =
+        name;
+
+      document
+        .getElementById("profileEmail")
+        .textContent =
+        email;
+
+      document
+        .getElementById("profileCountry")
+        .textContent =
+        `🌎 ${country}`;
+
+      document
+        .getElementById("sideWelcome")
+        .textContent =
+        `Welcome, ${name}!`;
+    }
+
+
+    // =========================
+    // CREATE POST
+    // =========================
+
+    async function createPost() {
+
+      const textArea =
+        document
+          .getElementById("postText");
+
+      const button =
+        document
+          .getElementById("postButton");
+
+      const message =
+        document
+          .getElementById("postMessage");
+
+      const body =
+        textArea.value.trim();
+
+      if (!body) {
+
+        message.style.color =
+          "#dc2626";
+
+        message.textContent =
+          "Please write something first.";
+
+        return;
+      }
+
+      try {
+
+        button.disabled = true;
+
+        button.textContent =
+          "Posting...";
+
+        message.textContent = "";
+
+        await api(
+          "/api/posts",
+          {
+            method: "POST",
+
+            body: JSON.stringify({
+              body
+            })
+          }
+        );
+
+        textArea.value = "";
+
+        message.style.color =
+          "#16a34a";
+
+        message.textContent =
+          "Posted successfully!";
+
+        await loadPosts();
+
+        setTimeout(() => {
+          message.textContent = "";
+        }, 2000);
+
+      } catch (error) {
+
+        console.error(
+          "CREATE POST ERROR:",
+          error
+        );
+
+        message.style.color =
+          "#dc2626";
+
+        message.textContent =
+          error.message ||
+          "Something went wrong.";
+
+      } finally {
+
+        button.disabled = false;
+
+        button.textContent =
+          "Post";
+      }
+    }
+
+
+    // =========================
+    // LOAD POSTS
+    // =========================
+
+    async function loadPosts() {
+
+      const feed =
+        document.getElementById(
+          "feed"
+        );
+
+      feed.innerHTML = `
+        <div class="feed-loading">
+          Loading World Feed...
+        </div>
+      `;
+
+      try {
+
+        const data =
+          await api("/api/posts");
+
+        const posts =
+          data.posts || [];
+
+        if (!posts.length) {
+
+          feed.innerHTML = `
+            <div class="empty-feed">
+              🌎 No posts yet.<br>
+              Be the first to share something!
+            </div>
+          `;
+
+          return;
+        }
+
+        feed.innerHTML =
+          posts
+            .map(renderPost)
+            .join("");
+
+      } catch (error) {
+
+        console.error(
+          "LOAD POSTS ERROR:",
+          error
+        );
+
+        feed.innerHTML = `
+          <div class="empty-feed">
+            ⚠️ Unable to load World Feed.<br><br>
+            ${escapeHtml(error.message)}
+          </div>
+        `;
+      }
+    }
+
+
+    // =========================
+    // RENDER POST
+    // =========================
+
+    function renderPost(post) {
+
+      const name =
+        post.name ||
+        "WorldConnect User";
+
+      const firstLetter =
+        name
+          .charAt(0)
+          .toUpperCase();
+
+      const country =
+        post.country
+          ? `🌎 ${escapeHtml(post.country)}`
+          : "🌎 WorldConnect";
+
+      const time =
+        formatDate(post.created_at);
+
+      return `
+        <article class="post-card">
+
+          <div class="post-header">
+
+            <div class="avatar">
+              ${escapeHtml(firstLetter)}
+            </div>
+
+            <div class="post-meta">
+
+              <div class="post-name">
+                ${escapeHtml(name)}
+              </div>
+
+              <div class="post-time">
+                ${country} · ${escapeHtml(time)}
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="post-body">
+            ${escapeHtml(post.body)}
+          </div>
+
+          <div class="post-actions">
+
+            <button
+              class="post-action"
+              onclick="showComingSoon('Likes')"
+            >
+              ❤️ ${post.like_count || 0}
+            </button>
+
+            <button
+              class="post-action"
+              onclick="showComingSoon('Comments')"
+            >
+              💬 ${post.comment_count || 0}
+            </button>
+
+            <button
+              class="post-action"
+              onclick="showComingSoon('Share')"
+            >
+              ↗️ Share
+            </button>
+
+          </div>
+
+        </article>
+      `;
+    }
+
+
+    // =========================
+    // PAGE NAVIGATION
+    // =========================
+
+    function showPage(page) {
+
+      document
+        .querySelectorAll(".page-section")
+        .forEach(section => {
+
+          section.classList.remove(
+            "active"
+          );
+
+        });
+
+      const target =
+        document.getElementById(
+          `page-${page}`
+        );
+
+      if (target) {
+
+        target.classList.add(
+          "active"
+        );
+      }
+
+      document
+        .querySelectorAll(".nav-item[data-page]")
+        .forEach(button => {
+
+          button.classList.remove(
+            "active"
+          );
+
+          if (
+            button.dataset.page === page
+          ) {
+
+            button.classList.add(
+              "active"
+            );
+          }
+
+        });
+
+      if (page === "feed") {
+        loadPosts();
+      }
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
       });
     }
 
-    if (password.length < 8) {
-      return res.status(400).json({
-        error:
-          "Password must be at least 8 characters"
-      });
+
+    // =========================
+    // COMING SOON
+    // =========================
+
+    function showComingSoon(feature) {
+
+      alert(
+        `${feature} is coming soon to WorldConnect.`
+      );
     }
 
-    const cleanName =
-      name.trim();
 
-    const cleanEmail =
-      email.toLowerCase().trim();
+    // =========================
+    // LOGOUT
+    // =========================
 
-    const cleanCountry =
-      country?.trim() || null;
+    function logout() {
 
-    const existing =
-      await pool.query(
-        `
-        SELECT id
-        FROM users
-        WHERE email = $1
-        `,
-        [cleanEmail]
+      localStorage.removeItem(
+        "token"
       );
 
-    if (existing.rows.length > 0) {
-      return res.status(409).json({
-        error:
-          "Email already registered"
-      });
+      token = null;
+      currentUser = null;
+
+      document
+        .getElementById("loginEmail")
+        .value = "";
+
+      document
+        .getElementById("loginPassword")
+        .value = "";
+
+      showLogin();
+      showAuth();
     }
 
-    const passwordHash =
-      await bcrypt.hash(
-        password,
-        10
-      );
 
-    const result =
-      await pool.query(
-        `
-        INSERT INTO users
-          (
-            name,
-            email,
-            password_hash,
-            country
-          )
-        VALUES
-          ($1, $2, $3, $4)
-        RETURNING
-          id,
-          name,
-          email,
-          country,
-          created_at
-        `,
-        [
-          cleanName,
-          cleanEmail,
-          passwordHash,
-          cleanCountry
-        ]
-      );
+    // =========================
+    // HELPERS
+    // =========================
 
-    return res.status(201).json({
-      message:
-        "Account created successfully",
-      user: result.rows[0]
-    });
+    function escapeHtml(value) {
 
-  } catch (error) {
+      const div =
+        document.createElement("div");
 
-    console.error(
-      "REGISTER ERROR:",
-      error
-    );
+      div.textContent =
+        value ?? "";
 
-    return res.status(500).json({
-      error:
-        "Registration failed"
-    });
-  }
-});
-
-// =========================
-// LOGIN
-// =========================
-
-app.post("/api/auth/login", async (req, res) => {
-  try {
-    const {
-      email,
-      password
-    } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({
-        error:
-          "Email and password are required"
-      });
+      return div.innerHTML;
     }
 
-    const cleanEmail =
-      email.toLowerCase().trim();
 
-    const result =
-      await pool.query(
-        `
-        SELECT
-          id,
-          name,
-          email,
-          password_hash,
-          country,
-          created_at
-        FROM users
-        WHERE email = $1
-        `,
-        [cleanEmail]
-      );
+    function formatDate(value) {
 
-    if (result.rows.length === 0) {
-      return res.status(401).json({
-        error:
-          "Invalid email or password"
-      });
-    }
+      if (!value) {
+        return "Just now";
+      }
 
-    const user =
-      result.rows[0];
+      const date =
+        new Date(value);
 
-    const passwordMatch =
-      await bcrypt.compare(
-        password,
-        user.password_hash
-      );
+      if (
+        Number.isNaN(
+          date.getTime()
+        )
+      ) {
+        return "Just now";
+      }
 
-    if (!passwordMatch) {
-      return res.status(401).json({
-        error:
-          "Invalid email or password"
-      });
-    }
-
-    if (!process.env.JWT_SECRET) {
-      console.error(
-        "JWT_SECRET is missing"
-      );
-
-      return res.status(500).json({
-        error:
-          "Server authentication is not configured"
-      });
-    }
-
-    const token =
-      jwt.sign(
+      return date.toLocaleString(
+        undefined,
         {
-          userId: user.id
-        },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: "7d"
+          dateStyle: "medium",
+          timeStyle: "short"
+        }
+      );
+    }
+
+
+    // =========================
+    // ENTER KEY
+    // =========================
+
+    document
+      .getElementById("postText")
+      .addEventListener(
+        "keydown",
+        function(event) {
+
+          if (
+            event.key === "Enter" &&
+            (event.ctrlKey ||
+             event.metaKey)
+          ) {
+
+            event.preventDefault();
+
+            createPost();
+          }
+
         }
       );
 
-    delete user.password_hash;
 
-    return res.json({
-      message:
-        "Login successful",
-      token,
-      user
-    });
+    // =========================
+    // AUTO START
+    // =========================
 
-  } catch (error) {
+    if (token) {
 
-    console.error(
-      "LOGIN ERROR:",
-      error
-    );
+      startApp();
 
-    return res.status(500).json({
-      error:
-        "Login failed"
-    });
-  }
-});
+    } else {
 
-// =========================
-// CURRENT USER
-// =========================
+      showAuth();
 
-app.get("/api/me", async (req, res) => {
-  try {
-
-    const userId =
-      getUserIdFromToken(req);
-
-    if (!userId) {
-      return res.status(401).json({
-        error:
-          "Not authenticated"
-      });
     }
 
-    const result =
-      await pool.query(
-        `
-        SELECT
-          id,
-          name,
-          email,
-          country,
-          created_at
-        FROM users
-        WHERE id = $1
-        `,
-        [userId]
-      );
+  </script>
 
-    if (result.rows.length === 0) {
-      return res.status(401).json({
-        error:
-          "User not found"
-      });
-    }
-
-    return res.json({
-      user:
-        result.rows[0]
-    });
-
-  } catch (error) {
-
-    console.error(
-      "ME ERROR:",
-      error
-    );
-
-    return res.status(401).json({
-      error:
-        "Invalid or expired session"
-    });
-  }
-});
-
-// =========================
-// GET WORLD FEED
-// =========================
-
-app.get("/api/posts", async (req, res) => {
-  try {
-
-    const result =
-      await pool.query(
-        `
-        SELECT
-          posts.id,
-          posts.body,
-          posts.created_at,
-
-          users.id AS user_id,
-          users.name,
-          users.country,
-
-          COUNT(
-            DISTINCT likes.user_id
-          )::int AS like_count,
-
-          COUNT(
-            DISTINCT comments.id
-          )::int AS comment_count
-
-        FROM posts
-
-        JOIN users
-          ON users.id = posts.user_id
-
-        LEFT JOIN likes
-          ON likes.post_id = posts.id
-
-        LEFT JOIN comments
-          ON comments.post_id = posts.id
-
-        GROUP BY
-          posts.id,
-          users.id
-
-        ORDER BY
-          posts.created_at DESC
-
-        LIMIT 100
-        `
-      );
-
-    return res.json({
-      posts:
-        result.rows
-    });
-
-  } catch (error) {
-
-    console.error(
-      "GET POSTS ERROR:",
-      error
-    );
-
-    return res.status(500).json({
-      error:
-        "Failed to load posts"
-    });
-  }
-});
-
-// =========================
-// CREATE POST
-// =========================
-
-app.post("/api/posts", async (req, res) => {
-  try {
-
-    const userId =
-      getUserIdFromToken(req);
-
-    if (!userId) {
-      return res.status(401).json({
-        error:
-          "Please login first"
-      });
-    }
-
-    const body =
-      typeof req.body.body === "string"
-        ? req.body.body.trim()
-        : "";
-
-    if (!body) {
-      return res.status(400).json({
-        error:
-          "Post cannot be empty"
-      });
-    }
-
-    if (body.length > 5000) {
-      return res.status(400).json({
-        error:
-          "Post is too long"
-      });
-    }
-
-    const result =
-      await pool.query(
-        `
-        INSERT INTO posts
-          (
-            user_id,
-            body
-          )
-        VALUES
-          ($1, $2)
-        RETURNING
-          id,
-          user_id,
-          body,
-          created_at
-        `,
-        [
-          userId,
-          body
-        ]
-      );
-
-    const post =
-      await pool.query(
-        `
-        SELECT
-          posts.id,
-          posts.body,
-          posts.created_at,
-
-          users.id AS user_id,
-          users.name,
-          users.country,
-
-          0::int AS like_count,
-          0::int AS comment_count
-
-        FROM posts
-
-        JOIN users
-          ON users.id = posts.user_id
-
-        WHERE posts.id = $1
-        `,
-        [
-          result.rows[0].id
-        ]
-      );
-
-    return res.status(201).json({
-      message:
-        "Post created successfully",
-      post:
-        post.rows[0]
-    });
-
-  } catch (error) {
-
-    console.error(
-      "CREATE POST ERROR:",
-      error
-    );
-
-    return res.status(500).json({
-      error:
-        "Failed to create post"
-    });
-  }
-});
-
-// =========================
-// LIKE POST
-// =========================
-
-app.post(
-  "/api/posts/:id/like",
-  async (req, res) => {
-
-    try {
-
-      const userId =
-        getUserIdFromToken(req);
-
-      if (!userId) {
-        return res.status(401).json({
-          error:
-            "Please login first"
-        });
-      }
-
-      const postId =
-        Number(req.params.id);
-
-      if (!Number.isInteger(postId)) {
-        return res.status(400).json({
-          error:
-            "Invalid post ID"
-        });
-      }
-
-      const post =
-        await pool.query(
-          `
-          SELECT id
-          FROM posts
-          WHERE id = $1
-          `,
-          [postId]
-        );
-
-      if (post.rows.length === 0) {
-        return res.status(404).json({
-          error:
-            "Post not found"
-        });
-      }
-
-      const existing =
-        await pool.query(
-          `
-          SELECT
-            user_id,
-            post_id
-          FROM likes
-          WHERE
-            user_id = $1
-            AND post_id = $2
-          `,
-          [
-            userId,
-            postId
-          ]
-        );
-
-      if (
-        existing.rows.length > 0
-      ) {
-
-        await pool.query(
-          `
-          DELETE FROM likes
-          WHERE
-            user_id = $1
-            AND post_id = $2
-          `,
-          [
-            userId,
-            postId
-          ]
-        );
-
-        return res.json({
-          liked: false,
-          message:
-            "Post unliked"
-        });
-      }
-
-      await pool.query(
-        `
-        INSERT INTO likes
-          (
-            user_id,
-            post_id
-          )
-        VALUES
-          ($1, $2)
-        `,
-        [
-          userId,
-          postId
-        ]
-      );
-
-      return res.json({
-        liked: true,
-        message:
-          "Post liked"
-      });
-
-    } catch (error) {
-
-      console.error(
-        "LIKE ERROR:",
-        error
-      );
-
-      return res.status(500).json({
-        error:
-          "Failed to like post"
-      });
-    }
-  }
-);
-
-// =========================
-// GET COMMENTS
-// =========================
-
-app.get(
-  "/api/posts/:id/comments",
-  async (req, res) => {
-
-    try {
-
-      const postId =
-        Number(req.params.id);
-
-      if (!Number.isInteger(postId)) {
-        return res.status(400).json({
-          error:
-            "Invalid post ID"
-        });
-      }
-
-      const result =
-        await pool.query(
-          `
-          SELECT
-            comments.id,
-            comments.body,
-            comments.created_at,
-
-            users.id AS user_id,
-            users.name,
-            users.country
-
-          FROM comments
-
-          JOIN users
-            ON users.id =
-               comments.user_id
-
-          WHERE comments.post_id = $1
-
-          ORDER BY
-            comments.created_at ASC
-
-          LIMIT 100
-          `,
-          [postId]
-        );
-
-      return res.json({
-        comments:
-          result.rows
-      });
-
-    } catch (error) {
-
-      console.error(
-        "GET COMMENTS ERROR:",
-        error
-      );
-
-      return res.status(500).json({
-        error:
-          "Failed to load comments"
-      });
-    }
-  }
-);
-
-// =========================
-// ADD COMMENT
-// =========================
-
-app.post(
-  "/api/posts/:id/comments",
-  async (req, res) => {
-
-    try {
-
-      const userId =
-        getUserIdFromToken(req);
-
-      if (!userId) {
-        return res.status(401).json({
-          error:
-            "Please login first"
-        });
-      }
-
-      const postId =
-        Number(req.params.id);
-
-      if (!Number.isInteger(postId)) {
-        return res.status(400).json({
-          error:
-            "Invalid post ID"
-        });
-      }
-
-      const body =
-        typeof req.body.body === "string"
-          ? req.body.body.trim()
-          : "";
-
-      if (!body) {
-        return res.status(400).json({
-          error:
-            "Comment cannot be empty"
-        });
-      }
-
-      if (body.length > 1000) {
-        return res.status(400).json({
-          error:
-            "Comment is too long"
-        });
-      }
-
-      const post =
-        await pool.query(
-          `
-          SELECT id
-          FROM posts
-          WHERE id = $1
-          `,
-          [postId]
-        );
-
-      if (post.rows.length === 0) {
-        return res.status(404).json({
-          error:
-            "Post not found"
-        });
-      }
-
-      const result =
-        await pool.query(
-          `
-          INSERT INTO comments
-            (
-              user_id,
-              post_id,
-              body
-            )
-          VALUES
-            ($1, $2, $3)
-          RETURNING
-            id,
-            user_id,
-            post_id,
-            body,
-            created_at
-          `,
-          [
-            userId,
-            postId,
-            body
-          ]
-        );
-
-      const comment =
-        await pool.query(
-          `
-          SELECT
-            comments.id,
-            comments.body,
-            comments.created_at,
-
-            users.id AS user_id,
-            users.name,
-            users.country
-
-          FROM comments
-
-          JOIN users
-            ON users.id =
-               comments.user_id
-
-          WHERE comments.id = $1
-          `,
-          [
-            result.rows[0].id
-          ]
-        );
-
-      return res.status(201).json({
-        message:
-          "Comment added",
-        comment:
-          comment.rows[0]
-      });
-
-    } catch (error) {
-
-      console.error(
-        "ADD COMMENT ERROR:",
-        error
-      );
-
-      return res.status(500).json({
-        error:
-          "Failed to add comment"
-      });
-    }
-  }
-);
-
-// =========================
-// SHARE POST
-// =========================
-
-app.post(
-  "/api/posts/:id/share",
-  async (req, res) => {
-
-    try {
-
-      const postId =
-        Number(req.params.id);
-
-      if (!Number.isInteger(postId)) {
-        return res.status(400).json({
-          error:
-            "Invalid post ID"
-        });
-      }
-
-      const result =
-        await pool.query(
-          `
-          SELECT
-            posts.id,
-            posts.body,
-            users.name
-          FROM posts
-          JOIN users
-            ON users.id = posts.user_id
-          WHERE posts.id = $1
-          `,
-          [postId]
-        );
-
-      if (result.rows.length === 0) {
-        return res.status(404).json({
-          error:
-            "Post not found"
-        });
-      }
-
-      const post =
-        result.rows[0];
-
-      return res.json({
-        message:
-          "Post ready to share",
-        shareText:
-          `${post.name}: ${post.body}`,
-        postId:
-          post.id
-      });
-
-    } catch (error) {
-
-      console.error(
-        "SHARE ERROR:",
-        error
-      );
-
-      return res.status(500).json({
-        error:
-          "Failed to share post"
-      });
-    }
-  }
-);
-
-// =========================
-// START SERVER
-// =========================
-
-const port =
-  process.env.PORT || 3000;
-
-initDb()
-  .then(() => {
-
-    app.listen(
-      port,
-      () => {
-
-        console.log(
-          `WorldConnect running on port ${port}`
-        );
-
-      }
-    );
-
-  })
-  .catch((err) => {
-
-    console.error(
-      "Database initialization failed:",
-      err
-    );
-
-    process.exit(1);
-
-  });
+</body>
+</html>
