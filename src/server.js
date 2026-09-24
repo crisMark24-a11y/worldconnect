@@ -12,6 +12,7 @@ dotenv.config();
 const app = express();
 
 const PORT = process.env.PORT || 3000;
+
 const JWT_SECRET =
   process.env.JWT_SECRET || "worldconnect-development-secret";
 
@@ -19,7 +20,13 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 app.use(cors());
-app.use(express.json({ limit: "2mb" }));
+
+app.use(
+  express.json({
+    limit: "2mb"
+  })
+);
+
 
 /* =====================================================
    AUTH HELPERS
@@ -60,7 +67,10 @@ function requireAuth(req, res, next) {
       });
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(
+      token,
+      JWT_SECRET
+    );
 
     req.user = decoded;
 
@@ -92,7 +102,10 @@ app.get("/api/health", async (req, res) => {
 
   } catch (error) {
 
-    console.error("HEALTH ERROR:", error);
+    console.error(
+      "HEALTH ERROR:",
+      error
+    );
 
     res.status(500).json({
       ok: false,
@@ -106,343 +119,440 @@ app.get("/api/health", async (req, res) => {
    REGISTER
 ===================================================== */
 
-app.post("/api/auth/register", async (req, res) => {
+app.post(
+  "/api/auth/register",
+  async (req, res) => {
 
-  try {
+    try {
 
-    const {
-      name,
-      email,
-      password,
-      country
-    } = req.body;
+      const {
+        name,
+        email,
+        password,
+        country
+      } = req.body;
 
-    if (!name || !email || !password) {
-      return res.status(400).json({
-        error: "Name, email and password are required."
+      if (!name || !email || !password) {
+
+        return res.status(400).json({
+          error:
+            "Name, email and password are required."
+        });
+      }
+
+      if (password.length < 6) {
+
+        return res.status(400).json({
+          error:
+            "Password must be at least 6 characters."
+        });
+      }
+
+      const cleanName =
+        String(name).trim();
+
+      const cleanEmail =
+        String(email)
+          .trim()
+          .toLowerCase();
+
+      const existing =
+        await pool.query(
+          `
+          SELECT id
+          FROM users
+          WHERE email = $1
+          `,
+          [cleanEmail]
+        );
+
+      if (existing.rows.length > 0) {
+
+        return res.status(409).json({
+          error:
+            "Email is already registered."
+        });
+      }
+
+      const passwordHash =
+        await bcrypt.hash(
+          password,
+          10
+        );
+
+      const result =
+        await pool.query(
+          `
+          INSERT INTO users
+            (
+              name,
+              email,
+              password_hash,
+              country
+            )
+          VALUES
+            (
+              $1,
+              $2,
+              $3,
+              $4
+            )
+          RETURNING
+            id,
+            name,
+            email,
+            country,
+            created_at
+          `,
+          [
+            cleanName,
+            cleanEmail,
+            passwordHash,
+            country
+              ? String(country).trim()
+              : null
+          ]
+        );
+
+      const user =
+        result.rows[0];
+
+      const token =
+        createToken(user);
+
+      res.status(201).json({
+        token,
+        user
       });
-    }
 
-    if (password.length < 6) {
-      return res.status(400).json({
-        error: "Password must be at least 6 characters."
-      });
-    }
+    } catch (error) {
 
-    const cleanName = String(name).trim();
-    const cleanEmail =
-      String(email).trim().toLowerCase();
-
-    const existing =
-      await pool.query(
-        "SELECT id FROM users WHERE email = $1",
-        [cleanEmail]
+      console.error(
+        "REGISTER ERROR:",
+        error
       );
 
-    if (existing.rows.length > 0) {
-      return res.status(409).json({
-        error: "Email is already registered."
+      res.status(500).json({
+        error:
+          "Registration failed."
       });
     }
-
-    const passwordHash =
-      await bcrypt.hash(password, 10);
-
-    const result =
-      await pool.query(
-        `
-        INSERT INTO users
-          (name, email, password_hash, country)
-        VALUES
-          ($1, $2, $3, $4)
-        RETURNING
-          id,
-          name,
-          email,
-          country,
-          created_at
-        `,
-        [
-          cleanName,
-          cleanEmail,
-          passwordHash,
-          country
-            ? String(country).trim()
-            : null
-        ]
-      );
-
-    const user = result.rows[0];
-
-    const token = createToken(user);
-
-    res.status(201).json({
-      token,
-      user
-    });
-
-  } catch (error) {
-
-    console.error("REGISTER ERROR:", error);
-
-    res.status(500).json({
-      error: "Registration failed."
-    });
   }
-});
+);
 
 
 /* =====================================================
    LOGIN
 ===================================================== */
 
-app.post("/api/auth/login", async (req, res) => {
+app.post(
+  "/api/auth/login",
+  async (req, res) => {
 
-  try {
+    try {
 
-    const {
-      email,
-      password
-    } = req.body;
+      const {
+        email,
+        password
+      } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({
-        error: "Email and password are required."
+      if (!email || !password) {
+
+        return res.status(400).json({
+          error:
+            "Email and password are required."
+        });
+      }
+
+      const cleanEmail =
+        String(email)
+          .trim()
+          .toLowerCase();
+
+      const result =
+        await pool.query(
+          `
+          SELECT
+            id,
+            name,
+            email,
+            password_hash,
+            country,
+            created_at
+          FROM users
+          WHERE email = $1
+          `,
+          [cleanEmail]
+        );
+
+      if (result.rows.length === 0) {
+
+        return res.status(401).json({
+          error:
+            "Invalid email or password."
+        });
+      }
+
+      const user =
+        result.rows[0];
+
+      const valid =
+        await bcrypt.compare(
+          password,
+          user.password_hash
+        );
+
+      if (!valid) {
+
+        return res.status(401).json({
+          error:
+            "Invalid email or password."
+        });
+      }
+
+      delete user.password_hash;
+
+      const token =
+        createToken(user);
+
+      res.json({
+        token,
+        user
       });
-    }
 
-    const cleanEmail =
-      String(email).trim().toLowerCase();
+    } catch (error) {
 
-    const result =
-      await pool.query(
-        `
-        SELECT
-          id,
-          name,
-          email,
-          password_hash,
-          country,
-          created_at
-        FROM users
-        WHERE email = $1
-        `,
-        [cleanEmail]
+      console.error(
+        "LOGIN ERROR:",
+        error
       );
 
-    if (result.rows.length === 0) {
-      return res.status(401).json({
-        error: "Invalid email or password."
+      res.status(500).json({
+        error:
+          "Login failed."
       });
     }
-
-    const user = result.rows[0];
-
-    const valid =
-      await bcrypt.compare(
-        password,
-        user.password_hash
-      );
-
-    if (!valid) {
-      return res.status(401).json({
-        error: "Invalid email or password."
-      });
-    }
-
-    delete user.password_hash;
-
-    const token = createToken(user);
-
-    res.json({
-      token,
-      user
-    });
-
-  } catch (error) {
-
-    console.error("LOGIN ERROR:", error);
-
-    res.status(500).json({
-      error: "Login failed."
-    });
   }
-});
+);
 
 
 /* =====================================================
    CURRENT USER
 ===================================================== */
 
-app.get("/api/me", requireAuth, async (req, res) => {
+app.get(
+  "/api/me",
+  requireAuth,
+  async (req, res) => {
 
-  try {
+    try {
 
-    const result =
-      await pool.query(
-        `
-        SELECT
-          id,
-          name,
-          email,
-          country,
-          created_at
-        FROM users
-        WHERE id = $1
-        `,
-        [req.user.id]
+      const result =
+        await pool.query(
+          `
+          SELECT
+            id,
+            name,
+            email,
+            country,
+            created_at
+          FROM users
+          WHERE id = $1
+          `,
+          [req.user.id]
+        );
+
+      if (result.rows.length === 0) {
+
+        return res.status(404).json({
+          error:
+            "User not found."
+        });
+      }
+
+      res.json({
+        user:
+          result.rows[0]
+      });
+
+    } catch (error) {
+
+      console.error(
+        "ME ERROR:",
+        error
       );
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({
-        error: "User not found."
+      res.status(500).json({
+        error:
+          "Unable to load user."
       });
     }
-
-    res.json({
-      user: result.rows[0]
-    });
-
-  } catch (error) {
-
-    console.error("ME ERROR:", error);
-
-    res.status(500).json({
-      error: "Unable to load user."
-    });
   }
-});
+);
 
 
 /* =====================================================
    GET WORLD FEED
 ===================================================== */
 
-app.get("/api/posts", requireAuth, async (req, res) => {
+app.get(
+  "/api/posts",
+  requireAuth,
+  async (req, res) => {
 
-  try {
+    try {
 
-    const result =
-      await pool.query(
-        `
-        SELECT
-          p.id,
-          p.body,
-          p.created_at,
+      const result =
+        await pool.query(
+          `
+          SELECT
+            p.id,
+            p.body,
+            p.created_at,
 
-          u.id AS user_id,
-          u.name,
-          u.country,
+            u.id AS user_id,
+            u.name,
+            u.country,
 
-          COUNT(DISTINCT l.user_id)::int
-            AS like_count,
+            COUNT(
+              DISTINCT l.user_id
+            )::int AS like_count,
 
-          COUNT(DISTINCT c.id)::int
-            AS comment_count,
+            COUNT(
+              DISTINCT c.id
+            )::int AS comment_count,
 
-          EXISTS (
-            SELECT 1
-            FROM likes my_like
-            WHERE my_like.post_id = p.id
-              AND my_like.user_id = $1
-          ) AS liked_by_me
+            EXISTS (
+              SELECT 1
+              FROM likes my_like
+              WHERE my_like.post_id = p.id
+                AND my_like.user_id = $1
+            ) AS liked_by_me
 
-        FROM posts p
+          FROM posts p
 
-        JOIN users u
-          ON u.id = p.user_id
+          JOIN users u
+            ON u.id = p.user_id
 
-        LEFT JOIN likes l
-          ON l.post_id = p.id
+          LEFT JOIN likes l
+            ON l.post_id = p.id
 
-        LEFT JOIN comments c
-          ON c.post_id = p.id
+          LEFT JOIN comments c
+            ON c.post_id = p.id
 
-        GROUP BY
-          p.id,
-          p.body,
-          p.created_at,
-          u.id,
-          u.name,
-          u.country
+          GROUP BY
+            p.id,
+            p.body,
+            p.created_at,
+            u.id,
+            u.name,
+            u.country
 
-        ORDER BY p.created_at DESC
+          ORDER BY
+            p.created_at DESC
 
-        LIMIT 100
-        `,
-        [req.user.id]
+          LIMIT 100
+          `,
+          [req.user.id]
+        );
+
+      res.json({
+        posts:
+          result.rows
+      });
+
+    } catch (error) {
+
+      console.error(
+        "GET POSTS ERROR:",
+        error
       );
 
-    res.json({
-      posts: result.rows
-    });
-
-  } catch (error) {
-
-    console.error("GET POSTS ERROR:", error);
-
-    res.status(500).json({
-      error: "Unable to load posts."
-    });
+      res.status(500).json({
+        error:
+          "Unable to load posts."
+      });
+    }
   }
-});
+);
 
 
 /* =====================================================
    CREATE POST
 ===================================================== */
 
-app.post("/api/posts", requireAuth, async (req, res) => {
+app.post(
+  "/api/posts",
+  requireAuth,
+  async (req, res) => {
 
-  try {
+    try {
 
-    const body =
-      String(req.body.body || "").trim();
+      const body =
+        String(
+          req.body.body || ""
+        ).trim();
 
-    if (!body) {
-      return res.status(400).json({
-        error: "Post cannot be empty."
+      if (!body) {
+
+        return res.status(400).json({
+          error:
+            "Post cannot be empty."
+        });
+      }
+
+      if (body.length > 5000) {
+
+        return res.status(400).json({
+          error:
+            "Post is too long."
+        });
+      }
+
+      const result =
+        await pool.query(
+          `
+          INSERT INTO posts
+            (
+              user_id,
+              body
+            )
+          VALUES
+            (
+              $1,
+              $2
+            )
+          RETURNING
+            id,
+            user_id,
+            body,
+            created_at
+          `,
+          [
+            req.user.id,
+            body
+          ]
+        );
+
+      res.status(201).json({
+        post:
+          result.rows[0]
       });
-    }
 
-    if (body.length > 5000) {
-      return res.status(400).json({
-        error: "Post is too long."
-      });
-    }
+    } catch (error) {
 
-    const result =
-      await pool.query(
-        `
-        INSERT INTO posts
-          (user_id, body)
-        VALUES
-          ($1, $2)
-        RETURNING
-          id,
-          user_id,
-          body,
-          created_at
-        `,
-        [
-          req.user.id,
-          body
-        ]
+      console.error(
+        "CREATE POST ERROR:",
+        error
       );
 
-    res.status(201).json({
-      post: result.rows[0]
-    });
-
-  } catch (error) {
-
-    console.error("CREATE POST ERROR:", error);
-
-    res.status(500).json({
-      error: "Unable to create post."
-    });
+      res.status(500).json({
+        error:
+          "Unable to create post."
+      });
+    }
   }
-});
+);
 
 
 /* =====================================================
@@ -454,7 +564,8 @@ app.post(
   requireAuth,
   async (req, res) => {
 
-    const client = await pool.connect();
+    const client =
+      await pool.connect();
 
     try {
 
@@ -462,12 +573,16 @@ app.post(
         Number(req.params.id);
 
       if (!Number.isInteger(postId)) {
+
         return res.status(400).json({
-          error: "Invalid post ID."
+          error:
+            "Invalid post ID."
         });
       }
 
-      await client.query("BEGIN");
+      await client.query(
+        "BEGIN"
+      );
 
       const postResult =
         await client.query(
@@ -481,12 +596,17 @@ app.post(
           [postId]
         );
 
-      if (postResult.rows.length === 0) {
+      if (
+        postResult.rows.length === 0
+      ) {
 
-        await client.query("ROLLBACK");
+        await client.query(
+          "ROLLBACK"
+        );
 
         return res.status(404).json({
-          error: "Post not found."
+          error:
+            "Post not found."
         });
       }
 
@@ -506,7 +626,9 @@ app.post(
 
       let liked;
 
-      if (existing.rows.length > 0) {
+      if (
+        existing.rows.length > 0
+      ) {
 
         await client.query(
           `
@@ -527,9 +649,15 @@ app.post(
         await client.query(
           `
           INSERT INTO likes
-            (user_id, post_id)
+            (
+              user_id,
+              post_id
+            )
           VALUES
-            ($1, $2)
+            (
+              $1,
+              $2
+            )
           `,
           [
             req.user.id,
@@ -543,14 +671,17 @@ app.post(
       const countResult =
         await client.query(
           `
-          SELECT COUNT(*)::int AS count
+          SELECT
+            COUNT(*)::int AS count
           FROM likes
           WHERE post_id = $1
           `,
           [postId]
         );
 
-      await client.query("COMMIT");
+      await client.query(
+        "COMMIT"
+      );
 
       res.json({
         liked,
@@ -560,12 +691,18 @@ app.post(
 
     } catch (error) {
 
-      await client.query("ROLLBACK");
+      await client.query(
+        "ROLLBACK"
+      );
 
-      console.error("LIKE ERROR:", error);
+      console.error(
+        "LIKE ERROR:",
+        error
+      );
 
       res.status(500).json({
-        error: "Unable to update like."
+        error:
+          "Unable to update like."
       });
 
     } finally {
@@ -591,8 +728,10 @@ app.get(
         Number(req.params.id);
 
       if (!Number.isInteger(postId)) {
+
         return res.status(400).json({
-          error: "Invalid post ID."
+          error:
+            "Invalid post ID."
         });
       }
 
@@ -603,6 +742,7 @@ app.get(
             c.id,
             c.body,
             c.created_at,
+
             u.id AS user_id,
             u.name,
             u.country
@@ -614,7 +754,8 @@ app.get(
 
           WHERE c.post_id = $1
 
-          ORDER BY c.created_at ASC
+          ORDER BY
+            c.created_at ASC
 
           LIMIT 200
           `,
@@ -622,7 +763,8 @@ app.get(
         );
 
       res.json({
-        comments: result.rows
+        comments:
+          result.rows
       });
 
     } catch (error) {
@@ -633,7 +775,8 @@ app.get(
       );
 
       res.status(500).json({
-        error: "Unable to load comments."
+        error:
+          "Unable to load comments."
       });
     }
   }
@@ -655,23 +798,31 @@ app.post(
         Number(req.params.id);
 
       const body =
-        String(req.body.body || "").trim();
+        String(
+          req.body.body || ""
+        ).trim();
 
       if (!Number.isInteger(postId)) {
+
         return res.status(400).json({
-          error: "Invalid post ID."
+          error:
+            "Invalid post ID."
         });
       }
 
       if (!body) {
+
         return res.status(400).json({
-          error: "Comment cannot be empty."
+          error:
+            "Comment cannot be empty."
         });
       }
 
       if (body.length > 1000) {
+
         return res.status(400).json({
-          error: "Comment is too long."
+          error:
+            "Comment is too long."
         });
       }
 
@@ -685,9 +836,13 @@ app.post(
           [postId]
         );
 
-      if (post.rows.length === 0) {
+      if (
+        post.rows.length === 0
+      ) {
+
         return res.status(404).json({
-          error: "Post not found."
+          error:
+            "Post not found."
         });
       }
 
@@ -695,9 +850,17 @@ app.post(
         await pool.query(
           `
           INSERT INTO comments
-            (user_id, post_id, body)
+            (
+              user_id,
+              post_id,
+              body
+            )
           VALUES
-            ($1, $2, $3)
+            (
+              $1,
+              $2,
+              $3
+            )
           RETURNING
             id,
             user_id,
@@ -715,7 +878,8 @@ app.post(
       const countResult =
         await pool.query(
           `
-          SELECT COUNT(*)::int AS count
+          SELECT
+            COUNT(*)::int AS count
           FROM comments
           WHERE post_id = $1
           `,
@@ -723,7 +887,9 @@ app.post(
         );
 
       res.status(201).json({
-        comment: result.rows[0],
+        comment:
+          result.rows[0],
+
         comment_count:
           countResult.rows[0].count
       });
@@ -736,7 +902,8 @@ app.post(
       );
 
       res.status(500).json({
-        error: "Unable to add comment."
+        error:
+          "Unable to add comment."
       });
     }
   }
@@ -758,8 +925,10 @@ app.post(
         Number(req.params.id);
 
       if (!Number.isInteger(postId)) {
+
         return res.status(400).json({
-          error: "Invalid post ID."
+          error:
+            "Invalid post ID."
         });
       }
 
@@ -771,39 +940,57 @@ app.post(
             p.body,
             u.name
           FROM posts p
+
           JOIN users u
             ON u.id = p.user_id
+
           WHERE p.id = $1
           `,
           [postId]
         );
 
-      if (result.rows.length === 0) {
+      if (
+        result.rows.length === 0
+      ) {
+
         return res.status(404).json({
-          error: "Post not found."
+          error:
+            "Post not found."
         });
       }
 
-      const post = result.rows[0];
+      const post =
+        result.rows[0];
 
       const shareUrl =
-        `${req.protocol}://${req.get("host")}/?post=${post.id}`;
+        `${req.protocol}://${req.get(
+          "host"
+        )}/?post=${post.id}`;
 
       const shareText =
         `${post.name} shared on WorldConnect:\n\n${post.body}`;
 
       res.json({
-        post_id: post.id,
-        share_text: shareText,
-        url: shareUrl
+        post_id:
+          post.id,
+
+        share_text:
+          shareText,
+
+        url:
+          shareUrl
       });
 
     } catch (error) {
 
-      console.error("SHARE ERROR:", error);
+      console.error(
+        "SHARE ERROR:",
+        error
+      );
 
       res.status(500).json({
-        error: "Unable to share post."
+        error:
+          "Unable to share post."
       });
     }
   }
@@ -831,11 +1018,13 @@ app.get(
             u.country,
             u.created_at,
 
-            COUNT(DISTINCT followers.follower_id)::int
-              AS follower_count,
+            COUNT(
+              DISTINCT followers.follower_id
+            )::int AS follower_count,
 
-            COUNT(DISTINCT following.following_id)::int
-              AS following_count,
+            COUNT(
+              DISTINCT following.following_id
+            )::int AS following_count,
 
             EXISTS (
               SELECT 1
@@ -861,7 +1050,8 @@ app.get(
             u.country,
             u.created_at
 
-          ORDER BY u.created_at DESC
+          ORDER BY
+            u.created_at DESC
 
           LIMIT 50
           `,
@@ -869,7 +1059,8 @@ app.get(
         );
 
       res.json({
-        users: result.rows
+        users:
+          result.rows
       });
 
     } catch (error) {
@@ -880,7 +1071,8 @@ app.get(
       );
 
       res.status(500).json({
-        error: "Unable to discover users."
+        error:
+          "Unable to discover users."
       });
     }
   }
@@ -896,7 +1088,8 @@ app.post(
   requireAuth,
   async (req, res) => {
 
-    const client = await pool.connect();
+    const client =
+      await pool.connect();
 
     try {
 
@@ -906,20 +1099,25 @@ app.post(
       if (!Number.isInteger(targetId)) {
 
         return res.status(400).json({
-          error: "Invalid user ID."
+          error:
+            "Invalid user ID."
         });
       }
 
-      if (targetId === Number(req.user.id)) {
+      if (
+        targetId ===
+        Number(req.user.id)
+      ) {
 
         return res.status(400).json({
-          error: "You cannot follow yourself."
+          error:
+            "You cannot follow yourself."
         });
       }
 
-
-      await client.query("BEGIN");
-
+      await client.query(
+        "BEGIN"
+      );
 
       const userResult =
         await client.query(
@@ -931,16 +1129,19 @@ app.post(
           [targetId]
         );
 
+      if (
+        userResult.rows.length === 0
+      ) {
 
-      if (userResult.rows.length === 0) {
-
-        await client.query("ROLLBACK");
+        await client.query(
+          "ROLLBACK"
+        );
 
         return res.status(404).json({
-          error: "User not found."
+          error:
+            "User not found."
         });
       }
-
 
       const existing =
         await client.query(
@@ -956,11 +1157,11 @@ app.post(
           ]
         );
 
-
       let following;
 
-
-      if (existing.rows.length > 0) {
+      if (
+        existing.rows.length > 0
+      ) {
 
         await client.query(
           `
@@ -981,9 +1182,15 @@ app.post(
         await client.query(
           `
           INSERT INTO follows
-            (follower_id, following_id)
+            (
+              follower_id,
+              following_id
+            )
           VALUES
-            ($1, $2)
+            (
+              $1,
+              $2
+            )
           `,
           [
             req.user.id,
@@ -994,31 +1201,31 @@ app.post(
         following = true;
       }
 
-
       const followersResult =
         await client.query(
           `
-          SELECT COUNT(*)::int AS count
+          SELECT
+            COUNT(*)::int AS count
           FROM follows
           WHERE following_id = $1
           `,
           [targetId]
         );
 
-
       const followingResult =
         await client.query(
           `
-          SELECT COUNT(*)::int AS count
+          SELECT
+            COUNT(*)::int AS count
           FROM follows
           WHERE follower_id = $1
           `,
           [targetId]
         );
 
-
-      await client.query("COMMIT");
-
+      await client.query(
+        "COMMIT"
+      );
 
       res.json({
         following,
@@ -1030,10 +1237,11 @@ app.post(
           followingResult.rows[0].count
       });
 
-
     } catch (error) {
 
-      await client.query("ROLLBACK");
+      await client.query(
+        "ROLLBACK"
+      );
 
       console.error(
         "FOLLOW ERROR:",
@@ -1041,7 +1249,8 @@ app.post(
       );
 
       res.status(500).json({
-        error: "Unable to update follow."
+        error:
+          "Unable to update follow."
       });
 
     } finally {
@@ -1067,11 +1276,12 @@ app.get(
         Number(req.params.id);
 
       if (!Number.isInteger(userId)) {
+
         return res.status(400).json({
-          error: "Invalid user ID."
+          error:
+            "Invalid user ID."
         });
       }
-
 
       const result =
         await pool.query(
@@ -1112,19 +1322,20 @@ app.get(
           ]
         );
 
-
-      if (result.rows.length === 0) {
+      if (
+        result.rows.length === 0
+      ) {
 
         return res.status(404).json({
-          error: "User not found."
+          error:
+            "User not found."
         });
       }
 
-
       res.json({
-        user: result.rows[0]
+        user:
+          result.rows[0]
       });
-
 
     } catch (error) {
 
@@ -1134,7 +1345,8 @@ app.get(
       );
 
       res.status(500).json({
-        error: "Unable to load profile."
+        error:
+          "Unable to load profile."
       });
     }
   }
@@ -1142,25 +1354,37 @@ app.get(
 
 
 /* =====================================================
-   SERVE FRONTEND
+   STATIC FRONTEND
 ===================================================== */
 
 app.use(
   express.static(
-    path.join(__dirname, "../public")
+    path.join(
+      __dirname,
+      "../public"
+    )
   )
 );
 
 
-app.get("*", (req, res) => {
+/* =====================================================
+   FRONTEND FALLBACK
+   EXPRESS 5 COMPATIBLE
+===================================================== */
 
-  res.sendFile(
-    path.join(
-      __dirname,
-      "../public/index.html"
-    )
-  );
-});
+app.get(
+  "/{*splat}",
+  (req, res) => {
+
+    res.sendFile(
+      path.join(
+        __dirname,
+        "../public/index.html"
+      )
+    );
+
+  }
+);
 
 
 /* =====================================================
