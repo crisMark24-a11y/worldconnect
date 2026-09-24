@@ -1813,7 +1813,7 @@
 
 }
 
-function showMoments() {
+async function showMoments() {
 
   const main = document.querySelector(".main-content");
 
@@ -1828,66 +1828,96 @@ function showMoments() {
         </div>
       </div>
 
-      <div style="
-        padding:40px 20px;
-        text-align:center;
-        color:#777;
-      ">
-        <div style="font-size:48px;">✨</div>
-
-        <h3>No new moments yet</h3>
-
-        <p>
-          When someone interacts with you,
-          your moments will appear here.
-        </p>
+      <div id="momentsList"
+        style="
+          padding:20px;
+          text-align:center;
+          color:#777;
+        "
+      >
+        Loading moments...
       </div>
     </section>
   `;
 
+  try {
+
+    const notifications = await api("/api/notifications");
+
+    const list = document.getElementById("momentsList");
+
+    if (!notifications || notifications.length === 0) {
+
+      list.innerHTML = `
+        <div style="padding:30px 10px;">
+          <div style="font-size:48px;">✨</div>
+
+          <h3>No new moments yet</h3>
+
+          <p>
+            When someone interacts with you,
+            your moments will appear here.
+          </p>
+        </div>
+      `;
+
+      return;
+    }
+
+    list.innerHTML = notifications.map(n => `
+
+      <div style="
+        text-align:left;
+        padding:15px;
+        margin-bottom:10px;
+        border:1px solid #eee;
+        border-radius:12px;
+        background:#fafafa;
+      ">
+
+        <div style="font-size:16px;">
+          ✨ <strong>${n.actor_name || "Someone"}</strong>
+        </div>
+
+        <div style="
+          margin-top:6px;
+          color:#555;
+        ">
+          ${n.message}
+        </div>
+
+        <div style="
+          margin-top:8px;
+          font-size:12px;
+          color:#999;
+        ">
+          ${new Date(n.created_at).toLocaleString()}
+        </div>
+
+      </div>
+
+    `).join("");
+
+  } catch (error) {
+
+    console.error(
+      "MOMENTS ERROR:",
+      error
+    );
+
+    const list = document.getElementById("momentsList");
+
+    if (list) {
+      list.innerHTML = `
+        <div style="padding:30px;">
+          ⚠️ Unable to load moments.
+        </div>
+      `;
+    }
+
+  }
+
 }
-
-
-    // =========================
-    // AUTH UI
-    // =========================
-
-    function showRegister() {
-
-      document.getElementById(
-        "loginForm"
-      ).style.display = "none";
-
-
-      document.getElementById(
-        "registerForm"
-      ).style.display = "block";
-
-
-      document.getElementById(
-        "authMessage"
-      ).textContent = "";
-
-    }
-
-
-    function showLogin() {
-
-      document.getElementById(
-        "registerForm"
-      ).style.display = "none";
-
-
-      document.getElementById(
-        "loginForm"
-      ).style.display = "block";
-
-
-      document.getElementById(
-        "authMessage"
-      ).textContent = "";
-
-    }
 
 
     
