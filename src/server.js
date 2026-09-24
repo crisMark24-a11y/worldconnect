@@ -84,6 +84,31 @@ function requireAuth(req, res, next) {
 
 
 /* =====================================================
+   PROFILE DATABASE MIGRATION
+
+   Automatically adds profile fields to existing
+   WorldConnect users table.
+===================================================== */
+
+async function ensureProfileColumns() {
+  await pool.query(`
+    ALTER TABLE users
+      ADD COLUMN IF NOT EXISTS bio TEXT;
+
+    ALTER TABLE users
+      ADD COLUMN IF NOT EXISTS profile_photo_url TEXT;
+
+    ALTER TABLE users
+      ADD COLUMN IF NOT EXISTS cover_photo_url TEXT;
+  `);
+
+  console.log(
+    "Profile database fields verified."
+  );
+}
+
+
+/* =====================================================
    NOTIFICATION HELPER
 ===================================================== */
 
@@ -245,6 +270,9 @@ app.post(
             name,
             email,
             country,
+            bio,
+            profile_photo_url,
+            cover_photo_url,
             created_at
           `,
           [
@@ -317,6 +345,9 @@ app.post(
             email,
             password_hash,
             country,
+            bio,
+            profile_photo_url,
+            cover_photo_url,
             created_at
           FROM users
           WHERE email = $1
@@ -373,7 +404,7 @@ app.post(
 
 
 /* =====================================================
-   CURRENT USER
+   CURRENT USER / MY PROFILE
 ===================================================== */
 
 app.get(
@@ -385,13 +416,36 @@ app.get(
         await pool.query(
           `
           SELECT
-            id,
-            name,
-            email,
-            country,
-            created_at
-          FROM users
-          WHERE id = $1
+            u.id,
+            u.name,
+            u.email,
+            u.country,
+            u.bio,
+            u.profile_photo_url,
+            u.cover_photo_url,
+            u.created_at,
+
+            (
+              SELECT COUNT(*)
+              FROM posts
+              WHERE user_id = u.id
+            )::int AS post_count,
+
+            (
+              SELECT COUNT(*)
+              FROM follows
+              WHERE following_id = u.id
+            )::int AS follower_count,
+
+            (
+              SELECT COUNT(*)
+              FROM follows
+              WHERE follower_id = u.id
+            )::int AS following_count
+
+          FROM users u
+
+          WHERE u.id = $1
           `,
           [req.user.id]
         );
@@ -424,6 +478,142 @@ app.get(
 
 
 /* =====================================================
+   UPDATE MY PROFILE
+===================================================== */
+
+app.put(
+  "/api/users/me",
+  requireAuth,
+  async (req, res) => {
+    try {
+      const {
+        name,
+        country,
+        bio,
+        profile_photo_url,
+        cover_photo_url
+      } = req.body;
+
+      const cleanName =
+        String(name ?? "").trim();
+
+      const cleanCountry =
+        String(country ?? "").trim();
+
+      const cleanBio =
+        String(bio ?? "").trim();
+
+      const cleanProfilePhoto =
+        String(profile_photo_url ?? "").trim();
+
+      const cleanCoverPhoto =
+        String(cover_photo_url ?? "").trim();
+
+      if (!cleanName) {
+        return res.status(400).json({
+          error:
+            "Name cannot be empty."
+        });
+      }
+
+      if (cleanName.length > 80) {
+        return res.status(400).json({
+          error:
+            "Name is too long."
+        });
+      }
+
+      if (cleanCountry.length > 80) {
+        return res.status(400).json({
+          error:
+            "Country is too long."
+        });
+      }
+
+      if (cleanBio.length > 500) {
+        return res.status(400).json({
+          error:
+            "Bio is too long. Maximum is 500 characters."
+        });
+      }
+
+      if (cleanProfilePhoto.length > 2000) {
+        return res.status(400).json({
+          error:
+            "Profile photo URL is too long."
+        });
+      }
+
+      if (cleanCoverPhoto.length > 2000) {
+        return res.status(400).json({
+          error:
+            "Cover photo URL is too long."
+        });
+      }
+
+      const result =
+        await pool.query(
+          `
+          UPDATE users
+
+          SET
+            name = $1,
+            country = $2,
+            bio = $3,
+            profile_photo_url = $4,
+            cover_photo_url = $5
+
+          WHERE id = $6
+
+          RETURNING
+            id,
+            name,
+            email,
+            country,
+            bio,
+            profile_photo_url,
+            cover_photo_url,
+            created_at
+          `,
+          [
+            cleanName,
+            cleanCountry || null,
+            cleanBio || null,
+            cleanProfilePhoto || null,
+            cleanCoverPhoto || null,
+            req.user.id
+          ]
+        );
+
+      if (result.rows.length === 0) {
+        return res.status(404).json({
+          error:
+            "User not found."
+        });
+      }
+
+      res.json({
+        ok: true,
+        user:
+          result.rows[0]
+      });
+
+    } catch (error) {
+      console.error(
+        "UPDATE PROFILE ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Unable to update profile."
+      });
+    }
+  }
+);
+
+
+/* =====================================================
    WORLD FEED
 ===================================================== */
 
@@ -443,6 +633,7 @@ app.get(
             u.id AS user_id,
             u.name,
             u.country,
+            u.profile_photo_url,
 
             COUNT(
               DISTINCT l.user_id
@@ -476,7 +667,8 @@ app.get(
             p.created_at,
             u.id,
             u.name,
-            u.country
+            u.country,
+            u.profile_photo_url
 
           ORDER BY
             p.created_at DESC
@@ -809,7 +1001,8 @@ app.get(
 
             u.id AS user_id,
             u.name,
-            u.country
+            u.country,
+            u.profile_photo_url
 
           FROM comments c
 
@@ -1112,6 +1305,9 @@ app.get(
             u.name,
             u.email,
             u.country,
+            u.bio,
+            u.profile_photo_url,
+            u.cover_photo_url,
             u.created_at,
 
             COUNT(
@@ -1144,6 +1340,9 @@ app.get(
             u.name,
             u.email,
             u.country,
+            u.bio,
+            u.profile_photo_url,
+            u.cover_photo_url,
             u.created_at
 
           ORDER BY
@@ -1391,6 +1590,7 @@ app.post(
 
 /* =====================================================
    USER PROFILE
+   Includes profile information + posts
 ===================================================== */
 
 app.get(
@@ -1401,14 +1601,17 @@ app.get(
       const userId =
         Number(req.params.id);
 
-      if (!Number.isInteger(userId)) {
+      if (
+        !Number.isInteger(userId) ||
+        userId <= 0
+      ) {
         return res.status(400).json({
           error:
             "Invalid user ID."
         });
       }
 
-      const result =
+      const userResult =
         await pool.query(
           `
           SELECT
@@ -1416,7 +1619,16 @@ app.get(
             u.name,
             u.email,
             u.country,
+            u.bio,
+            u.profile_photo_url,
+            u.cover_photo_url,
             u.created_at,
+
+            (
+              SELECT COUNT(*)
+              FROM posts
+              WHERE user_id = u.id
+            )::int AS post_count,
 
             (
               SELECT COUNT(*)
@@ -1447,16 +1659,80 @@ app.get(
           ]
         );
 
-      if (result.rows.length === 0) {
+      if (userResult.rows.length === 0) {
         return res.status(404).json({
           error:
             "User not found."
         });
       }
 
+      const postsResult =
+        await pool.query(
+          `
+          SELECT
+            p.id,
+            p.body,
+            p.created_at,
+
+            u.id AS user_id,
+            u.name,
+            u.country,
+            u.profile_photo_url,
+
+            COUNT(
+              DISTINCT l.user_id
+            )::int AS like_count,
+
+            COUNT(
+              DISTINCT c.id
+            )::int AS comment_count,
+
+            EXISTS (
+              SELECT 1
+              FROM likes my_like
+              WHERE my_like.post_id = p.id
+                AND my_like.user_id = $1
+            ) AS liked_by_me
+
+          FROM posts p
+
+          JOIN users u
+            ON u.id = p.user_id
+
+          LEFT JOIN likes l
+            ON l.post_id = p.id
+
+          LEFT JOIN comments c
+            ON c.post_id = p.id
+
+          WHERE p.user_id = $2
+
+          GROUP BY
+            p.id,
+            p.body,
+            p.created_at,
+            u.id,
+            u.name,
+            u.country,
+            u.profile_photo_url
+
+          ORDER BY
+            p.created_at DESC
+
+          LIMIT 100
+          `,
+          [
+            req.user.id,
+            userId
+          ]
+        );
+
       res.json({
         user:
-          result.rows[0]
+          userResult.rows[0],
+
+        posts:
+          postsResult.rows
       });
 
     } catch (error) {
@@ -1496,7 +1772,8 @@ app.get(
 
             a.id AS actor_id,
             a.name AS actor_name,
-            a.country AS actor_country
+            a.country AS actor_country,
+            a.profile_photo_url AS actor_profile_photo
 
           FROM notifications n
 
@@ -1691,7 +1968,9 @@ app.post(
             id,
             name,
             email,
-            country
+            country,
+            bio,
+            profile_photo_url
           FROM users
           WHERE id = $1
           `,
@@ -1798,7 +2077,13 @@ app.post(
             targetUser.email,
 
           other_user_country:
-            targetUser.country
+            targetUser.country,
+
+          other_user_bio:
+            targetUser.bio,
+
+          other_user_profile_photo:
+            targetUser.profile_photo_url
         },
 
         user: targetUser
@@ -1832,10 +2117,6 @@ app.post(
 /* =====================================================
    CONVERSE
    GET MY CONVERSATIONS
-
-   IMPORTANT:
-   The response names here must match
-   the frontend index.html.
 ===================================================== */
 
 app.get(
@@ -1854,6 +2135,7 @@ app.get(
             u.name AS other_user_name,
             u.email AS other_user_email,
             u.country AS other_user_country,
+            u.profile_photo_url AS other_user_profile_photo,
 
             lm.body AS last_message,
             lm.created_at AS last_message_at,
@@ -1928,6 +2210,10 @@ app.get(
             other_user_country:
               row.other_user_country ||
               "World",
+
+            other_user_profile_photo:
+              row.other_user_profile_photo ||
+              "",
 
             last_message:
               row.last_message ||
@@ -2024,7 +2310,8 @@ app.get(
             m.created_at,
 
             u.name AS sender_name,
-            u.country AS sender_country
+            u.country AS sender_country,
+            u.profile_photo_url AS sender_profile_photo
 
           FROM messages m
 
@@ -2411,6 +2698,8 @@ async function startServer() {
   try {
 
     await initDb();
+
+    await ensureProfileColumns();
 
     app.listen(
       PORT,
