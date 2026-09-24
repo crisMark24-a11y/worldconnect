@@ -1926,96 +1926,62 @@ async function showMoments() {
     // =========================
 
     async function register() {
+  const name = document
+    .getElementById("registerName")
+    .value
+    .trim();
 
-      const name =
-        document.getElementById(
-          "registerName"
-        ).value.trim();
+  const email = document
+    .getElementById("registerEmail")
+    .value
+    .trim();
 
+  const country = document
+    .getElementById("registerCountry")
+    .value
+    .trim();
 
-      const email =
-        document.getElementById(
-          "registerEmail"
-        ).value.trim();
+  const password = document
+    .getElementById("registerPassword")
+    .value;
 
+  const message = document.getElementById("authMessage");
 
-      const country =
-        document.getElementById(
-          "registerCountry"
-        ).value.trim();
+  if (!name || !email || !password) {
+    message.textContent =
+      "Please complete all required fields.";
+    return;
+  }
 
+  if (password.length < 8) {
+    message.textContent =
+      "Password must be at least 8 characters.";
+    return;
+  }
 
-      const password =
-        document.getElementById(
-          "registerPassword"
-        ).value;
+  try {
+    const result = await api("/api/auth/register", {
+      method: "POST",
+      body: JSON.stringify({
+        name,
+        email,
+        password,
+        country
+      })
+    });
 
+    message.textContent =
+      "Account created successfully!";
 
-      const message =
-        document.getElementById(
-          "authMessage"
-        );
+    console.log("REGISTER SUCCESS:", result);
 
+  } catch (error) {
+    console.error("REGISTER ERROR:", error);
 
-      if (!name || !email || !password) {
-
-        message.textContent =
-          "Please complete all required fields.";
-
-        return;
-
-      }
-
-
-      try {
-
-        message.textContent =
-          "Creating account...";
-
-
-        const data =
-          await api(
-            "/api/auth/register",
-            {
-              method: "POST",
-
-              body: JSON.stringify({
-                name,
-                email,
-                password,
-                country
-              })
-            }
-          );
-
-
-        token = data.token;
-
-
-        localStorage.setItem(
-          "token",
-          token
-        );
-
-
-        currentUser = data.user;
-
-
-        message.textContent =
-          "Account created successfully!";
-
-
-        await startApp();
-
-
-      } catch (error) {
-
-        message.textContent =
-          error.message;
-
-      }
-
-    }
+    message.textContent =
+      error.message || "Registration failed.";
+  }
+}
 
 
     // =========================
