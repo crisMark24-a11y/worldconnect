@@ -1534,51 +1534,128 @@
 
       </section>
 
-      <!-- MY SPACE -->
+     <!-- MY PROFILE -->
 
-      <section
-        id="spaceSection"
-        class="hidden"
-      >
+<section
+  id="spaceSection"
+  class="hidden"
+>
 
-        <h1 class="section-title">
-          ✦ My Space
-        </h1>
+  <h1 class="section-title">
+    👤 My Profile
+  </h1>
 
-        <div class="panel-card">
+  <div class="profile-page">
 
-          <h2 id="myProfileName">
-            Profile
-          </h2>
+    <!-- COVER PHOTO -->
+    <div class="profile-cover">
 
-          <p
-            id="myProfileEmail"
-            class="section-subtitle"
-          ></p>
+      <img
+        id="myCoverPhoto"
+        src=""
+        alt="Cover photo"
+      />
 
-          <p id="myProfileCountry"></p>
+    </div>
 
-          <div class="profile-stats">
+    <!-- PROFILE INFO -->
+    <div class="profile-header">
 
-            <div class="stat">
-              <strong id="myFollowers">
-                0
-              </strong>
-              <span>Followers</span>
-            </div>
+      <div class="profile-photo-wrapper">
 
-            <div class="stat">
-              <strong id="myFollowing">
-                0
-              </strong>
-              <span>Following</span>
-            </div>
+        <img
+          id="myProfilePhoto"
+          src=""
+          alt="Profile photo"
+        />
 
-          </div>
+      </div>
 
+      <div class="profile-main-info">
+
+        <h2 id="myProfileName">
+          Profile
+        </h2>
+
+        <p
+          id="myProfileEmail"
+          class="section-subtitle"
+        ></p>
+
+        <p id="myProfileCountry">
+          🌎 World
+        </p>
+
+        <p id="myProfileBio">
+          No bio yet.
+        </p>
+
+      </div>
+
+      <div class="profile-actions">
+
+        <button
+          id="editProfileBtn"
+          class="small-primary"
+          type="button"
+        >
+          ✏️ Edit Profile
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- PROFILE STATS -->
+    <div class="panel-card">
+
+      <div class="profile-stats">
+
+        <div class="stat">
+          <strong id="myPostCount">
+            0
+          </strong>
+          <span>Posts</span>
         </div>
 
-      </section>
+        <div class="stat">
+          <strong id="myFollowers">
+            0
+          </strong>
+          <span>Followers</span>
+        </div>
+
+        <div class="stat">
+          <strong id="myFollowing">
+            0
+          </strong>
+          <span>Following</span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- MY POSTS -->
+    <div class="panel-card">
+
+      <h2>
+        📄 My Posts
+      </h2>
+
+      <div id="myPosts">
+
+        <div class="loading">
+          Loading posts...
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
 
       <!-- MOMENTS -->
 
