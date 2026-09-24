@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
   <title>WorldConnect</title>
 
   <style>
@@ -13,14 +17,14 @@
     }
 
     body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: #f3f6fa;
+      font-family: Arial, sans-serif;
+      background: #f3f6fb;
       color: #172033;
     }
 
     button,
-    textarea,
-    input {
+    input,
+    textarea {
       font: inherit;
     }
 
@@ -43,18 +47,21 @@
       justify-content: center;
       padding: 20px;
       background:
-        radial-gradient(circle at top left, #dbeafe, transparent 35%),
-        radial-gradient(circle at bottom right, #e0e7ff, transparent 35%),
-        #f5f7fb;
+        linear-gradient(
+          135deg,
+          #eef5ff,
+          #ffffff,
+          #eefaf5
+        );
     }
 
     .auth-card {
       width: 100%;
       max-width: 430px;
       background: white;
-      border-radius: 22px;
-      padding: 32px;
-      box-shadow: 0 15px 45px rgba(15, 23, 42, 0.12);
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 15px 50px rgba(0,0,0,.10);
     }
 
     .brand {
@@ -63,87 +70,82 @@
     }
 
     .brand-logo {
-      font-size: 42px;
+      font-size: 48px;
       margin-bottom: 8px;
     }
 
     .brand h1 {
       font-size: 30px;
-      color: #2563eb;
+      color: #1877f2;
     }
 
     .brand p {
-      color: #64748b;
+      color: #687386;
       margin-top: 6px;
     }
 
-    .auth-tabs {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 20px;
-      background: #f1f5f9;
-      padding: 5px;
-      border-radius: 12px;
+    .auth-card h2 {
+      margin-bottom: 18px;
     }
 
-    .auth-tab {
-      flex: 1;
-      border: 0;
-      background: transparent;
-      padding: 11px;
-      border-radius: 9px;
-      color: #64748b;
-      font-weight: 700;
-    }
-
-    .auth-tab.active {
-      background: white;
-      color: #2563eb;
-      box-shadow: 0 2px 8px rgba(0,0,0,.08);
-    }
-
-    .field {
+    .form-group {
       margin-bottom: 14px;
     }
 
-    .field label {
+    .form-group label {
       display: block;
-      font-size: 14px;
-      font-weight: 700;
       margin-bottom: 6px;
+      font-size: 14px;
+      font-weight: bold;
     }
 
-    .field input {
+    .form-group input {
       width: 100%;
-      padding: 13px 14px;
-      border: 1px solid #dbe2ea;
-      border-radius: 11px;
+      padding: 13px;
+      border: 1px solid #d8deea;
+      border-radius: 12px;
       outline: none;
     }
 
-    .field input:focus {
-      border-color: #2563eb;
+    .form-group input:focus {
+      border-color: #1877f2;
     }
 
     .primary-btn {
       width: 100%;
-      border: 0;
-      background: #2563eb;
-      color: white;
+      border: none;
       padding: 13px;
-      border-radius: 11px;
-      font-weight: 700;
+      border-radius: 12px;
+      background: #1877f2;
+      color: white;
+      font-weight: bold;
       margin-top: 5px;
     }
 
     .primary-btn:hover {
-      background: #1d4ed8;
+      opacity: .92;
     }
 
-    .auth-message {
-      min-height: 22px;
+    .switch-auth {
       text-align: center;
-      margin-top: 13px;
+      margin-top: 18px;
+      color: #687386;
+      font-size: 14px;
+    }
+
+    .switch-auth button {
+      border: none;
+      background: none;
+      color: #1877f2;
+      font-weight: bold;
+    }
+
+    .error-box {
+      background: #fff0f0;
+      color: #c62828;
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 12px;
       font-size: 14px;
     }
 
@@ -156,320 +158,312 @@
     }
 
     .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 100;
       height: 64px;
       background: white;
-      border-bottom: 1px solid #e5e7eb;
+      border-bottom: 1px solid #e5e9f0;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 22px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
 
     .top-brand {
+      color: #1877f2;
       font-size: 21px;
-      font-weight: 800;
-      color: #2563eb;
+      font-weight: bold;
     }
 
     .top-actions {
       display: flex;
-      align-items: center;
       gap: 8px;
     }
 
     .icon-btn {
-      width: 40px;
-      height: 40px;
-      border: 0;
-      background: #f1f5f9;
+      border: none;
+      background: #f1f4f9;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
-      color: #334155;
-      font-size: 17px;
+      font-size: 18px;
     }
 
-    .logout-btn {
-      border: 0;
-      background: #fee2e2;
-      color: #dc2626;
-      padding: 10px 14px;
-      border-radius: 9px;
-      font-weight: 700;
+    .icon-btn:hover {
+      background: #e5ebf5;
     }
 
     .layout {
-      max-width: 1400px;
+      max-width: 1250px;
       margin: auto;
       display: grid;
-      grid-template-columns: 240px minmax(0, 680px) 260px;
+      grid-template-columns: 230px 1fr 260px;
       gap: 20px;
-      padding: 22px;
+      padding: 20px;
     }
 
     /* =========================
        SIDEBAR
     ========================= */
 
-    .sidebar,
-    .rightbar {
+    .sidebar {
+      background: white;
+      border-radius: 18px;
+      padding: 15px;
+      height: fit-content;
       position: sticky;
       top: 84px;
-      align-self: start;
     }
 
-    .side-card {
-      background: white;
-      border-radius: 16px;
-      padding: 14px;
-      border: 1px solid #e7ebf0;
-    }
-
-    .side-welcome {
-      padding: 12px;
+    .profile-mini {
+      padding: 15px;
+      border-bottom: 1px solid #edf0f5;
       margin-bottom: 10px;
-      background: #eff6ff;
-      border-radius: 12px;
-    }
-
-    .side-welcome strong {
-      display: block;
-      color: #1e40af;
-      margin-bottom: 4px;
-    }
-
-    .nav-item {
-      width: 100%;
-      border: 0;
-      background: transparent;
-      text-align: left;
-      padding: 12px;
-      border-radius: 10px;
-      margin-bottom: 3px;
-      color: #475569;
-      font-weight: 600;
-    }
-
-    .nav-item:hover,
-    .nav-item.active {
-      background: #eff6ff;
-      color: #2563eb;
-    }
-
-    /* =========================
-       FEED
-    ========================= */
-
-    .feed-title {
-      margin-bottom: 15px;
-    }
-
-    .feed-title h2 {
-      font-size: 24px;
-    }
-
-    .feed-title p {
-      color: #64748b;
-      margin-top: 4px;
-      font-size: 14px;
-    }
-
-    .composer {
-      background: white;
-      border: 1px solid #e7ebf0;
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 18px;
-    }
-
-    .composer-head {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
     }
 
     .avatar {
-      width: 42px;
-      height: 42px;
-      flex: 0 0 42px;
+      width: 46px;
+      height: 46px;
       border-radius: 50%;
-      background: #2563eb;
+      background: linear-gradient(
+        135deg,
+        #1877f2,
+        #7b61ff
+      );
       color: white;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 800;
+      font-weight: bold;
+      font-size: 20px;
     }
 
-    .composer-name {
-      font-weight: 700;
+    .profile-mini-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    .composer textarea {
+    .profile-mini-name {
+      font-weight: bold;
+    }
+
+    .profile-mini-email {
+      font-size: 12px;
+      color: #7a8495;
+      margin-top: 3px;
+      word-break: break-all;
+    }
+
+    .nav-btn {
       width: 100%;
-      min-height: 95px;
+      border: none;
+      background: transparent;
+      padding: 12px;
+      text-align: left;
+      border-radius: 10px;
+      margin-bottom: 4px;
+      font-weight: 600;
+      color: #4d586c;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active {
+      background: #eef5ff;
+      color: #1877f2;
+    }
+
+    /* =========================
+       MAIN
+    ========================= */
+
+    .main-content {
+      min-width: 0;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .section-title {
+      font-size: 25px;
+      margin-bottom: 5px;
+    }
+
+    .section-subtitle {
+      color: #758094;
+      margin-bottom: 18px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 3px 14px rgba(31,45,61,.04);
+    }
+
+    /* =========================
+       CREATE POST
+    ========================= */
+
+    .create-post textarea {
+      width: 100%;
+      min-height: 100px;
       resize: vertical;
-      border: 1px solid #dbe2ea;
-      border-radius: 12px;
+      border: 1px solid #dce2eb;
+      border-radius: 14px;
       padding: 13px;
       outline: none;
     }
 
-    .composer textarea:focus {
-      border-color: #2563eb;
+    .create-post textarea:focus {
+      border-color: #1877f2;
     }
 
-    .composer-bottom {
+    .post-tools {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-top: 10px;
     }
 
-    .post-message {
-      font-size: 13px;
+    .char-count {
+      color: #7a8495;
+      font-size: 12px;
     }
 
     .post-btn {
-      border: 0;
-      background: #2563eb;
+      border: none;
+      background: #1877f2;
       color: white;
-      padding: 10px 22px;
+      padding: 10px 18px;
       border-radius: 10px;
-      font-weight: 700;
+      font-weight: bold;
     }
 
     /* =========================
-       POST
+       POSTS
     ========================= */
-
-    .post-card {
-      background: white;
-      border: 1px solid #e7ebf0;
-      border-radius: 16px;
-      padding: 17px;
-      margin-bottom: 16px;
-    }
 
     .post-header {
       display: flex;
-      align-items: center;
+      justify-content: space-between;
       gap: 10px;
     }
 
-    .post-meta {
-      min-width: 0;
+    .post-user {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .post-user .avatar {
+      width: 42px;
+      height: 42px;
+      font-size: 17px;
     }
 
     .post-name {
-      font-weight: 800;
+      font-weight: bold;
     }
 
-    .post-time {
-      color: #64748b;
+    .post-country {
       font-size: 12px;
-      margin-top: 3px;
+      color: #7b8495;
+      margin-top: 2px;
+    }
+
+    .post-date {
+      font-size: 11px;
+      color: #8b94a4;
     }
 
     .post-body {
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
+      margin: 15px 0;
       line-height: 1.55;
-      margin: 17px 0;
-      color: #273449;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .post-stats {
+      display: flex;
+      gap: 15px;
+      color: #737d90;
+      font-size: 13px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #edf0f4;
     }
 
     .post-actions {
-      border-top: 1px solid #edf0f3;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 5px;
-      padding-top: 8px;
+      margin-top: 8px;
     }
 
     .post-action {
-      border: 0;
+      border: none;
       background: transparent;
-      padding: 10px 5px;
+      padding: 9px;
       border-radius: 9px;
-      color: #475569;
+      color: #586377;
       font-weight: 600;
     }
 
     .post-action:hover {
-      background: #f1f5f9;
+      background: #f1f4f8;
     }
 
     .post-action.liked {
-      color: #2563eb;
-      background: #eff6ff;
-    }
-
-    .loading,
-    .empty {
-      background: white;
-      padding: 30px;
-      text-align: center;
-      border-radius: 16px;
-      color: #64748b;
-      border: 1px solid #e7ebf0;
+      color: #1877f2;
+      background: #eef5ff;
     }
 
     /* =========================
        COMMENTS
     ========================= */
 
-    .comments-area {
+    .comments-box {
       margin-top: 12px;
       padding-top: 12px;
-      border-top: 1px solid #edf0f3;
-    }
-
-    .comment-loading {
-      color: #64748b;
-      font-size: 13px;
-      padding: 8px 0;
+      border-top: 1px solid #edf0f4;
     }
 
     .comment {
       display: flex;
-      gap: 9px;
+      gap: 8px;
       margin-bottom: 10px;
     }
 
     .comment .avatar {
       width: 32px;
       height: 32px;
-      flex-basis: 32px;
+      min-width: 32px;
       font-size: 13px;
     }
 
     .comment-bubble {
-      background: #f1f5f9;
+      background: #f1f4f8;
       border-radius: 12px;
       padding: 8px 11px;
       flex: 1;
-      min-width: 0;
     }
 
     .comment-name {
-      font-weight: 700;
+      font-weight: bold;
       font-size: 13px;
     }
 
     .comment-text {
-      font-size: 14px;
       margin-top: 3px;
+      font-size: 13px;
       white-space: pre-wrap;
-      overflow-wrap: anywhere;
-    }
-
-    .comment-time {
-      color: #94a3b8;
-      font-size: 11px;
-      margin-top: 4px;
     }
 
     .comment-form {
@@ -478,173 +472,186 @@
       margin-top: 10px;
     }
 
-    .comment-input {
+    .comment-form input {
       flex: 1;
-      min-width: 0;
-      border: 1px solid #dbe2ea;
-      border-radius: 10px;
-      padding: 10px;
+      border: 1px solid #dce2eb;
+      border-radius: 20px;
+      padding: 9px 13px;
       outline: none;
     }
 
-    .comment-input:focus {
-      border-color: #2563eb;
-    }
-
-    .comment-send {
-      border: 0;
-      background: #2563eb;
+    .comment-form button {
+      border: none;
+      background: #1877f2;
       color: white;
-      border-radius: 10px;
-      padding: 0 14px;
-      font-weight: 700;
+      border-radius: 20px;
+      padding: 0 15px;
     }
 
     /* =========================
-       RIGHTBAR
+       DISCOVER / CONNECT
     ========================= */
 
-    .profile-card {
+    .discover-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .user-card {
       background: white;
-      border: 1px solid #e7ebf0;
-      border-radius: 16px;
+      border-radius: 18px;
       padding: 18px;
-      text-align: center;
+      border: 1px solid #edf0f4;
     }
 
-    .profile-card .avatar {
-      margin: 0 auto 10px;
-      width: 62px;
-      height: 62px;
-      font-size: 24px;
+    .user-card-top {
+      display: flex;
+      gap: 12px;
+      align-items: center;
     }
 
-    .profile-name {
-      font-weight: 800;
-      font-size: 18px;
+    .user-card-name {
+      font-weight: bold;
+      font-size: 17px;
     }
 
-    .profile-email,
-    .profile-country {
-      color: #64748b;
+    .user-card-country {
+      color: #7a8495;
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .user-stats {
+      display: flex;
+      gap: 18px;
+      margin: 15px 0;
       font-size: 13px;
-      margin-top: 5px;
-      overflow-wrap: anywhere;
+      color: #697487;
     }
 
-    .right-info {
-      background: white;
-      border: 1px solid #e7ebf0;
-      border-radius: 16px;
-      padding: 17px;
+    .follow-btn {
+      width: 100%;
+      border: none;
+      padding: 10px;
+      border-radius: 10px;
+      background: #1877f2;
+      color: white;
+      font-weight: bold;
+    }
+
+    .follow-btn.following {
+      background: #e9edf4;
+      color: #344054;
+    }
+
+    .profile-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
       margin-top: 15px;
     }
 
-    .right-info h3 {
-      font-size: 15px;
-      margin-bottom: 8px;
+    .stat-box {
+      background: #f5f7fa;
+      border-radius: 14px;
+      text-align: center;
+      padding: 18px 10px;
     }
 
-    .right-info p {
-      color: #64748b;
+    .stat-number {
+      font-size: 24px;
+      font-weight: bold;
+      color: #1877f2;
+    }
+
+    .stat-label {
+      color: #788295;
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    /* =========================
+       RIGHT PANEL
+    ========================= */
+
+    .right-panel {
+      background: white;
+      border-radius: 18px;
+      padding: 18px;
+      height: fit-content;
+      position: sticky;
+      top: 84px;
+    }
+
+    .right-panel h3 {
+      margin-bottom: 12px;
+    }
+
+    .info-item {
+      padding: 12px 0;
+      border-bottom: 1px solid #edf0f4;
+      color: #687386;
       font-size: 13px;
       line-height: 1.5;
     }
 
     /* =========================
-       MODAL
+       EMPTY / LOADING
     ========================= */
 
-    .modal-overlay {
+    .empty {
+      text-align: center;
+      padding: 35px 15px;
+      color: #7a8495;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 25px;
+      color: #7a8495;
+    }
+
+    .toast {
       position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, .55);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 18px;
-      z-index: 999;
-    }
-
-    .modal {
-      width: 100%;
-      max-width: 520px;
-      max-height: 85vh;
-      overflow-y: auto;
-      background: white;
-      border-radius: 18px;
-      padding: 20px;
-    }
-
-    .modal-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-
-    .modal-head h3 {
-      font-size: 20px;
-    }
-
-    .close-btn {
-      width: 35px;
-      height: 35px;
-      border: 0;
-      background: #f1f5f9;
-      border-radius: 50%;
-      font-size: 18px;
-    }
-
-    .share-box {
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 14px;
-      line-height: 1.5;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-    }
-
-    .share-buttons {
-      display: flex;
-      gap: 8px;
-    }
-
-    .share-buttons button {
-      flex: 1;
-      border: 0;
-      padding: 11px;
-      border-radius: 10px;
-      font-weight: 700;
-    }
-
-    .copy-btn {
-      background: #e2e8f0;
-      color: #334155;
-    }
-
-    .native-share-btn {
-      background: #2563eb;
+      right: 20px;
+      bottom: 20px;
+      background: #172033;
       color: white;
+      padding: 12px 17px;
+      border-radius: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: .25s;
+      z-index: 999;
+      max-width: 320px;
+      font-size: 14px;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     /* =========================
-       RESPONSIVE
+       MOBILE
     ========================= */
 
-    @media (max-width: 1050px) {
+    @media (max-width: 1000px) {
+
       .layout {
-        grid-template-columns: 210px minmax(0, 1fr);
+        grid-template-columns: 200px 1fr;
       }
 
-      .rightbar {
+      .right-panel {
         display: none;
       }
+
     }
 
-    @media (max-width: 720px) {
+    @media (max-width: 700px) {
+
       .topbar {
         padding: 0 12px;
       }
@@ -653,67 +660,58 @@
         font-size: 18px;
       }
 
-      .top-actions .icon-btn {
-        display: none;
-      }
-
-      .logout-btn {
-        padding: 9px 11px;
-      }
-
       .layout {
         display: block;
-        padding: 12px;
+        padding: 10px;
       }
 
       .sidebar {
         position: static;
-        margin-bottom: 14px;
-      }
-
-      .side-card {
-        display: flex;
-        overflow-x: auto;
-        gap: 4px;
+        margin-bottom: 12px;
         padding: 8px;
       }
 
-      .side-welcome {
+      .profile-mini {
         display: none;
       }
 
-      .nav-item {
-        min-width: max-content;
-        margin: 0;
+      .sidebar nav {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 4px;
       }
 
-      .feed-title h2 {
-        font-size: 21px;
+      .nav-btn {
+        text-align: center;
+        font-size: 11px;
+        padding: 9px 4px;
       }
 
-      .composer,
-      .post-card {
-        border-radius: 13px;
+      .discover-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        border-radius: 14px;
+        padding: 14px;
       }
 
       .post-actions {
-        font-size: 13px;
+        font-size: 12px;
       }
 
-      .auth-card {
-        padding: 24px 18px;
-      }
     }
+
   </style>
 </head>
 
 <body>
 
-  <!-- =========================
+  <!-- =====================================================
        AUTH SCREEN
-  ========================= -->
+  ====================================================== -->
 
-  <section id="authScreen">
+  <div id="authScreen">
 
     <div class="auth-card">
 
@@ -723,123 +721,143 @@
         <p>One World. One Connection.</p>
       </div>
 
-      <div class="auth-tabs">
-        <button
-          id="loginTab"
-          class="auth-tab active"
-          onclick="showLoginForm()">
-          Login
-        </button>
-
-        <button
-          id="registerTab"
-          class="auth-tab"
-          onclick="showRegisterForm()">
-          Register
-        </button>
-      </div>
-
       <!-- LOGIN -->
 
-      <form id="loginForm" onsubmit="login(event)">
+      <div id="loginForm">
 
-        <div class="field">
+        <h2>Welcome Back</h2>
+
+        <div
+          id="loginError"
+          class="error-box hidden"
+        ></div>
+
+        <div class="form-group">
           <label>Email</label>
+
           <input
             id="loginEmail"
             type="email"
             placeholder="Enter your email"
-            required>
+          />
         </div>
 
-        <div class="field">
+        <div class="form-group">
           <label>Password</label>
+
           <input
             id="loginPassword"
             type="password"
             placeholder="Enter your password"
-            required>
+          />
         </div>
 
         <button
-          id="loginButton"
           class="primary-btn"
-          type="submit">
+          onclick="login()"
+        >
           Login
         </button>
 
-      </form>
+        <div class="switch-auth">
+          Don't have an account?
+
+          <button
+            onclick="showRegister()"
+          >
+            Register
+          </button>
+        </div>
+
+      </div>
+
 
       <!-- REGISTER -->
 
-      <form
+      <div
         id="registerForm"
         class="hidden"
-        onsubmit="register(event)">
+      >
 
-        <div class="field">
+        <h2>Create Account</h2>
+
+        <div
+          id="registerError"
+          class="error-box hidden"
+        ></div>
+
+        <div class="form-group">
           <label>Name</label>
+
           <input
             id="registerName"
             type="text"
             placeholder="Your name"
-            maxlength="80"
-            required>
+          />
         </div>
 
-        <div class="field">
+        <div class="form-group">
           <label>Email</label>
+
           <input
             id="registerEmail"
             type="email"
             placeholder="Your email"
-            required>
+          />
         </div>
 
-        <div class="field">
+        <div class="form-group">
           <label>Country</label>
+
           <input
             id="registerCountry"
             type="text"
             placeholder="Your country"
-            maxlength="80">
+          />
         </div>
 
-        <div class="field">
+        <div class="form-group">
           <label>Password</label>
+
           <input
             id="registerPassword"
             type="password"
-            placeholder="Create a password"
-            required>
+            placeholder="Minimum 6 characters"
+          />
         </div>
 
         <button
-          id="registerButton"
           class="primary-btn"
-          type="submit">
+          onclick="register()"
+        >
           Create Account
         </button>
 
-      </form>
+        <div class="switch-auth">
+          Already have an account?
 
-      <div
-        id="authMessage"
-        class="auth-message">
+          <button
+            onclick="showLogin()"
+          >
+            Login
+          </button>
+        </div>
+
       </div>
 
     </div>
 
-  </section>
+  </div>
 
 
-  <!-- =========================
-       APP SCREEN
-  ========================= -->
+  <!-- =====================================================
+       APP
+  ====================================================== -->
 
-  <section
+  <div
     id="appScreen"
-    style="display:none;">
+    class="hidden"
+  >
 
     <!-- TOP BAR -->
 
@@ -853,26 +871,34 @@
 
         <button
           class="icon-btn"
-          onclick="showComingSoon('Notifications')">
+          title="Notifications"
+          onclick="showToast('Notifications coming soon.')"
+        >
           🔔
         </button>
 
         <button
           class="icon-btn"
-          onclick="showComingSoon('Messages')">
+          title="Messages"
+          onclick="showToast('Messages coming soon.')"
+        >
           💬
         </button>
 
         <button
           class="icon-btn"
-          onclick="showComingSoon('Help')">
+          title="Help"
+          onclick="showToast('WorldConnect — One World. One Connection.')"
+        >
           ?
         </button>
 
         <button
-          class="logout-btn"
-          onclick="logout()">
-          Logout
+          class="icon-btn"
+          title="Logout"
+          onclick="logout()"
+        >
+          🚪
         </button>
 
       </div>
@@ -884,1477 +910,2241 @@
 
     <div class="layout">
 
-      <!-- LEFT -->
+
+      <!-- =================================================
+           SIDEBAR
+      ================================================== -->
 
       <aside class="sidebar">
 
-        <div class="side-card">
+        <div class="profile-mini">
 
-          <div
-            id="sideWelcome"
-            class="side-welcome">
+          <div class="profile-mini-row">
+
+            <div
+              class="avatar"
+              id="miniAvatar"
+            >
+              ?
+            </div>
+
+            <div>
+
+              <div
+                class="profile-mini-name"
+                id="miniName"
+              >
+                User
+              </div>
+
+              <div
+                class="profile-mini-email"
+                id="miniEmail"
+              >
+                -
+              </div>
+
+            </div>
+
           </div>
 
+        </div>
+
+
+        <nav>
+
           <button
-            class="nav-item active"
-            onclick="showFeed()">
+            class="nav-btn active"
+            data-section="feedSection"
+            onclick="showSection('feedSection', this)"
+          >
             🌎 World Feed
           </button>
 
           <button
-            class="nav-item"
-            onclick="showComingSoon('My Space')">
+            class="nav-btn"
+            data-section="spaceSection"
+            onclick="showSection('spaceSection', this)"
+          >
             ✦ My Space
           </button>
 
           <button
-            class="nav-item"
-            onclick="showComingSoon('Moments')">
+            class="nav-btn"
+            data-section="momentsSection"
+            onclick="showSection('momentsSection', this)"
+          >
             ✨ Moments
           </button>
 
           <button
-            class="nav-item"
-            onclick="showComingSoon('Converse')">
+            class="nav-btn"
+            data-section="converseSection"
+            onclick="showSection('converseSection', this)"
+          >
             💬 Converse
           </button>
 
           <button
-            class="nav-item"
-            onclick="showComingSoon('Connect')">
+            class="nav-btn"
+            data-section="connectSection"
+            onclick="showSection('connectSection', this)"
+          >
             🤝 Connect
           </button>
 
           <button
-            class="nav-item"
-            onclick="showComingSoon('Discover')">
+            class="nav-btn"
+            data-section="discoverSection"
+            onclick="showSection('discoverSection', this)"
+          >
             🧭 Discover
           </button>
 
           <button
-            class="nav-item"
-            onclick="showComingSoon('Control Center')">
+            class="nav-btn"
+            data-section="controlSection"
+            onclick="showSection('controlSection', this)"
+          >
             ⚙️ Control Center
           </button>
 
-        </div>
+          <button
+            class="nav-btn"
+            onclick="logout()"
+          >
+            🚪 Logout
+          </button>
+
+        </nav>
 
       </aside>
 
 
-      <!-- CENTER -->
+      <!-- =================================================
+           MAIN CONTENT
+      ================================================== -->
 
-      <main>
-
-        <div class="feed-title">
-          <h2>🌎 World Feed</h2>
-          <p>Share your thoughts with the world.</p>
-        </div>
+      <main class="main-content">
 
 
-        <!-- COMPOSER -->
+        <!-- =========================
+             WORLD FEED
+        ========================== -->
 
-        <div class="composer">
+        <section
+          id="feedSection"
+          class="section active"
+        >
 
-          <div class="composer-head">
+          <h2 class="section-title">
+            🌎 World Feed
+          </h2>
 
-            <div
-              id="composerAvatar"
-              class="avatar">
-              U
-            </div>
+          <p class="section-subtitle">
+            Connect with people around the world.
+          </p>
 
-            <div
-              id="composerName"
-              class="composer-name">
-              WorldConnect User
+
+          <!-- CREATE POST -->
+
+          <div class="card create-post">
+
+            <textarea
+              id="postBody"
+              maxlength="5000"
+              placeholder="What's on your mind?"
+              oninput="updateCharCount()"
+            ></textarea>
+
+            <div class="post-tools">
+
+              <span
+                class="char-count"
+                id="charCount"
+              >
+                0 / 5000
+              </span>
+
+              <button
+                class="post-btn"
+                onclick="createPost()"
+              >
+                📝 Post
+              </button>
+
             </div>
 
           </div>
 
-          <textarea
-            id="postText"
-            maxlength="5000"
-            placeholder="What's on your mind?">
-          </textarea>
 
-          <div class="composer-bottom">
+          <!-- FEED -->
 
-            <div
-              id="postMessage"
-              class="post-message">
+          <div id="feedContainer">
+
+            <div class="loading">
+              Loading World Feed...
             </div>
 
-            <button
-              id="postButton"
-              class="post-btn"
-              onclick="createPost()">
-              Post
-            </button>
+          </div>
+
+        </section>
+
+
+        <!-- =========================
+             MY SPACE
+        ========================== -->
+
+        <section
+          id="spaceSection"
+          class="section"
+        >
+
+          <h2 class="section-title">
+            ✦ My Space
+          </h2>
+
+          <p class="section-subtitle">
+            Your WorldConnect profile.
+          </p>
+
+
+          <div class="card">
+
+            <div
+              class="profile-mini-row"
+            >
+
+              <div
+                class="avatar"
+                id="profileAvatar"
+              >
+                ?
+              </div>
+
+              <div>
+
+                <h2 id="profileName">
+                  User
+                </h2>
+
+                <p
+                  id="profileEmail"
+                  class="profile-mini-email"
+                >
+                  -
+                </p>
+
+                <p
+                  id="profileCountry"
+                  class="profile-mini-email"
+                >
+                  🌎
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="profile-stats">
+
+              <div class="stat-box">
+
+                <div
+                  class="stat-number"
+                  id="myFollowers"
+                >
+                  0
+                </div>
+
+                <div class="stat-label">
+                  Followers
+                </div>
+
+              </div>
+
+              <div class="stat-box">
+
+                <div
+                  class="stat-number"
+                  id="myFollowing"
+                >
+                  0
+                </div>
+
+                <div class="stat-label">
+                  Following
+                </div>
+
+              </div>
+
+            </div>
 
           </div>
 
-        </div>
+        </section>
 
 
-        <!-- POSTS -->
+        <!-- =========================
+             MOMENTS
+        ========================== -->
 
-        <div id="postsContainer">
+        <section
+          id="momentsSection"
+          class="section"
+        >
 
-          <div class="loading">
-            Loading World Feed...
+          <h2 class="section-title">
+            ✨ Moments
+          </h2>
+
+          <p class="section-subtitle">
+            Share and discover memorable moments.
+          </p>
+
+          <div class="card empty">
+            ✨ Moments feature is coming soon.
           </div>
 
-        </div>
+        </section>
+
+
+        <!-- =========================
+             CONVERSE
+        ========================== -->
+
+        <section
+          id="converseSection"
+          class="section"
+        >
+
+          <h2 class="section-title">
+            💬 Converse
+          </h2>
+
+          <p class="section-subtitle">
+            Talk with people from around the world.
+          </p>
+
+          <div class="card empty">
+            💬 Messenger and private conversations are coming soon.
+          </div>
+
+        </section>
+
+
+        <!-- =========================
+             CONNECT
+        ========================== -->
+
+        <section
+          id="connectSection"
+          class="section"
+        >
+
+          <h2 class="section-title">
+            🤝 Connect
+          </h2>
+
+          <p class="section-subtitle">
+            Follow people and build your network.
+          </p>
+
+
+          <div class="card">
+
+            <h3>
+              👥 Your Network
+            </h3>
+
+            <div class="profile-stats">
+
+              <div class="stat-box">
+
+                <div
+                  class="stat-number"
+                  id="connectFollowers"
+                >
+                  0
+                </div>
+
+                <div class="stat-label">
+                  Followers
+                </div>
+
+              </div>
+
+              <div class="stat-box">
+
+                <div
+                  class="stat-number"
+                  id="connectFollowing"
+                >
+                  0
+                </div>
+
+                <div class="stat-label">
+                  Following
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div id="connectContainer">
+
+            <div class="loading">
+              Loading people...
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =========================
+             DISCOVER
+        ========================== -->
+
+        <section
+          id="discoverSection"
+          class="section"
+        >
+
+          <h2 class="section-title">
+            🧭 Discover
+          </h2>
+
+          <p class="section-subtitle">
+            Discover people and connect with them.
+          </p>
+
+
+          <div
+            id="discoverContainer"
+            class="discover-grid"
+          >
+
+            <div class="loading">
+              Loading users...
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- =========================
+             CONTROL CENTER
+        ========================== -->
+
+        <section
+          id="controlSection"
+          class="section"
+        >
+
+          <h2 class="section-title">
+            ⚙️ Control Center
+          </h2>
+
+          <p class="section-subtitle">
+            Manage your WorldConnect account.
+          </p>
+
+
+          <div class="card">
+
+            <h3>
+              👤 Account
+            </h3>
+
+            <div class="info-item">
+              Your account is protected with secure
+              authentication.
+            </div>
+
+            <div class="info-item">
+              Your WorldConnect session remains active
+              after refreshing the page.
+            </div>
+
+            <div class="info-item">
+              More account settings will be added soon.
+            </div>
+
+          </div>
+
+        </section>
 
       </main>
 
 
-      <!-- RIGHT -->
+      <!-- =================================================
+           RIGHT PANEL
+      ================================================== -->
 
-      <aside class="rightbar">
+      <aside class="right-panel">
 
-        <div class="profile-card">
+        <h3>
+          🌎 WorldConnect
+        </h3>
 
-          <div
-            id="profileAvatar"
-            class="avatar">
-            U
-          </div>
-
-          <div
-            id="profileName"
-            class="profile-name">
-            WorldConnect User
-          </div>
-
-          <div
-            id="profileEmail"
-            class="profile-email">
-          </div>
-
-          <div
-            id="profileCountry"
-            class="profile-country">
-          </div>
-
+        <div class="info-item">
+          Connect with people around the world.
         </div>
 
+        <div class="info-item">
+          ❤️ Like posts
+        </div>
 
-        <div class="right-info">
+        <div class="info-item">
+          💬 Comment on posts
+        </div>
 
-          <h3>🌎 About WorldConnect</h3>
+        <div class="info-item">
+          ↗️ Share posts
+        </div>
 
-          <p>
-            Connect with people, share your thoughts,
-            discover new conversations and build
-            connections around the world.
-          </p>
+        <div class="info-item">
+          🤝 Follow people
+        </div>
 
+        <div class="info-item">
+          👥 Build your network
         </div>
 
       </aside>
-
-    </div>
-
-  </section>
-
-
-  <!-- =========================
-       MODAL
-  ========================= -->
-
-  <div
-    id="modalOverlay"
-    class="modal-overlay hidden"
-    onclick="closeModalOutside(event)">
-
-    <div class="modal">
-
-      <div class="modal-head">
-
-        <h3 id="modalTitle">
-          WorldConnect
-        </h3>
-
-        <button
-          class="close-btn"
-          onclick="closeModal()">
-          ×
-        </button>
-
-      </div>
-
-      <div id="modalContent"></div>
 
     </div>
 
   </div>
 
 
-<script>
-/* =====================================================
-   GLOBAL
-===================================================== */
+  <!-- TOAST -->
 
-let token = localStorage.getItem("token");
-let currentUser = null;
+  <div
+    id="toast"
+    class="toast"
+  ></div>
 
 
-/* =====================================================
-   API HELPER
-===================================================== */
+  <script>
 
-async function api(url, options = {}) {
+    /* =====================================================
+       GLOBAL STATE
+    ====================================================== */
 
-  options.headers = {
-    ...(options.headers || {}),
-    "Content-Type": "application/json"
-  };
+    let token =
+      localStorage.getItem("token");
 
-  if (token) {
-    options.headers.Authorization = `Bearer ${token}`;
-  }
+    let currentUser = null;
 
-  const response = await fetch(url, options);
 
-  let data = {};
+    /* =====================================================
+       API HELPER
+    ====================================================== */
 
-  try {
-    data = await response.json();
-  } catch {
-    data = {};
-  }
+    async function api(
+      url,
+      options = {}
+    ) {
 
-  if (!response.ok) {
-    throw new Error(
-      data.error || `Request failed (${response.status})`
-    );
-  }
+      options.headers = {
+        ...(options.headers || {}),
+        "Content-Type":
+          "application/json"
+      };
 
-  return data;
-}
+      if (token) {
 
+        options.headers.Authorization =
+          `Bearer ${token}`;
 
-/* =====================================================
-   ESCAPE HTML
-===================================================== */
+      }
 
-function escapeHtml(value) {
+      const response =
+        await fetch(
+          url,
+          options
+        );
 
-  if (value === null || value === undefined) {
-    return "";
-  }
+      let data = {};
 
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
+      try {
 
+        data =
+          await response.json();
 
-/* =====================================================
-   DATE
-===================================================== */
+      } catch {
 
-function formatDate(dateString) {
+        data = {};
 
-  if (!dateString) {
-    return "";
-  }
+      }
 
-  const date = new Date(dateString);
+      if (!response.ok) {
 
-  if (Number.isNaN(date.getTime())) {
-    return "";
-  }
+        throw new Error(
+          data.error ||
+          `Request failed (${response.status})`
+        );
 
-  return date.toLocaleString([], {
-    dateStyle: "medium",
-    timeStyle: "short"
-  });
-}
+      }
 
-
-/* =====================================================
-   AUTH TABS
-===================================================== */
-
-function showLoginForm() {
-
-  document.getElementById("loginForm")
-    .classList.remove("hidden");
-
-  document.getElementById("registerForm")
-    .classList.add("hidden");
-
-  document.getElementById("loginTab")
-    .classList.add("active");
-
-  document.getElementById("registerTab")
-    .classList.remove("active");
-
-  document.getElementById("authMessage")
-    .textContent = "";
-}
-
-
-function showRegisterForm() {
-
-  document.getElementById("loginForm")
-    .classList.add("hidden");
-
-  document.getElementById("registerForm")
-    .classList.remove("hidden");
-
-  document.getElementById("loginTab")
-    .classList.remove("active");
-
-  document.getElementById("registerTab")
-    .classList.add("active");
-
-  document.getElementById("authMessage")
-    .textContent = "";
-}
-
-
-/* =====================================================
-   LOGIN
-===================================================== */
-
-async function login(event) {
-
-  event.preventDefault();
-
-  const email =
-    document.getElementById("loginEmail")
-      .value.trim();
-
-  const password =
-    document.getElementById("loginPassword")
-      .value;
-
-  const button =
-    document.getElementById("loginButton");
-
-  const message =
-    document.getElementById("authMessage");
-
-  try {
-
-    button.disabled = true;
-    button.textContent = "Logging in...";
-
-    message.style.color = "#64748b";
-    message.textContent = "";
-
-    const data = await api("/api/auth/login", {
-      method: "POST",
-      body: JSON.stringify({
-        email,
-        password
-      })
-    });
-
-    token = data.token;
-
-    localStorage.setItem("token", token);
-
-    await startApp();
-
-  } catch (error) {
-
-    console.error("LOGIN ERROR:", error);
-
-    message.style.color = "#dc2626";
-    message.textContent =
-      error.message || "Login failed.";
-
-  } finally {
-
-    button.disabled = false;
-    button.textContent = "Login";
-  }
-}
-
-
-/* =====================================================
-   REGISTER
-===================================================== */
-
-async function register(event) {
-
-  event.preventDefault();
-
-  const name =
-    document.getElementById("registerName")
-      .value.trim();
-
-  const email =
-    document.getElementById("registerEmail")
-      .value.trim();
-
-  const country =
-    document.getElementById("registerCountry")
-      .value.trim();
-
-  const password =
-    document.getElementById("registerPassword")
-      .value;
-
-  const button =
-    document.getElementById("registerButton");
-
-  const message =
-    document.getElementById("authMessage");
-
-  try {
-
-    button.disabled = true;
-    button.textContent = "Creating...";
-
-    message.style.color = "#64748b";
-    message.textContent = "";
-
-    const data = await api("/api/auth/register", {
-      method: "POST",
-      body: JSON.stringify({
-        name,
-        email,
-        password,
-        country
-      })
-    });
-
-    token = data.token;
-
-    localStorage.setItem("token", token);
-
-    await startApp();
-
-  } catch (error) {
-
-    console.error("REGISTER ERROR:", error);
-
-    message.style.color = "#dc2626";
-    message.textContent =
-      error.message || "Registration failed.";
-
-  } finally {
-
-    button.disabled = false;
-    button.textContent = "Create Account";
-  }
-}
-
-
-/* =====================================================
-   START APP
-===================================================== */
-
-async function startApp() {
-
-  try {
-
-    if (!token) {
-      showAuth();
-      return;
+      return data;
     }
 
-    const data = await api("/api/me");
 
-    currentUser = data.user;
+    /* =====================================================
+       TOAST
+    ====================================================== */
 
-    updateUserInterface();
+    let toastTimer;
 
-    document.getElementById("authScreen")
-      .style.display = "none";
+    function showToast(message) {
 
-    document.getElementById("appScreen")
-      .style.display = "block";
+      const toast =
+        document.getElementById(
+          "toast"
+        );
 
-    await loadPosts();
+      toast.textContent =
+        message;
 
-  } catch (error) {
-
-    console.error("START APP ERROR:", error);
-
-    localStorage.removeItem("token");
-
-    token = null;
-    currentUser = null;
-
-    showAuth();
-  }
-}
-
-
-/* =====================================================
-   SHOW AUTH
-===================================================== */
-
-function showAuth() {
-
-  document.getElementById("authScreen")
-    .style.display = "flex";
-
-  document.getElementById("appScreen")
-    .style.display = "none";
-}
-
-
-/* =====================================================
-   UPDATE USER UI
-===================================================== */
-
-function updateUserInterface() {
-
-  if (!currentUser) {
-    return;
-  }
-
-  const name =
-    currentUser.name || "WorldConnect User";
-
-  const email =
-    currentUser.email || "";
-
-  const country =
-    currentUser.country || "";
-
-  const firstLetter =
-    name.charAt(0).toUpperCase() || "U";
-
-
-  document.getElementById("composerName")
-    .textContent = name;
-
-  document.getElementById("composerAvatar")
-    .textContent = firstLetter;
-
-  document.getElementById("profileAvatar")
-    .textContent = firstLetter;
-
-  document.getElementById("profileName")
-    .textContent = name;
-
-  document.getElementById("profileEmail")
-    .textContent = email;
-
-  document.getElementById("profileCountry")
-    .textContent =
-      country ? `🌎 ${country}` : "🌎 WorldConnect";
-
-
-  document.getElementById("sideWelcome")
-    .innerHTML = `
-      <strong>Welcome!</strong>
-      <span>${escapeHtml(name)}</span>
-    `;
-}
-
-
-/* =====================================================
-   LOGOUT
-===================================================== */
-
-function logout() {
-
-  localStorage.removeItem("token");
-
-  token = null;
-  currentUser = null;
-
-  document.getElementById("appScreen")
-    .style.display = "none";
-
-  document.getElementById("authScreen")
-    .style.display = "flex";
-
-  document.getElementById("loginForm")
-    .reset();
-
-  document.getElementById("registerForm")
-    .reset();
-
-  showLoginForm();
-}
-
-
-/* =====================================================
-   LOAD POSTS
-===================================================== */
-
-async function loadPosts() {
-
-  const container =
-    document.getElementById("postsContainer");
-
-  container.innerHTML = `
-    <div class="loading">
-      Loading World Feed...
-    </div>
-  `;
-
-  try {
-
-    const data =
-      await api("/api/posts");
-
-    const posts =
-      Array.isArray(data)
-        ? data
-        : (data.posts || []);
-
-    if (!posts.length) {
-
-      container.innerHTML = `
-        <div class="empty">
-          🌎 No posts yet.<br><br>
-          Be the first person to share something!
-        </div>
-      `;
-
-      return;
-    }
-
-    container.innerHTML =
-      posts.map(renderPost).join("");
-
-  } catch (error) {
-
-    console.error("LOAD POSTS ERROR:", error);
-
-    container.innerHTML = `
-      <div class="empty">
-        ❌ Unable to load posts.<br><br>
-        ${escapeHtml(error.message)}
-      </div>
-    `;
-  }
-}
-
-
-/* =====================================================
-   RENDER POST
-===================================================== */
-
-function renderPost(post) {
-
-  const name =
-    post.name || "WorldConnect User";
-
-  const firstLetter =
-    name.charAt(0).toUpperCase();
-
-  const country =
-    post.country
-      ? `🌎 ${escapeHtml(post.country)}`
-      : "🌎 WorldConnect";
-
-  const time =
-    formatDate(post.created_at);
-
-  const likeCount =
-    Number(post.like_count || 0);
-
-  const commentCount =
-    Number(post.comment_count || 0);
-
-  const liked =
-    post.liked_by_me ||
-    post.liked ||
-    false;
-
-  return `
-    <article
-      class="post-card"
-      id="post-${post.id}">
-
-      <div class="post-header">
-
-        <div class="avatar">
-          ${escapeHtml(firstLetter)}
-        </div>
-
-        <div class="post-meta">
-
-          <div class="post-name">
-            ${escapeHtml(name)}
-          </div>
-
-          <div class="post-time">
-            ${country} · ${escapeHtml(time)}
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <div class="post-body">
-        ${escapeHtml(post.body)}
-      </div>
-
-
-      <div class="post-actions">
-
-        <button
-          class="post-action ${liked ? "liked" : ""}"
-          id="like-btn-${post.id}"
-          onclick="toggleLike(${post.id}, this)">
-
-          ${liked ? "💙 Liked" : "❤️ Like"}
-          <span id="like-count-${post.id}">
-            ${likeCount}
-          </span>
-
-        </button>
-
-
-        <button
-          class="post-action"
-          onclick="toggleComments(${post.id})">
-
-          💬 Comments
-          <span id="comment-count-${post.id}">
-            ${commentCount}
-          </span>
-
-        </button>
-
-
-        <button
-          class="post-action"
-          onclick="sharePost(${post.id})">
-
-          ↗️ Share
-
-        </button>
-
-      </div>
-
-
-      <div
-        id="comments-${post.id}"
-        class="comments-area hidden">
-
-        <div
-          id="comments-list-${post.id}">
-        </div>
-
-        <div class="comment-form">
-
-          <input
-            id="comment-input-${post.id}"
-            class="comment-input"
-            maxlength="1000"
-            placeholder="Write a comment..."
-            onkeydown="handleCommentKey(event, ${post.id})">
-
-          <button
-            class="comment-send"
-            onclick="addComment(${post.id})">
-
-            Send
-
-          </button>
-
-        </div>
-
-      </div>
-
-    </article>
-  `;
-}
-
-
-/* =====================================================
-   LIKE / UNLIKE
-===================================================== */
-
-async function toggleLike(postId, button) {
-
-  try {
-
-    button.disabled = true;
-
-    const data =
-      await api(`/api/posts/${postId}/like`, {
-        method: "POST"
-      });
-
-    const countElement =
-      document.getElementById(
-        `like-count-${postId}`
+      toast.classList.add(
+        "show"
       );
 
-    if (countElement) {
+      clearTimeout(
+        toastTimer
+      );
 
-      countElement.textContent =
-        Number(
-          data.like_count ??
-          data.likes ??
-          0
+      toastTimer =
+        setTimeout(
+          () => {
+
+            toast.classList.remove(
+              "show"
+            );
+
+          },
+          2500
         );
     }
 
 
-    const liked =
-      data.liked === true ||
-      data.is_liked === true;
+    /* =====================================================
+       AUTH UI
+    ====================================================== */
 
+    function showLogin() {
 
-    if (liked) {
+      document
+        .getElementById("loginForm")
+        .classList.remove("hidden");
 
-      button.classList.add("liked");
+      document
+        .getElementById("registerForm")
+        .classList.add("hidden");
 
-      button.innerHTML = `
-        💙 Liked
-        <span id="like-count-${postId}">
-          ${Number(
-            data.like_count ??
-            data.likes ??
-            0
-          )}
-        </span>
-      `;
-
-    } else {
-
-      button.classList.remove("liked");
-
-      button.innerHTML = `
-        ❤️ Like
-        <span id="like-count-${postId}">
-          ${Number(
-            data.like_count ??
-            data.likes ??
-            0
-          )}
-        </span>
-      `;
-    }
-
-  } catch (error) {
-
-    console.error("LIKE ERROR:", error);
-
-    alert(
-      error.message ||
-      "Unable to like this post."
-    );
-
-  } finally {
-
-    button.disabled = false;
-  }
-}
-
-
-/* =====================================================
-   COMMENTS TOGGLE
-===================================================== */
-
-async function toggleComments(postId) {
-
-  const area =
-    document.getElementById(
-      `comments-${postId}`
-    );
-
-  if (!area) {
-    return;
-  }
-
-
-  if (!area.classList.contains("hidden")) {
-
-    area.classList.add("hidden");
-
-    return;
-  }
-
-
-  area.classList.remove("hidden");
-
-  await loadComments(postId);
-}
-
-
-/* =====================================================
-   LOAD COMMENTS
-===================================================== */
-
-async function loadComments(postId) {
-
-  const list =
-    document.getElementById(
-      `comments-list-${postId}`
-    );
-
-  if (!list) {
-    return;
-  }
-
-  list.innerHTML = `
-    <div class="comment-loading">
-      Loading comments...
-    </div>
-  `;
-
-
-  try {
-
-    const data =
-      await api(
-        `/api/posts/${postId}/comments`
-      );
-
-    const comments =
-      Array.isArray(data)
-        ? data
-        : (data.comments || []);
-
-
-    if (!comments.length) {
-
-      list.innerHTML = `
-        <div class="comment-loading">
-          No comments yet. Be the first!
-        </div>
-      `;
-
-      return;
     }
 
 
-    list.innerHTML =
-      comments.map(renderComment).join("");
+    function showRegister() {
 
+      document
+        .getElementById("loginForm")
+        .classList.add("hidden");
 
-  } catch (error) {
+      document
+        .getElementById("registerForm")
+        .classList.remove("hidden");
 
-    console.error(
-      "LOAD COMMENTS ERROR:",
-      error
-    );
-
-    list.innerHTML = `
-      <div class="comment-loading">
-        ❌ ${escapeHtml(error.message)}
-      </div>
-    `;
-  }
-}
-
-
-/* =====================================================
-   RENDER COMMENT
-===================================================== */
-
-function renderComment(comment) {
-
-  const name =
-    comment.name ||
-    comment.user_name ||
-    "WorldConnect User";
-
-  const firstLetter =
-    name.charAt(0).toUpperCase();
-
-  const body =
-    comment.body ||
-    "";
-
-  const time =
-    comment.created_at
-      ? formatDate(comment.created_at)
-      : "";
-
-
-  return `
-    <div class="comment">
-
-      <div class="avatar">
-        ${escapeHtml(firstLetter)}
-      </div>
-
-      <div class="comment-bubble">
-
-        <div class="comment-name">
-          ${escapeHtml(name)}
-        </div>
-
-        <div class="comment-text">
-          ${escapeHtml(body)}
-        </div>
-
-        ${
-          time
-            ? `
-              <div class="comment-time">
-                ${escapeHtml(time)}
-              </div>
-            `
-            : ""
-        }
-
-      </div>
-
-    </div>
-  `;
-}
-
-
-/* =====================================================
-   ADD COMMENT
-===================================================== */
-
-async function addComment(postId) {
-
-  const input =
-    document.getElementById(
-      `comment-input-${postId}`
-    );
-
-  if (!input) {
-    return;
-  }
-
-  const body =
-    input.value.trim();
-
-  if (!body) {
-    return;
-  }
-
-
-  const sendButton =
-    input.parentElement
-      .querySelector(".comment-send");
-
-
-  try {
-
-    input.disabled = true;
-
-    if (sendButton) {
-      sendButton.disabled = true;
-      sendButton.textContent = "...";
     }
 
 
-    const data =
-      await api(
-        `/api/posts/${postId}/comments`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            body
-          })
-        }
+    function showError(
+      id,
+      message
+    ) {
+
+      const box =
+        document.getElementById(id);
+
+      box.textContent =
+        message;
+
+      box.classList.remove(
+        "hidden"
+      );
+    }
+
+
+    function hideError(id) {
+
+      document
+        .getElementById(id)
+        .classList.add("hidden");
+
+    }
+
+
+    /* =====================================================
+       REGISTER
+    ====================================================== */
+
+    async function register() {
+
+      hideError(
+        "registerError"
       );
 
+      const name =
+        document
+          .getElementById(
+            "registerName"
+          )
+          .value
+          .trim();
 
-    input.value = "";
+      const email =
+        document
+          .getElementById(
+            "registerEmail"
+          )
+          .value
+          .trim();
 
+      const country =
+        document
+          .getElementById(
+            "registerCountry"
+          )
+          .value
+          .trim();
 
-    const countElement =
-      document.getElementById(
-        `comment-count-${postId}`
-      );
+      const password =
+        document
+          .getElementById(
+            "registerPassword"
+          )
+          .value;
 
+      if (
+        !name ||
+        !email ||
+        !password
+      ) {
 
-    if (countElement) {
+        showError(
+          "registerError",
+          "Please complete all required fields."
+        );
 
-      let newCount;
-
-      if (data.comment_count !== undefined) {
-
-        newCount =
-          Number(data.comment_count);
-
-      } else if (data.commentCount !== undefined) {
-
-        newCount =
-          Number(data.commentCount);
-
-      } else {
-
-        newCount =
-          Number(countElement.textContent || 0) + 1;
+        return;
       }
 
-      countElement.textContent =
-        newCount;
+      try {
+
+        const data =
+          await api(
+            "/api/auth/register",
+            {
+              method: "POST",
+
+              body: JSON.stringify({
+                name,
+                email,
+                password,
+                country
+              })
+            }
+          );
+
+        token =
+          data.token;
+
+        localStorage.setItem(
+          "token",
+          token
+        );
+
+        currentUser =
+          data.user;
+
+        showApp();
+
+        showToast(
+          "Account created successfully!"
+        );
+
+      } catch (error) {
+
+        showError(
+          "registerError",
+          error.message
+        );
+
+      }
     }
 
 
-    await loadComments(postId);
+    /* =====================================================
+       LOGIN
+    ====================================================== */
 
+    async function login() {
 
-  } catch (error) {
-
-    console.error(
-      "ADD COMMENT ERROR:",
-      error
-    );
-
-    alert(
-      error.message ||
-      "Unable to add comment."
-    );
-
-  } finally {
-
-    input.disabled = false;
-
-    if (sendButton) {
-
-      sendButton.disabled = false;
-      sendButton.textContent = "Send";
-
-    }
-  }
-}
-
-
-/* =====================================================
-   COMMENT ENTER KEY
-===================================================== */
-
-function handleCommentKey(event, postId) {
-
-  if (
-    event.key === "Enter" &&
-    !event.shiftKey
-  ) {
-
-    event.preventDefault();
-
-    addComment(postId);
-  }
-}
-
-
-/* =====================================================
-   SHARE
-===================================================== */
-
-async function sharePost(postId) {
-
-  try {
-
-    const data =
-      await api(
-        `/api/posts/${postId}/share`,
-        {
-          method: "POST"
-        }
+      hideError(
+        "loginError"
       );
 
+      const email =
+        document
+          .getElementById(
+            "loginEmail"
+          )
+          .value
+          .trim();
 
-    const shareText =
-      data.share_text ||
-      data.text ||
-      data.message ||
-      "Check out this post on WorldConnect!";
+      const password =
+        document
+          .getElementById(
+            "loginPassword"
+          )
+          .value;
+
+      if (
+        !email ||
+        !password
+      ) {
+
+        showError(
+          "loginError",
+          "Please enter your email and password."
+        );
+
+        return;
+      }
+
+      try {
+
+        const data =
+          await api(
+            "/api/auth/login",
+            {
+              method: "POST",
+
+              body: JSON.stringify({
+                email,
+                password
+              })
+            }
+          );
+
+        token =
+          data.token;
+
+        localStorage.setItem(
+          "token",
+          token
+        );
+
+        currentUser =
+          data.user;
+
+        showApp();
+
+      } catch (error) {
+
+        showError(
+          "loginError",
+          error.message
+        );
+
+      }
+    }
 
 
-    const shareUrl =
-      data.url ||
-      data.share_url ||
-      window.location.href;
+    /* =====================================================
+       LOGOUT
+    ====================================================== */
+
+    function logout() {
+
+      token = null;
+
+      currentUser = null;
+
+      localStorage.removeItem(
+        "token"
+      );
+
+      document
+        .getElementById(
+          "appScreen"
+        )
+        .classList.add("hidden");
+
+      document
+        .getElementById(
+          "authScreen"
+        )
+        .classList.remove("hidden");
+
+      showLogin();
+
+      showToast(
+        "Logged out."
+      );
+    }
 
 
-    /* Native phone sharing */
+    /* =====================================================
+       SHOW APP
+    ====================================================== */
 
-    if (
-      navigator.share &&
-      typeof navigator.share === "function"
+    async function showApp() {
+
+      document
+        .getElementById(
+          "authScreen"
+        )
+        .classList.add("hidden");
+
+      document
+        .getElementById(
+          "appScreen"
+        )
+        .classList.remove("hidden");
+
+      updateProfileUI();
+
+      await loadMyProfile();
+
+      await loadFeed();
+
+      await loadDiscover();
+
+    }
+
+
+    /* =====================================================
+       PROFILE UI
+    ====================================================== */
+
+    function updateProfileUI() {
+
+      if (!currentUser) {
+        return;
+      }
+
+      const name =
+        currentUser.name ||
+        "User";
+
+      const email =
+        currentUser.email ||
+        "";
+
+      const country =
+        currentUser.country ||
+        "🌎";
+
+      document
+        .getElementById(
+          "miniName"
+        )
+        .textContent =
+        name;
+
+      document
+        .getElementById(
+          "miniEmail"
+        )
+        .textContent =
+        email;
+
+      document
+        .getElementById(
+          "profileName"
+        )
+        .textContent =
+        name;
+
+      document
+        .getElementById(
+          "profileEmail"
+        )
+        .textContent =
+        email;
+
+      document
+        .getElementById(
+          "profileCountry"
+        )
+        .textContent =
+        `🌎 ${country}`;
+
+      const initial =
+        name
+          .charAt(0)
+          .toUpperCase();
+
+      document
+        .getElementById(
+          "miniAvatar"
+        )
+        .textContent =
+        initial;
+
+      document
+        .getElementById(
+          "profileAvatar"
+        )
+        .textContent =
+        initial;
+
+    }
+
+
+    /* =====================================================
+       LOAD MY PROFILE
+    ====================================================== */
+
+    async function loadMyProfile() {
+
+      try {
+
+        const data =
+          await api(
+            "/api/users/" +
+            currentUser.id
+          );
+
+        if (data.user) {
+
+          currentUser =
+            {
+              ...currentUser,
+              ...data.user
+            };
+
+          updateProfileUI();
+
+          const followers =
+            Number(
+              data.user.follower_count ||
+              0
+            );
+
+          const following =
+            Number(
+              data.user.following_count ||
+              0
+            );
+
+          document
+            .getElementById(
+              "myFollowers"
+            )
+            .textContent =
+            followers;
+
+          document
+            .getElementById(
+              "myFollowing"
+            )
+            .textContent =
+            following;
+
+          document
+            .getElementById(
+              "connectFollowers"
+            )
+            .textContent =
+            followers;
+
+          document
+            .getElementById(
+              "connectFollowing"
+            )
+            .textContent =
+            following;
+
+        }
+
+      } catch (error) {
+
+        console.error(
+          error
+        );
+
+      }
+    }
+
+
+    /* =====================================================
+       SECTION NAVIGATION
+    ====================================================== */
+
+    function showSection(
+      sectionId,
+      button
+    ) {
+
+      document
+        .querySelectorAll(
+          ".section"
+        )
+        .forEach(
+          section => {
+
+            section.classList.remove(
+              "active"
+            );
+
+          }
+        );
+
+      const section =
+        document.getElementById(
+          sectionId
+        );
+
+      if (section) {
+
+        section.classList.add(
+          "active"
+        );
+
+      }
+
+      document
+        .querySelectorAll(
+          ".nav-btn"
+        )
+        .forEach(
+          btn => {
+
+            btn.classList.remove(
+              "active"
+            );
+
+          }
+        );
+
+      if (button) {
+
+        button.classList.add(
+          "active"
+        );
+
+      }
+
+
+      if (
+        sectionId ===
+        "discoverSection"
+      ) {
+
+        loadDiscover();
+
+      }
+
+
+      if (
+        sectionId ===
+        "connectSection"
+      ) {
+
+        loadDiscover();
+
+        loadMyProfile();
+
+      }
+
+    }
+
+
+    /* =====================================================
+       CHARACTER COUNT
+    ====================================================== */
+
+    function updateCharCount() {
+
+      const textarea =
+        document.getElementById(
+          "postBody"
+        );
+
+      document
+        .getElementById(
+          "charCount"
+        )
+        .textContent =
+        `${textarea.value.length} / 5000`;
+
+    }
+
+
+    /* =====================================================
+       CREATE POST
+    ====================================================== */
+
+    async function createPost() {
+
+      const textarea =
+        document.getElementById(
+          "postBody"
+        );
+
+      const body =
+        textarea.value.trim();
+
+      if (!body) {
+
+        showToast(
+          "Please write something first."
+        );
+
+        return;
+      }
+
+      try {
+
+        await api(
+          "/api/posts",
+          {
+            method: "POST",
+
+            body: JSON.stringify({
+              body
+            })
+          }
+        );
+
+        textarea.value = "";
+
+        updateCharCount();
+
+        await loadFeed();
+
+        showToast(
+          "Post published!"
+        );
+
+      } catch (error) {
+
+        showToast(
+          error.message
+        );
+
+      }
+    }
+
+
+    /* =====================================================
+       LOAD FEED
+    ====================================================== */
+
+    async function loadFeed() {
+
+      const container =
+        document.getElementById(
+          "feedContainer"
+        );
+
+      container.innerHTML =
+        `<div class="loading">
+          Loading World Feed...
+        </div>`;
+
+      try {
+
+        const data =
+          await api(
+            "/api/posts"
+          );
+
+        const posts =
+          data.posts || [];
+
+        if (
+          posts.length === 0
+        ) {
+
+          container.innerHTML =
+            `<div class="card empty">
+              🌎 No posts yet. Be the first to post!
+            </div>`;
+
+          return;
+        }
+
+        container.innerHTML =
+          posts
+            .map(
+              post =>
+                renderPost(post)
+            )
+            .join("");
+
+      } catch (error) {
+
+        container.innerHTML =
+          `<div class="card empty">
+            ❌ ${escapeHtml(
+              error.message
+            )}
+          </div>`;
+
+      }
+    }
+
+
+    /* =====================================================
+       RENDER POST
+    ====================================================== */
+
+    function renderPost(post) {
+
+      const initial =
+        (post.name || "U")
+          .charAt(0)
+          .toUpperCase();
+
+      const date =
+        formatDate(
+          post.created_at
+        );
+
+      return `
+
+        <article
+          class="card"
+          id="post-${post.id}"
+        >
+
+          <div class="post-header">
+
+            <div class="post-user">
+
+              <div class="avatar">
+                ${escapeHtml(initial)}
+              </div>
+
+              <div>
+
+                <div class="post-name">
+                  ${escapeHtml(
+                    post.name
+                  )}
+                </div>
+
+                <div class="post-country">
+                  ${post.country
+                    ? "🌎 " +
+                      escapeHtml(
+                        post.country
+                      )
+                    : ""}
+                </div>
+
+              </div>
+
+            </div>
+
+            <div class="post-date">
+              ${date}
+            </div>
+
+          </div>
+
+
+          <div class="post-body">
+            ${escapeHtml(
+              post.body
+            )}
+          </div>
+
+
+          <div class="post-stats">
+
+            <span>
+              ❤️ ${Number(
+                post.like_count || 0
+              )}
+            </span>
+
+            <span>
+              💬 ${Number(
+                post.comment_count || 0
+              )}
+            </span>
+
+          </div>
+
+
+          <div class="post-actions">
+
+            <button
+              class="post-action ${
+                post.liked_by_me
+                  ? "liked"
+                  : ""
+              }"
+              onclick="toggleLike(
+                ${post.id},
+                this
+              )"
+            >
+              ❤️ Like
+            </button>
+
+            <button
+              class="post-action"
+              onclick="toggleComments(
+                ${post.id}
+              )"
+            >
+              💬 Comment
+            </button>
+
+            <button
+              class="post-action"
+              onclick="sharePost(
+                ${post.id}
+              )"
+            >
+              ↗️ Share
+            </button>
+
+          </div>
+
+
+          <div
+            id="comments-${post.id}"
+            class="comments-box hidden"
+          >
+
+            <div
+              id="comment-list-${post.id}"
+            >
+              <div class="loading">
+                Loading comments...
+              </div>
+            </div>
+
+
+            <div class="comment-form">
+
+              <input
+                id="comment-input-${post.id}"
+                type="text"
+                maxlength="1000"
+                placeholder="Write a comment..."
+                onkeydown="
+                  if(event.key === 'Enter'){
+                    addComment(${post.id})
+                  }
+                "
+              />
+
+              <button
+                onclick="
+                  addComment(${post.id})
+                "
+              >
+                Send
+              </button>
+
+            </div>
+
+          </div>
+
+        </article>
+
+      `;
+    }
+
+
+    /* =====================================================
+       LIKE
+    ====================================================== */
+
+    async function toggleLike(
+      postId,
+      button
     ) {
 
       try {
 
-        await navigator.share({
-          title: "WorldConnect",
-          text: shareText,
-          url: shareUrl
-        });
+        const data =
+          await api(
+            `/api/posts/${postId}/like`,
+            {
+              method: "POST"
+            }
+          );
 
-        return;
+        button.classList.toggle(
+          "liked",
+          data.liked
+        );
 
-      } catch (shareError) {
+        const post =
+          document.getElementById(
+            `post-${postId}`
+          );
+
+        if (post) {
+
+          const stats =
+            post.querySelector(
+              ".post-stats"
+            );
+
+          if (stats) {
+
+            const spans =
+              stats.querySelectorAll(
+                "span"
+              );
+
+            if (spans[0]) {
+
+              spans[0].textContent =
+                `❤️ ${Number(
+                  data.like_count || 0
+                )}`;
+
+            }
+
+          }
+
+        }
+
+      } catch (error) {
+
+        showToast(
+          error.message
+        );
+
+      }
+    }
+
+
+    /* =====================================================
+       COMMENTS TOGGLE
+    ====================================================== */
+
+    async function toggleComments(
+      postId
+    ) {
+
+      const box =
+        document.getElementById(
+          `comments-${postId}`
+        );
+
+      if (
+        box.classList.contains(
+          "hidden"
+        )
+      ) {
+
+        box.classList.remove(
+          "hidden"
+        );
+
+        await loadComments(
+          postId
+        );
+
+      } else {
+
+        box.classList.add(
+          "hidden"
+        );
+
+      }
+
+    }
+
+
+    /* =====================================================
+       LOAD COMMENTS
+    ====================================================== */
+
+    async function loadComments(
+      postId
+    ) {
+
+      const list =
+        document.getElementById(
+          `comment-list-${postId}`
+        );
+
+      try {
+
+        const data =
+          await api(
+            `/api/posts/${postId}/comments`
+          );
+
+        const comments =
+          data.comments || [];
 
         if (
-          shareError &&
-          shareError.name === "AbortError"
+          comments.length === 0
+        ) {
+
+          list.innerHTML =
+            `<div class="empty">
+              No comments yet.
+            </div>`;
+
+          return;
+        }
+
+        list.innerHTML =
+          comments
+            .map(
+              comment => {
+
+                const initial =
+                  (
+                    comment.name ||
+                    "U"
+                  )
+                    .charAt(0)
+                    .toUpperCase();
+
+                return `
+
+                  <div class="comment">
+
+                    <div class="avatar">
+                      ${escapeHtml(
+                        initial
+                      )}
+                    </div>
+
+                    <div class="comment-bubble">
+
+                      <div class="comment-name">
+                        ${escapeHtml(
+                          comment.name
+                        )}
+                      </div>
+
+                      <div class="comment-text">
+                        ${escapeHtml(
+                          comment.body
+                        )}
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                `;
+
+              }
+            )
+            .join("");
+
+      } catch (error) {
+
+        list.innerHTML =
+          `<div class="empty">
+            ❌ ${escapeHtml(
+              error.message
+            )}
+          </div>`;
+
+      }
+    }
+
+
+    /* =====================================================
+       ADD COMMENT
+    ====================================================== */
+
+    async function addComment(
+      postId
+    ) {
+
+      const input =
+        document.getElementById(
+          `comment-input-${postId}`
+        );
+
+      const body =
+        input.value.trim();
+
+      if (!body) {
+        return;
+      }
+
+      try {
+
+        await api(
+          `/api/posts/${postId}/comments`,
+          {
+            method: "POST",
+
+            body: JSON.stringify({
+              body
+            })
+          }
+        );
+
+        input.value = "";
+
+        await loadComments(
+          postId
+        );
+
+        await loadFeed();
+
+      } catch (error) {
+
+        showToast(
+          error.message
+        );
+
+      }
+    }
+
+
+    /* =====================================================
+       SHARE
+    ====================================================== */
+
+    async function sharePost(
+      postId
+    ) {
+
+      try {
+
+        const data =
+          await api(
+            `/api/posts/${postId}/share`,
+            {
+              method: "POST"
+            }
+          );
+
+        const shareText =
+          data.share_text || "";
+
+        const url =
+          data.url || "";
+
+        if (
+          navigator.share
+        ) {
+
+          await navigator.share({
+            title:
+              "WorldConnect",
+            text:
+              shareText,
+            url
+          });
+
+        } else if (
+          navigator.clipboard
+        ) {
+
+          await navigator.clipboard.writeText(
+            `${shareText}\n\n${url}`
+          );
+
+          showToast(
+            "Share link copied!"
+          );
+
+        } else {
+
+          window.prompt(
+            "Copy this link:",
+            url
+          );
+
+        }
+
+      } catch (error) {
+
+        if (
+          error.name ===
+          "AbortError"
         ) {
           return;
         }
+
+        showToast(
+          error.message
+        );
+
       }
     }
 
 
-    /* Show share modal */
+    /* =====================================================
+       DISCOVER USERS
+    ====================================================== */
 
-    openShareModal(
-      shareText,
-      shareUrl
-    );
+    async function loadDiscover() {
 
+      const discover =
+        document.getElementById(
+          "discoverContainer"
+        );
 
-  } catch (error) {
+      const connect =
+        document.getElementById(
+          "connectContainer"
+        );
 
-    console.error(
-      "SHARE ERROR:",
-      error
-    );
+      const loading =
+        `<div class="loading">
+          Loading people...
+        </div>`;
 
-    openShareModal(
-      "Check out this post on WorldConnect!",
-      window.location.href
-    );
-  }
-}
+      discover.innerHTML =
+        loading;
 
+      connect.innerHTML =
+        loading;
 
-/* =====================================================
-   SHARE MODAL
-===================================================== */
+      try {
 
-function openShareModal(text, url) {
+        const data =
+          await api(
+            "/api/users/discover"
+          );
 
-  const content =
-    document.getElementById(
-      "modalContent"
-    );
+        const users =
+          data.users || [];
 
-  document.getElementById(
-    "modalTitle"
-  ).textContent = "↗️ Share Post";
+        if (
+          users.length === 0
+        ) {
 
+          const empty =
+            `<div class="card empty">
+              🧭 No other users found yet.
+            </div>`;
 
-  content.innerHTML = `
+          discover.innerHTML =
+            empty;
 
-    <div class="share-box">
-      ${escapeHtml(text)}
+          connect.innerHTML =
+            empty;
 
-      ${url
-        ? `\n\n${escapeHtml(url)}`
-        : ""
+          return;
+        }
+
+        const html =
+          users
+            .map(
+              user =>
+                renderUserCard(user)
+            )
+            .join("");
+
+        discover.innerHTML =
+          html;
+
+        connect.innerHTML =
+          html;
+
+      } catch (error) {
+
+        const errorHtml =
+          `<div class="card empty">
+            ❌ ${escapeHtml(
+              error.message
+            )}
+          </div>`;
+
+        discover.innerHTML =
+          errorHtml;
+
+        connect.innerHTML =
+          errorHtml;
+
       }
-    </div>
+    }
 
 
-    <div class="share-buttons">
+    /* =====================================================
+       RENDER USER CARD
+    ====================================================== */
 
-      <button
-        class="copy-btn"
-        onclick="copyShareText(${JSON.stringify(
-          text + (url ? "\n\n" + url : "")
-        )})">
+    function renderUserCard(
+      user
+    ) {
 
-        📋 Copy
+      const initial =
+        (
+          user.name ||
+          "U"
+        )
+          .charAt(0)
+          .toUpperCase();
 
-      </button>
+      const followers =
+        Number(
+          user.follower_count ||
+          0
+        );
+
+      const following =
+        Number(
+          user.following_count ||
+          0
+        );
+
+      const isFollowing =
+        Boolean(
+          user.following_me
+        );
+
+      return `
+
+        <div
+          class="user-card"
+          id="user-card-${user.id}"
+        >
+
+          <div class="user-card-top">
+
+            <div class="avatar">
+              ${escapeHtml(
+                initial
+              )}
+            </div>
+
+            <div>
+
+              <div class="user-card-name">
+                ${escapeHtml(
+                  user.name
+                )}
+              </div>
+
+              <div class="user-card-country">
+                ${
+                  user.country
+                    ? "🌎 " +
+                      escapeHtml(
+                        user.country
+                      )
+                    : "🌎 WorldConnect"
+                }
+              </div>
+
+            </div>
+
+          </div>
 
 
-      <button
-        class="native-share-btn"
-        onclick="nativeShare(
-          ${JSON.stringify(text)},
-          ${JSON.stringify(url)}
-        )">
+          <div class="user-stats">
 
-        📤 Share
+            <span>
+              👥 ${followers} followers
+            </span>
 
-      </button>
+            <span>
+              ➕ ${following} following
+            </span>
 
-    </div>
-  `;
+          </div>
 
 
-  document.getElementById(
-    "modalOverlay"
-  ).classList.remove("hidden");
-}
+          <button
+            class="follow-btn ${
+              isFollowing
+                ? "following"
+                : ""
+            }"
+            onclick="
+              toggleFollow(
+                ${user.id},
+                this
+              )
+            "
+          >
+            ${
+              isFollowing
+                ? "✓ Following"
+                : "🤝 Follow"
+            }
+          </button>
+
+        </div>
+
+      `;
+    }
 
 
-/* =====================================================
-   COPY SHARE
-===================================================== */
+    /* =====================================================
+       FOLLOW / UNFOLLOW
+    ====================================================== */
 
-async function copyShareText(text) {
+    async function toggleFollow(
+      userId,
+      button
+    ) {
 
-  try {
+      try {
 
-    await navigator.clipboard.writeText(text);
+        button.disabled = true;
 
-    alert("Share text copied!");
+        const data =
+          await api(
+            `/api/users/${userId}/follow`,
+            {
+              method: "POST"
+            }
+          );
 
-  } catch (error) {
+        const following =
+          Boolean(
+            data.following
+          );
 
-    prompt(
-      "Copy this text:",
-      text
-    );
-  }
-}
+        button.classList.toggle(
+          "following",
+          following
+        );
+
+        button.textContent =
+          following
+            ? "✓ Following"
+            : "🤝 Follow";
+
+        button.disabled =
+          false;
 
 
-/* =====================================================
-   NATIVE SHARE
-===================================================== */
+        /* Update card follower count */
 
-async function nativeShare(text, url) {
+        const card =
+          document.getElementById(
+            `user-card-${userId}`
+          );
 
-  if (
-    navigator.share &&
-    typeof navigator.share === "function"
-  ) {
+        if (card) {
 
-    try {
+          const stat =
+            card.querySelector(
+              ".user-stats"
+            );
 
-      await navigator.share({
-        title: "WorldConnect",
-        text,
-        url
-      });
+          if (stat) {
 
-      closeModal();
+            const spans =
+              stat.querySelectorAll(
+                "span"
+              );
 
-    } catch (error) {
+            if (spans[0]) {
+
+              spans[0].textContent =
+                `👥 ${Number(
+                  data.follower_count ||
+                  0
+                )} followers`;
+
+            }
+
+          }
+
+        }
+
+
+        /* Update own following count */
+
+        await loadMyProfile();
+
+        showToast(
+          following
+            ? "You are now following this user."
+            : "You unfollowed this user."
+        );
+
+      } catch (error) {
+
+        button.disabled =
+          false;
+
+        showToast(
+          error.message
+        );
+
+      }
+    }
+
+
+    /* =====================================================
+       DATE FORMAT
+    ====================================================== */
+
+    function formatDate(
+      dateString
+    ) {
+
+      if (!dateString) {
+        return "";
+      }
+
+      const date =
+        new Date(
+          dateString
+        );
 
       if (
-        error &&
-        error.name !== "AbortError"
+        Number.isNaN(
+          date.getTime()
+        )
       ) {
-        alert("Unable to share.");
+
+        return "";
+
       }
+
+      return date.toLocaleString(
+        undefined,
+        {
+          dateStyle: "medium",
+          timeStyle: "short"
+        }
+      );
     }
 
-  } else {
 
-    await copyShareText(
-      text + (url ? "\n\n" + url : "")
-    );
-  }
-}
+    /* =====================================================
+       HTML ESCAPE
+    ====================================================== */
 
+    function escapeHtml(
+      value
+    ) {
 
-/* =====================================================
-   MODAL
-===================================================== */
+      return String(
+        value ?? ""
+      )
+        .replace(
+          /&/g,
+          "&amp;"
+        )
+        .replace(
+          /</g,
+          "&lt;"
+        )
+        .replace(
+          />/g,
+          "&gt;"
+        )
+        .replace(
+          /"/g,
+          "&quot;"
+        )
+        .replace(
+          /'/g,
+          "&#039;"
+        );
 
-function closeModal() {
-
-  document.getElementById(
-    "modalOverlay"
-  ).classList.add("hidden");
-}
-
-
-function closeModalOutside(event) {
-
-  if (
-    event.target.id ===
-    "modalOverlay"
-  ) {
-
-    closeModal();
-  }
-}
-
-
-/* =====================================================
-   COMING SOON
-===================================================== */
-
-function showComingSoon(feature) {
-
-  document.getElementById(
-    "modalTitle"
-  ).textContent = feature;
-
-
-  document.getElementById(
-    "modalContent"
-  ).innerHTML = `
-
-    <div
-      style="
-        text-align:center;
-        padding:25px 10px;
-        color:#64748b;
-      ">
-
-      <div
-        style="
-          font-size:40px;
-          margin-bottom:12px;
-        ">
-        🚀
-      </div>
-
-      <h3
-        style="
-          color:#172033;
-          margin-bottom:8px;
-        ">
-        ${escapeHtml(feature)}
-      </h3>
-
-      <p>
-        This WorldConnect feature is
-        coming in the next update.
-      </p>
-
-    </div>
-  `;
-
-
-  document.getElementById(
-    "modalOverlay"
-  ).classList.remove("hidden");
-}
-
-
-/* =====================================================
-   SHOW FEED
-===================================================== */
-
-function showFeed() {
-
-  window.scrollTo({
-    top: 0,
-    behavior: "smooth"
-  });
-
-  loadPosts();
-}
-
-
-/* =====================================================
-   INITIALIZE
-===================================================== */
-
-document.addEventListener(
-  "DOMContentLoaded",
-  () => {
-
-    if (token) {
-      startApp();
-    } else {
-      showAuth();
     }
 
-  }
-);
-</script>
+
+    /* =====================================================
+       INITIAL APP CHECK
+    ====================================================== */
+
+    async function checkSession() {
+
+      if (!token) {
+
+        document
+          .getElementById(
+            "authScreen"
+          )
+          .classList.remove(
+            "hidden"
+          );
+
+        document
+          .getElementById(
+            "appScreen"
+          )
+          .classList.add(
+            "hidden"
+          );
+
+        return;
+      }
+
+      try {
+
+        const data =
+          await api(
+            "/api/me"
+          );
+
+        currentUser =
+          data.user;
+
+        await showApp();
+
+      } catch (error) {
+
+        console.error(
+          error
+        );
+
+        token = null;
+
+        localStorage.removeItem(
+          "token"
+        );
+
+        document
+          .getElementById(
+            "authScreen"
+          )
+          .classList.remove(
+            "hidden"
+          );
+
+        document
+          .getElementById(
+            "appScreen"
+          )
+          .classList.add(
+            "hidden"
+          );
+
+      }
+
+    }
+
+
+    /* =====================================================
+       START
+    ====================================================== */
+
+    checkSession();
+
+  </script>
 
 </body>
 </html>
