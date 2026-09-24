@@ -611,76 +611,6 @@ if (
   }
 });
 
-// =========================
-// CREATE COMMENT NOTIFICATION
-// =========================
-
-app.post("/api/notifications/comment", auth, async (req, res) => {
-  try {
-
-    const postId = Number(req.body.postId);
-
-    if (!Number.isInteger(postId) || postId <= 0) {
-      return res.status(400).json({
-        error: "Invalid post ID"
-      });
-    }
-
-    const post = await pool.query(
-      `
-      SELECT user_id
-      FROM posts
-      WHERE id = $1
-      `,
-      [postId]
-    );
-
-    if (post.rowCount === 0) {
-      return res.status(404).json({
-        error: "Post not found"
-      });
-    }
-
-    const ownerId = post.rows[0].user_id;
-
-    if (ownerId === req.user.id) {
-      return res.json({
-        success: true
-      });
-    }
-
-    await pool.query(
-      `
-      INSERT INTO notifications
-        (user_id, actor_id, type, post_id, message)
-      VALUES
-        ($1, $2, $3, $4, $5)
-      `,
-      [
-        ownerId,
-        req.user.id,
-        "comment",
-        postId,
-        "Someone commented on your post."
-      ]
-    );
-
-    res.status(201).json({
-      success: true
-    });
-
-  } catch (e) {
-
-    console.error(
-      "CREATE COMMENT NOTIFICATION ERROR:",
-      e
-    );
-
-    res.status(500).json({
-      error: "Server error"
-    });
-  }
-});
 
 // =========================
 // FOLLOW / UNFOLLOW
@@ -846,6 +776,54 @@ app.get("/api/users/:id", async (req, res) => {
   } catch (e) {
 
     console.error("USER PROFILE ERROR:", e);
+
+    res.status(500).json({
+      error: "Server error"
+    });
+  }
+});
+
+// =========================
+// GET NOTIFICATIONS
+// =========================
+
+app.get("/api/notifications", auth, async (req, res) => {
+  try {
+
+    const q = await pool.query(
+      `
+      SELECT
+        n.id,
+        n.type,
+        n.message,
+        n.post_id,
+        n.is_read,
+        n.created_at,
+        u.name AS actor_name,
+        u.country AS actor_country
+
+      FROM notifications n
+
+      LEFT JOIN users u
+        ON u.id = n.actor_id
+
+      WHERE n.user_id = $1
+
+      ORDER BY n.created_at DESC
+
+      LIMIT 50
+      `,
+      [req.user.id]
+    );
+
+    res.json(q.rows);
+
+  } catch (e) {
+
+    console.error(
+      "GET NOTIFICATIONS ERROR:",
+      e
+    );
 
     res.status(500).json({
       error: "Server error"
