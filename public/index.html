@@ -12,14 +12,31 @@
   <style>
     * {
       box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    }
+
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #18202a;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --danger: #ef4444;
+      --success: #16a34a;
+      --soft: #eef4ff;
+      --shadow: 0 8px 30px rgba(15, 23, 42, 0.08);
     }
 
     body {
-      font-family: Arial, sans-serif;
-      background: #f3f6fb;
-      color: #172033;
+      margin: 0;
+      font-family:
+        Inter,
+        Arial,
+        Helvetica,
+        sans-serif;
+      background: var(--bg);
+      color: var(--text);
     }
 
     button,
@@ -47,12 +64,12 @@
       justify-content: center;
       padding: 20px;
       background:
-        linear-gradient(
-          135deg,
-          #eef5ff,
-          #ffffff,
-          #eefaf5
-        );
+        radial-gradient(
+          circle at top left,
+          #dbeafe,
+          transparent 40%
+        ),
+        var(--bg);
     }
 
     .auth-card {
@@ -61,92 +78,77 @@
       background: white;
       border-radius: 24px;
       padding: 30px;
-      box-shadow: 0 15px 50px rgba(0,0,0,.10);
+      box-shadow: var(--shadow);
     }
 
-    .brand {
+    .logo {
+      font-size: 30px;
+      font-weight: 800;
       text-align: center;
-      margin-bottom: 25px;
-    }
-
-    .brand-logo {
-      font-size: 48px;
+      color: var(--primary);
       margin-bottom: 8px;
     }
 
-    .brand h1 {
-      font-size: 30px;
-      color: #1877f2;
-    }
-
-    .brand p {
-      color: #687386;
-      margin-top: 6px;
+    .tagline {
+      text-align: center;
+      color: var(--muted);
+      margin-bottom: 25px;
     }
 
     .auth-card h2 {
-      margin-bottom: 18px;
+      margin-top: 0;
     }
 
-    .form-group {
+    .field {
       margin-bottom: 14px;
     }
 
-    .form-group label {
+    .field label {
       display: block;
       margin-bottom: 6px;
+      font-weight: 600;
       font-size: 14px;
-      font-weight: bold;
     }
 
-    .form-group input {
+    .field input {
       width: 100%;
-      padding: 13px;
-      border: 1px solid #d8deea;
+      padding: 13px 14px;
+      border: 1px solid var(--line);
       border-radius: 12px;
       outline: none;
     }
 
-    .form-group input:focus {
-      border-color: #1877f2;
+    .field input:focus,
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
 
     .primary-btn {
       width: 100%;
-      border: none;
+      border: 0;
+      background: var(--primary);
+      color: white;
       padding: 13px;
       border-radius: 12px;
-      background: #1877f2;
-      color: white;
-      font-weight: bold;
-      margin-top: 5px;
+      font-weight: 700;
     }
 
     .primary-btn:hover {
-      opacity: .92;
+      background: var(--primary-dark);
     }
 
     .switch-auth {
       text-align: center;
       margin-top: 18px;
-      color: #687386;
-      font-size: 14px;
+      color: var(--muted);
     }
 
     .switch-auth button {
-      border: none;
+      border: 0;
       background: none;
-      color: #1877f2;
-      font-weight: bold;
-    }
-
-    .error-box {
-      background: #fff0f0;
-      color: #c62828;
-      padding: 10px;
-      border-radius: 10px;
-      margin-bottom: 12px;
-      font-size: 14px;
+      color: var(--primary);
+      font-weight: 700;
     }
 
     /* =========================
@@ -160,46 +162,66 @@
     .topbar {
       height: 64px;
       background: white;
-      border-bottom: 1px solid #e5e9f0;
+      border-bottom: 1px solid var(--line);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 22px;
+      padding: 0 20px;
       position: sticky;
       top: 0;
       z-index: 100;
     }
 
-    .top-brand {
-      color: #1877f2;
+    .top-logo {
+      color: var(--primary);
       font-size: 21px;
-      font-weight: bold;
+      font-weight: 800;
     }
 
     .top-actions {
       display: flex;
+      align-items: center;
       gap: 8px;
     }
 
     .icon-btn {
-      border: none;
-      background: #f1f4f9;
-      width: 38px;
-      height: 38px;
+      position: relative;
+      border: 0;
+      background: #f3f4f6;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
-      font-size: 18px;
+      font-size: 19px;
     }
 
     .icon-btn:hover {
-      background: #e5ebf5;
+      background: #e5e7eb;
+    }
+
+    .notification-badge {
+      position: absolute;
+      right: -2px;
+      top: -3px;
+      min-width: 19px;
+      height: 19px;
+      padding: 0 5px;
+      border-radius: 20px;
+      background: var(--danger);
+      color: white;
+      font-size: 11px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid white;
     }
 
     .layout {
-      max-width: 1250px;
-      margin: auto;
       display: grid;
-      grid-template-columns: 230px 1fr 260px;
+      grid-template-columns: 240px minmax(0, 1fr) 300px;
       gap: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
       padding: 20px;
     }
 
@@ -208,367 +230,213 @@
     ========================= */
 
     .sidebar {
-      background: white;
-      border-radius: 18px;
-      padding: 15px;
-      height: fit-content;
       position: sticky;
       top: 84px;
+      height: fit-content;
+    }
+
+    .side-card {
+      background: white;
+      border-radius: 18px;
+      padding: 12px;
+      box-shadow: var(--shadow);
     }
 
     .profile-mini {
       padding: 15px;
-      border-bottom: 1px solid #edf0f5;
-      margin-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 8px;
     }
 
-    .avatar {
-      width: 46px;
-      height: 46px;
-      border-radius: 50%;
-      background: linear-gradient(
-        135deg,
-        #1877f2,
-        #7b61ff
-      );
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 20px;
+    .profile-name {
+      font-weight: 800;
+      font-size: 17px;
     }
 
-    .profile-mini-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .profile-mini-name {
-      font-weight: bold;
-    }
-
-    .profile-mini-email {
-      font-size: 12px;
-      color: #7a8495;
+    .profile-country {
+      color: var(--muted);
+      font-size: 13px;
       margin-top: 3px;
-      word-break: break-all;
     }
 
     .nav-btn {
       width: 100%;
-      border: none;
-      background: transparent;
-      padding: 12px;
       text-align: left;
-      border-radius: 10px;
-      margin-bottom: 4px;
+      border: 0;
+      background: transparent;
+      padding: 12px 13px;
+      border-radius: 12px;
+      margin-bottom: 3px;
+      color: #374151;
       font-weight: 600;
-      color: #4d586c;
     }
 
     .nav-btn:hover,
     .nav-btn.active {
-      background: #eef5ff;
-      color: #1877f2;
+      background: var(--soft);
+      color: var(--primary);
     }
 
     /* =========================
        MAIN
     ========================= */
 
-    .main-content {
+    .main {
       min-width: 0;
     }
 
-    .section {
-      display: none;
-    }
-
-    .section.active {
-      display: block;
-    }
-
     .section-title {
-      font-size: 25px;
-      margin-bottom: 5px;
+      margin: 0 0 15px;
+      font-size: 24px;
     }
 
     .section-subtitle {
-      color: #758094;
+      color: var(--muted);
+      margin-top: -8px;
       margin-bottom: 18px;
     }
 
-    .card {
+    .create-card,
+    .post-card,
+    .panel-card,
+    .user-card {
       background: white;
       border-radius: 18px;
-      padding: 18px;
-      margin-bottom: 16px;
-      box-shadow: 0 3px 14px rgba(31,45,61,.04);
+      box-shadow: var(--shadow);
     }
 
-    /* =========================
-       CREATE POST
-    ========================= */
+    .create-card {
+      padding: 18px;
+      margin-bottom: 18px;
+    }
 
-    .create-post textarea {
+    textarea {
       width: 100%;
-      min-height: 100px;
       resize: vertical;
-      border: 1px solid #dce2eb;
+      min-height: 100px;
+      border: 1px solid var(--line);
       border-radius: 14px;
       padding: 13px;
       outline: none;
     }
 
-    .create-post textarea:focus {
-      border-color: #1877f2;
-    }
-
-    .post-tools {
+    .create-actions {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      justify-content: flex-end;
       margin-top: 10px;
     }
 
-    .char-count {
-      color: #7a8495;
-      font-size: 12px;
-    }
-
-    .post-btn {
-      border: none;
-      background: #1877f2;
+    .small-primary {
+      border: 0;
+      background: var(--primary);
       color: white;
-      padding: 10px 18px;
       border-radius: 10px;
-      font-weight: bold;
+      padding: 10px 16px;
+      font-weight: 700;
     }
 
-    /* =========================
-       POSTS
-    ========================= */
+    .small-primary:hover {
+      background: var(--primary-dark);
+    }
 
-    .post-header {
+    .post-card {
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    .post-head {
       display: flex;
       justify-content: space-between;
       gap: 10px;
     }
 
-    .post-user {
-      display: flex;
-      gap: 10px;
-      align-items: center;
+    .post-author {
+      font-weight: 800;
     }
 
-    .post-user .avatar {
-      width: 42px;
-      height: 42px;
-      font-size: 17px;
-    }
-
-    .post-name {
-      font-weight: bold;
-    }
-
-    .post-country {
+    .post-country,
+    .post-time {
+      color: var(--muted);
       font-size: 12px;
-      color: #7b8495;
-      margin-top: 2px;
-    }
-
-    .post-date {
-      font-size: 11px;
-      color: #8b94a4;
     }
 
     .post-body {
+      white-space: pre-wrap;
+      word-break: break-word;
       margin: 15px 0;
       line-height: 1.55;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-    }
-
-    .post-stats {
-      display: flex;
-      gap: 15px;
-      color: #737d90;
-      font-size: 13px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #edf0f4;
     }
 
     .post-actions {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 5px;
-      margin-top: 8px;
+      display: flex;
+      gap: 8px;
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
     }
 
     .post-action {
-      border: none;
-      background: transparent;
-      padding: 9px;
-      border-radius: 9px;
-      color: #586377;
+      border: 0;
+      background: #f8fafc;
+      padding: 9px 12px;
+      border-radius: 10px;
+      color: #374151;
       font-weight: 600;
     }
 
     .post-action:hover {
-      background: #f1f4f8;
+      background: #eef2f7;
     }
 
     .post-action.liked {
-      color: #1877f2;
-      background: #eef5ff;
+      color: var(--danger);
+      background: #fff1f2;
     }
 
-    /* =========================
-       COMMENTS
-    ========================= */
-
-    .comments-box {
+    .comments {
       margin-top: 12px;
+      border-top: 1px solid var(--line);
       padding-top: 12px;
-      border-top: 1px solid #edf0f4;
     }
 
     .comment {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 10px;
+      background: #f8fafc;
+      border-radius: 10px;
+      padding: 9px 11px;
+      margin-bottom: 7px;
     }
 
-    .comment .avatar {
-      width: 32px;
-      height: 32px;
-      min-width: 32px;
+    .comment-author {
+      font-weight: 700;
       font-size: 13px;
     }
 
-    .comment-bubble {
-      background: #f1f4f8;
-      border-radius: 12px;
-      padding: 8px 11px;
-      flex: 1;
-    }
-
-    .comment-name {
-      font-weight: bold;
-      font-size: 13px;
-    }
-
-    .comment-text {
+    .comment-body {
+      font-size: 14px;
       margin-top: 3px;
-      font-size: 13px;
       white-space: pre-wrap;
     }
 
     .comment-form {
       display: flex;
-      gap: 7px;
+      gap: 8px;
       margin-top: 10px;
     }
 
     .comment-form input {
       flex: 1;
-      border: 1px solid #dce2eb;
-      border-radius: 20px;
-      padding: 9px 13px;
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
       outline: none;
     }
 
     .comment-form button {
-      border: none;
-      background: #1877f2;
+      border: 0;
+      background: var(--primary);
       color: white;
-      border-radius: 20px;
-      padding: 0 15px;
-    }
-
-    /* =========================
-       DISCOVER / CONNECT
-    ========================= */
-
-    .discover-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
-    }
-
-    .user-card {
-      background: white;
-      border-radius: 18px;
-      padding: 18px;
-      border: 1px solid #edf0f4;
-    }
-
-    .user-card-top {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .user-card-name {
-      font-weight: bold;
-      font-size: 17px;
-    }
-
-    .user-card-country {
-      color: #7a8495;
-      font-size: 12px;
-      margin-top: 3px;
-    }
-
-    .user-stats {
-      display: flex;
-      gap: 18px;
-      margin: 15px 0;
-      font-size: 13px;
-      color: #697487;
-    }
-
-    .follow-btn {
-      width: 100%;
-      border: none;
-      padding: 10px;
       border-radius: 10px;
-      background: #1877f2;
-      color: white;
-      font-weight: bold;
-    }
-
-    .follow-btn.following {
-      background: #e9edf4;
-      color: #344054;
-    }
-
-    .profile-stats {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-top: 15px;
-    }
-
-    .stat-box {
-      background: #f5f7fa;
-      border-radius: 14px;
-      text-align: center;
-      padding: 18px 10px;
-    }
-
-    .stat-number {
-      font-size: 24px;
-      font-weight: bold;
-      color: #1877f2;
-    }
-
-    .stat-label {
-      color: #788295;
-      font-size: 12px;
-      margin-top: 4px;
+      padding: 0 14px;
     }
 
     /* =========================
@@ -576,98 +444,276 @@
     ========================= */
 
     .right-panel {
-      background: white;
-      border-radius: 18px;
-      padding: 18px;
-      height: fit-content;
       position: sticky;
       top: 84px;
+      height: fit-content;
     }
 
-    .right-panel h3 {
-      margin-bottom: 12px;
+    .panel-card {
+      padding: 18px;
+      margin-bottom: 16px;
     }
 
-    .info-item {
-      padding: 12px 0;
-      border-bottom: 1px solid #edf0f4;
-      color: #687386;
-      font-size: 13px;
-      line-height: 1.5;
+    .panel-card h3 {
+      margin-top: 0;
+    }
+
+    .profile-stats {
+      display: flex;
+      gap: 20px;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 19px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 12px;
     }
 
     /* =========================
-       EMPTY / LOADING
+       DISCOVER
     ========================= */
 
+    .discover-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(
+          auto-fill,
+          minmax(220px, 1fr)
+        );
+      gap: 15px;
+    }
+
+    .user-card {
+      padding: 18px;
+    }
+
+    .user-avatar {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: var(--soft);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .user-name {
+      font-size: 17px;
+      font-weight: 800;
+    }
+
+    .user-country {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 3px;
+    }
+
+    .user-stats {
+      display: flex;
+      gap: 15px;
+      margin: 14px 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .follow-btn {
+      width: 100%;
+      border: 0;
+      background: var(--primary);
+      color: white;
+      padding: 10px;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+
+    .follow-btn.following {
+      background: #ecfdf5;
+      color: var(--success);
+      border: 1px solid #bbf7d0;
+    }
+
+    /* =========================
+       NOTIFICATIONS
+    ========================= */
+
+    .notification-panel {
+      position: fixed;
+      top: 70px;
+      right: 20px;
+      width: min(390px, calc(100vw - 30px));
+      max-height: 75vh;
+      background: white;
+      border-radius: 18px;
+      box-shadow:
+        0 20px 60px rgba(15, 23, 42, 0.2);
+      z-index: 200;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+
+    .notification-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .notification-header h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .notification-header button {
+      border: 0;
+      background: none;
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .notification-list {
+      overflow-y: auto;
+      max-height: calc(75vh - 60px);
+    }
+
+    .notification-item {
+      display: flex;
+      gap: 12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid #f1f5f9;
+      transition: background 0.2s;
+    }
+
+    .notification-item:hover {
+      background: #f8fafc;
+    }
+
+    .notification-item.unread {
+      background: #eff6ff;
+    }
+
+    .notification-icon {
+      width: 38px;
+      height: 38px;
+      min-width: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--soft);
+      font-size: 18px;
+    }
+
+    .notification-content {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .notification-message {
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .notification-time {
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 4px;
+    }
+
+    .notification-read {
+      border: 0;
+      background: transparent;
+      color: var(--primary);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px;
+    }
+
+    .empty-notifications {
+      text-align: center;
+      padding: 35px 20px;
+      color: var(--muted);
+    }
+
+    /* =========================
+       TOAST
+    ========================= */
+
+    #toast {
+      position: fixed;
+      left: 50%;
+      bottom: 25px;
+      transform: translateX(-50%);
+      background: #111827;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 12px;
+      font-size: 14px;
+      z-index: 500;
+      box-shadow: var(--shadow);
+      max-width: calc(100vw - 30px);
+      text-align: center;
+    }
+
+    /* =========================
+       LOADING / EMPTY
+    ========================= */
+
+    .loading,
     .empty {
       text-align: center;
-      padding: 35px 15px;
-      color: #7a8495;
-    }
-
-    .loading {
-      text-align: center;
-      padding: 25px;
-      color: #7a8495;
-    }
-
-    .toast {
-      position: fixed;
-      right: 20px;
-      bottom: 20px;
-      background: #172033;
-      color: white;
-      padding: 12px 17px;
-      border-radius: 12px;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(10px);
-      transition: .25s;
-      z-index: 999;
-      max-width: 320px;
-      font-size: 14px;
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translateY(0);
+      padding: 35px;
+      color: var(--muted);
     }
 
     /* =========================
        MOBILE
     ========================= */
 
-    @media (max-width: 1000px) {
-
+    @media (max-width: 1050px) {
       .layout {
-        grid-template-columns: 200px 1fr;
+        grid-template-columns:
+          210px
+          minmax(0, 1fr);
       }
 
       .right-panel {
         display: none;
       }
-
     }
 
-    @media (max-width: 700px) {
-
+    @media (max-width: 720px) {
       .topbar {
         padding: 0 12px;
       }
 
-      .top-brand {
+      .top-logo {
         font-size: 18px;
       }
 
       .layout {
         display: block;
-        padding: 10px;
+        padding: 12px;
       }
 
       .sidebar {
         position: static;
         margin-bottom: 12px;
+      }
+
+      .side-card {
+        display: flex;
+        overflow-x: auto;
+        gap: 4px;
         padding: 8px;
       }
 
@@ -675,33 +721,25 @@
         display: none;
       }
 
-      .sidebar nav {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 4px;
-      }
-
       .nav-btn {
-        text-align: center;
-        font-size: 11px;
-        padding: 9px 4px;
+        width: auto;
+        white-space: nowrap;
+        margin: 0;
       }
 
-      .discover-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .card {
-        border-radius: 14px;
-        padding: 14px;
+      .section-title {
+        font-size: 21px;
       }
 
       .post-actions {
-        font-size: 12px;
+        flex-wrap: wrap;
       }
 
+      .notification-panel {
+        right: 10px;
+        top: 66px;
+      }
     }
-
   </style>
 </head>
 
@@ -715,46 +753,41 @@
 
     <div class="auth-card">
 
-      <div class="brand">
-        <div class="brand-logo">🌎</div>
-        <h1>WorldConnect</h1>
-        <p>One World. One Connection.</p>
+      <div class="logo">
+        🌎 WorldConnect
+      </div>
+
+      <div class="tagline">
+        Connect with the world.
       </div>
 
       <!-- LOGIN -->
 
-      <div id="loginForm">
+      <div id="loginBox">
 
-        <h2>Welcome Back</h2>
+        <h2>Welcome back</h2>
 
-        <div
-          id="loginError"
-          class="error-box hidden"
-        ></div>
-
-        <div class="form-group">
+        <div class="field">
           <label>Email</label>
-
           <input
             id="loginEmail"
             type="email"
-            placeholder="Enter your email"
+            placeholder="you@example.com"
           />
         </div>
 
-        <div class="form-group">
+        <div class="field">
           <label>Password</label>
-
           <input
             id="loginPassword"
             type="password"
-            placeholder="Enter your password"
+            placeholder="Your password"
           />
         </div>
 
         <button
           class="primary-btn"
-          onclick="login()"
+          id="loginBtn"
         >
           Login
         </button>
@@ -763,9 +796,9 @@
           Don't have an account?
 
           <button
-            onclick="showRegister()"
+            id="showRegisterBtn"
           >
-            Register
+            Create one
           </button>
         </div>
 
@@ -775,20 +808,14 @@
       <!-- REGISTER -->
 
       <div
-        id="registerForm"
+        id="registerBox"
         class="hidden"
       >
 
-        <h2>Create Account</h2>
+        <h2>Create account</h2>
 
-        <div
-          id="registerError"
-          class="error-box hidden"
-        ></div>
-
-        <div class="form-group">
+        <div class="field">
           <label>Name</label>
-
           <input
             id="registerName"
             type="text"
@@ -796,39 +823,36 @@
           />
         </div>
 
-        <div class="form-group">
+        <div class="field">
           <label>Email</label>
-
           <input
             id="registerEmail"
             type="email"
-            placeholder="Your email"
+            placeholder="you@example.com"
           />
         </div>
 
-        <div class="form-group">
-          <label>Country</label>
-
-          <input
-            id="registerCountry"
-            type="text"
-            placeholder="Your country"
-          />
-        </div>
-
-        <div class="form-group">
+        <div class="field">
           <label>Password</label>
-
           <input
             id="registerPassword"
             type="password"
-            placeholder="Minimum 6 characters"
+            placeholder="At least 6 characters"
+          />
+        </div>
+
+        <div class="field">
+          <label>Country</label>
+          <input
+            id="registerCountry"
+            type="text"
+            placeholder="Philippines"
           />
         </div>
 
         <button
           class="primary-btn"
-          onclick="register()"
+          id="registerBtn"
         >
           Create Account
         </button>
@@ -837,7 +861,7 @@
           Already have an account?
 
           <button
-            onclick="showLogin()"
+            id="showLoginBtn"
           >
             Login
           </button>
@@ -851,7 +875,7 @@
 
 
   <!-- =====================================================
-       APP
+       APP SCREEN
   ====================================================== -->
 
   <div
@@ -859,11 +883,11 @@
     class="hidden"
   >
 
-    <!-- TOP BAR -->
+    <!-- TOPBAR -->
 
     <header class="topbar">
 
-      <div class="top-brand">
+      <div class="top-logo">
         🌎 WorldConnect
       </div>
 
@@ -871,34 +895,25 @@
 
         <button
           class="icon-btn"
-          title="Notifications"
-          onclick="showToast('Notifications coming soon.')"
-        >
-          🔔
-        </button>
-
-        <button
-          class="icon-btn"
+          id="messagesBtn"
           title="Messages"
-          onclick="showToast('Messages coming soon.')"
         >
           💬
         </button>
 
         <button
           class="icon-btn"
-          title="Help"
-          onclick="showToast('WorldConnect — One World. One Connection.')"
+          id="notificationBtn"
+          title="Notifications"
         >
-          ?
-        </button>
+          🔔
 
-        <button
-          class="icon-btn"
-          title="Logout"
-          onclick="logout()"
-        >
-          🚪
+          <span
+            id="notificationBadge"
+            class="notification-badge hidden"
+          >
+            0
+          </span>
         </button>
 
       </div>
@@ -906,169 +921,163 @@
     </header>
 
 
+    <!-- NOTIFICATION PANEL -->
+
+    <div
+      id="notificationPanel"
+      class="notification-panel hidden"
+    >
+
+      <div class="notification-header">
+
+        <h3>
+          🔔 Notifications
+        </h3>
+
+        <button
+          id="markAllReadBtn"
+        >
+          Mark all as read
+        </button>
+
+      </div>
+
+      <div
+        id="notificationList"
+        class="notification-list"
+      >
+
+        <div class="loading">
+          Loading...
+        </div>
+
+      </div>
+
+    </div>
+
+
     <!-- MAIN LAYOUT -->
 
     <div class="layout">
 
-
-      <!-- =================================================
-           SIDEBAR
-      ================================================== -->
+      <!-- SIDEBAR -->
 
       <aside class="sidebar">
 
-        <div class="profile-mini">
+        <div class="side-card">
 
-          <div class="profile-mini-row">
+          <div class="profile-mini">
 
             <div
-              class="avatar"
-              id="miniAvatar"
+              class="profile-name"
+              id="sidebarName"
             >
-              ?
+              User
             </div>
 
-            <div>
-
-              <div
-                class="profile-mini-name"
-                id="miniName"
-              >
-                User
-              </div>
-
-              <div
-                class="profile-mini-email"
-                id="miniEmail"
-              >
-                -
-              </div>
-
+            <div
+              class="profile-country"
+              id="sidebarCountry"
+            >
+              World
             </div>
 
           </div>
 
-        </div>
-
-
-        <nav>
 
           <button
             class="nav-btn active"
-            data-section="feedSection"
-            onclick="showSection('feedSection', this)"
+            data-section="feed"
           >
             🌎 World Feed
           </button>
 
           <button
             class="nav-btn"
-            data-section="spaceSection"
-            onclick="showSection('spaceSection', this)"
+            data-section="space"
           >
             ✦ My Space
           </button>
 
           <button
             class="nav-btn"
-            data-section="momentsSection"
-            onclick="showSection('momentsSection', this)"
+            data-section="moments"
           >
             ✨ Moments
           </button>
 
           <button
             class="nav-btn"
-            data-section="converseSection"
-            onclick="showSection('converseSection', this)"
+            data-section="converse"
           >
             💬 Converse
           </button>
 
           <button
             class="nav-btn"
-            data-section="connectSection"
-            onclick="showSection('connectSection', this)"
+            data-section="connect"
           >
             🤝 Connect
           </button>
 
           <button
             class="nav-btn"
-            data-section="discoverSection"
-            onclick="showSection('discoverSection', this)"
+            data-section="discover"
           >
             🧭 Discover
           </button>
 
           <button
             class="nav-btn"
-            data-section="controlSection"
-            onclick="showSection('controlSection', this)"
+            data-section="control"
           >
             ⚙️ Control Center
           </button>
 
           <button
             class="nav-btn"
-            onclick="logout()"
+            id="logoutBtn"
           >
             🚪 Logout
           </button>
 
-        </nav>
+        </div>
 
       </aside>
 
 
-      <!-- =================================================
-           MAIN CONTENT
-      ================================================== -->
+      <!-- MAIN -->
 
-      <main class="main-content">
+      <main class="main">
 
-
-        <!-- =========================
-             WORLD FEED
-        ========================== -->
+        <!-- FEED -->
 
         <section
           id="feedSection"
-          class="section active"
         >
 
-          <h2 class="section-title">
+          <h1 class="section-title">
             🌎 World Feed
-          </h2>
+          </h1>
 
           <p class="section-subtitle">
-            Connect with people around the world.
+            See what people around the world are sharing.
           </p>
 
 
-          <!-- CREATE POST -->
-
-          <div class="card create-post">
+          <div class="create-card">
 
             <textarea
-              id="postBody"
+              id="postInput"
               maxlength="5000"
               placeholder="What's on your mind?"
-              oninput="updateCharCount()"
             ></textarea>
 
-            <div class="post-tools">
-
-              <span
-                class="char-count"
-                id="charCount"
-              >
-                0 / 5000
-              </span>
+            <div class="create-actions">
 
               <button
-                class="post-btn"
-                onclick="createPost()"
+                class="small-primary"
+                id="createPostBtn"
               >
                 📝 Post
               </button>
@@ -1078,105 +1087,65 @@
           </div>
 
 
-          <!-- FEED -->
-
-          <div id="feedContainer">
-
+          <div
+            id="feed"
+          >
             <div class="loading">
-              Loading World Feed...
+              Loading posts...
             </div>
-
           </div>
 
         </section>
 
 
-        <!-- =========================
-             MY SPACE
-        ========================== -->
+        <!-- MY SPACE -->
 
         <section
           id="spaceSection"
-          class="section"
+          class="hidden"
         >
 
-          <h2 class="section-title">
+          <h1 class="section-title">
             ✦ My Space
-          </h2>
+          </h1>
 
-          <p class="section-subtitle">
-            Your WorldConnect profile.
-          </p>
+          <div class="panel-card">
 
+            <h2 id="myProfileName">
+              Profile
+            </h2>
 
-          <div class="card">
+            <p
+              id="myProfileEmail"
+              class="section-subtitle"
+            ></p>
 
-            <div
-              class="profile-mini-row"
-            >
-
-              <div
-                class="avatar"
-                id="profileAvatar"
-              >
-                ?
-              </div>
-
-              <div>
-
-                <h2 id="profileName">
-                  User
-                </h2>
-
-                <p
-                  id="profileEmail"
-                  class="profile-mini-email"
-                >
-                  -
-                </p>
-
-                <p
-                  id="profileCountry"
-                  class="profile-mini-email"
-                >
-                  🌎
-                </p>
-
-              </div>
-
-            </div>
-
+            <p id="myProfileCountry"></p>
 
             <div class="profile-stats">
 
-              <div class="stat-box">
-
-                <div
-                  class="stat-number"
+              <div class="stat">
+                <strong
                   id="myFollowers"
                 >
                   0
-                </div>
+                </strong>
 
-                <div class="stat-label">
+                <span>
                   Followers
-                </div>
-
+                </span>
               </div>
 
-              <div class="stat-box">
-
-                <div
-                  class="stat-number"
+              <div class="stat">
+                <strong
                   id="myFollowing"
                 >
                   0
-                </div>
+                </strong>
 
-                <div class="stat-label">
+                <span>
                   Following
-                </div>
-
+                </span>
               </div>
 
             </div>
@@ -1186,195 +1155,131 @@
         </section>
 
 
-        <!-- =========================
-             MOMENTS
-        ========================== -->
+        <!-- MOMENTS -->
 
         <section
           id="momentsSection"
-          class="section"
+          class="hidden"
         >
 
-          <h2 class="section-title">
+          <h1 class="section-title">
             ✨ Moments
-          </h2>
+          </h1>
 
-          <p class="section-subtitle">
-            Share and discover memorable moments.
-          </p>
+          <div class="panel-card">
 
-          <div class="card empty">
-            ✨ Moments feature is coming soon.
+            <h3>
+              Coming soon
+            </h3>
+
+            <p>
+              Moments will be available in a future update.
+            </p>
+
           </div>
 
         </section>
 
 
-        <!-- =========================
-             CONVERSE
-        ========================== -->
+        <!-- CONVERSE -->
 
         <section
           id="converseSection"
-          class="section"
+          class="hidden"
         >
 
-          <h2 class="section-title">
+          <h1 class="section-title">
             💬 Converse
-          </h2>
+          </h1>
 
-          <p class="section-subtitle">
-            Talk with people from around the world.
-          </p>
+          <div class="panel-card">
 
-          <div class="card empty">
-            💬 Messenger and private conversations are coming soon.
+            <h3>
+              Messaging
+            </h3>
+
+            <p>
+              Private messaging will be added soon.
+            </p>
+
           </div>
 
         </section>
 
 
-        <!-- =========================
-             CONNECT
-        ========================== -->
+        <!-- CONNECT -->
 
         <section
           id="connectSection"
-          class="section"
+          class="hidden"
         >
 
-          <h2 class="section-title">
+          <h1 class="section-title">
             🤝 Connect
-          </h2>
-
-          <p class="section-subtitle">
-            Follow people and build your network.
-          </p>
-
-
-          <div class="card">
-
-            <h3>
-              👥 Your Network
-            </h3>
-
-            <div class="profile-stats">
-
-              <div class="stat-box">
-
-                <div
-                  class="stat-number"
-                  id="connectFollowers"
-                >
-                  0
-                </div>
-
-                <div class="stat-label">
-                  Followers
-                </div>
-
-              </div>
-
-              <div class="stat-box">
-
-                <div
-                  class="stat-number"
-                  id="connectFollowing"
-                >
-                  0
-                </div>
-
-                <div class="stat-label">
-                  Following
-                </div>
-
-              </div>
-
-            </div>
-
-          </div>
-
-
-          <div id="connectContainer">
-
-            <div class="loading">
-              Loading people...
-            </div>
-
-          </div>
-
-        </section>
-
-
-        <!-- =========================
-             DISCOVER
-        ========================== -->
-
-        <section
-          id="discoverSection"
-          class="section"
-        >
-
-          <h2 class="section-title">
-            🧭 Discover
-          </h2>
+          </h1>
 
           <p class="section-subtitle">
             Discover people and connect with them.
           </p>
 
-
           <div
-            id="discoverContainer"
+            id="connectList"
             class="discover-grid"
-          >
-
-            <div class="loading">
-              Loading users...
-            </div>
-
-          </div>
+          ></div>
 
         </section>
 
 
-        <!-- =========================
-             CONTROL CENTER
-        ========================== -->
+        <!-- DISCOVER -->
+
+        <section
+          id="discoverSection"
+          class="hidden"
+        >
+
+          <h1 class="section-title">
+            🧭 Discover
+          </h1>
+
+          <p class="section-subtitle">
+            Find people to follow.
+          </p>
+
+          <div
+            id="discoverList"
+            class="discover-grid"
+          ></div>
+
+        </section>
+
+
+        <!-- CONTROL CENTER -->
 
         <section
           id="controlSection"
-          class="section"
+          class="hidden"
         >
 
-          <h2 class="section-title">
+          <h1 class="section-title">
             ⚙️ Control Center
-          </h2>
+          </h1>
 
-          <p class="section-subtitle">
-            Manage your WorldConnect account.
-          </p>
-
-
-          <div class="card">
+          <div class="panel-card">
 
             <h3>
-              👤 Account
+              Account
             </h3>
 
-            <div class="info-item">
-              Your account is protected with secure
-              authentication.
-            </div>
+            <p>
+              Your WorldConnect account is active.
+            </p>
 
-            <div class="info-item">
-              Your WorldConnect session remains active
-              after refreshing the page.
-            </div>
-
-            <div class="info-item">
-              More account settings will be added soon.
-            </div>
+            <button
+              class="small-primary"
+              id="controlLogoutBtn"
+            >
+              🚪 Logout
+            </button>
 
           </div>
 
@@ -1383,38 +1288,86 @@
       </main>
 
 
-      <!-- =================================================
-           RIGHT PANEL
-      ================================================== -->
+      <!-- RIGHT PANEL -->
 
       <aside class="right-panel">
 
-        <h3>
-          🌎 WorldConnect
-        </h3>
+        <div class="panel-card">
 
-        <div class="info-item">
-          Connect with people around the world.
+          <h3>
+            👤 Your Profile
+          </h3>
+
+          <div
+            class="profile-name"
+            id="rightProfileName"
+          >
+            User
+          </div>
+
+          <div
+            class="profile-country"
+            id="rightProfileCountry"
+          >
+            World
+          </div>
+
+          <br />
+
+          <div class="profile-stats">
+
+            <div class="stat">
+
+              <strong
+                id="rightFollowers"
+              >
+                0
+              </strong>
+
+              <span>
+                Followers
+              </span>
+
+            </div>
+
+            <div class="stat">
+
+              <strong
+                id="rightFollowing"
+              >
+                0
+              </strong>
+
+              <span>
+                Following
+              </span>
+
+            </div>
+
+          </div>
+
         </div>
 
-        <div class="info-item">
-          ❤️ Like posts
-        </div>
 
-        <div class="info-item">
-          💬 Comment on posts
-        </div>
+        <div class="panel-card">
 
-        <div class="info-item">
-          ↗️ Share posts
-        </div>
+          <h3>
+            🔔 Notifications
+          </h3>
 
-        <div class="info-item">
-          🤝 Follow people
-        </div>
+          <p
+            id="notificationSummary"
+          >
+            No new notifications.
+          </p>
 
-        <div class="info-item">
-          👥 Build your network
+          <button
+            class="small-primary"
+            id="openNotificationsBtn"
+          >
+            View Notifications
+          </button>
+
         </div>
 
       </aside>
@@ -1428,12 +1381,11 @@
 
   <div
     id="toast"
-    class="toast"
+    class="hidden"
   ></div>
 
 
   <script>
-
     /* =====================================================
        GLOBAL STATE
     ====================================================== */
@@ -1443,9 +1395,128 @@
 
     let currentUser = null;
 
+    let notificationTimer = null;
+
 
     /* =====================================================
-       API HELPER
+       DOM HELPERS
+    ====================================================== */
+
+    const $ = (id) =>
+      document.getElementById(id);
+
+
+    function showToast(message) {
+
+      const toast =
+        $("toast");
+
+      toast.textContent =
+        message;
+
+      toast.classList.remove(
+        "hidden"
+      );
+
+      clearTimeout(
+        showToast.timer
+      );
+
+      showToast.timer =
+        setTimeout(() => {
+
+          toast.classList.add(
+            "hidden"
+          );
+
+        }, 3000);
+    }
+
+
+    function escapeHtml(value) {
+
+      return String(
+        value ?? ""
+      )
+        .replaceAll(
+          "&",
+          "&amp;"
+        )
+        .replaceAll(
+          "<",
+          "&lt;"
+        )
+        .replaceAll(
+          ">",
+          "&gt;"
+        )
+        .replaceAll(
+          '"',
+          "&quot;"
+        )
+        .replaceAll(
+          "'",
+          "&#039;"
+        );
+    }
+
+
+    function formatDate(value) {
+
+      if (!value) {
+        return "";
+      }
+
+      const date =
+        new Date(value);
+
+      if (
+        Number.isNaN(
+          date.getTime()
+        )
+      ) {
+        return "";
+      }
+
+      return date.toLocaleString(
+        undefined,
+        {
+          dateStyle: "medium",
+          timeStyle: "short"
+        }
+      );
+    }
+
+
+    function getInitials(name) {
+
+      const text =
+        String(
+          name || "U"
+        ).trim();
+
+      if (!text) {
+        return "U";
+      }
+
+      const parts =
+        text.split(/\s+/);
+
+      if (parts.length === 1) {
+        return parts[0]
+          .substring(0, 2)
+          .toUpperCase();
+      }
+
+      return (
+        parts[0][0] +
+        parts[parts.length - 1][0]
+      ).toUpperCase();
+    }
+
+
+    /* =====================================================
+       API
     ====================================================== */
 
     async function api(
@@ -1460,10 +1531,8 @@
       };
 
       if (token) {
-
         options.headers.Authorization =
           `Bearer ${token}`;
-
       }
 
       const response =
@@ -1475,14 +1544,29 @@
       let data = {};
 
       try {
-
         data =
           await response.json();
-
       } catch {
-
         data = {};
+      }
 
+      if (
+        response.status === 401
+      ) {
+
+        token = null;
+
+        localStorage.removeItem(
+          "token"
+        );
+
+        currentUser = null;
+
+        showAuth();
+
+        throw new Error(
+          "Your session has expired. Please login again."
+        );
       }
 
       if (!response.ok) {
@@ -1491,7 +1575,6 @@
           data.error ||
           `Request failed (${response.status})`
         );
-
       }
 
       return data;
@@ -1499,149 +1582,117 @@
 
 
     /* =====================================================
-       TOAST
+       AUTH SCREEN
     ====================================================== */
 
-    let toastTimer;
+    function showAuth() {
 
-    function showToast(message) {
-
-      const toast =
-        document.getElementById(
-          "toast"
+      $("authScreen")
+        .classList.remove(
+          "hidden"
         );
 
-      toast.textContent =
-        message;
+      $("appScreen")
+        .classList.add(
+          "hidden"
+        );
 
-      toast.classList.add(
-        "show"
-      );
+      if (
+        notificationTimer
+      ) {
+        clearInterval(
+          notificationTimer
+        );
 
-      clearTimeout(
-        toastTimer
-      );
+        notificationTimer =
+          null;
+      }
+    }
 
-      toastTimer =
-        setTimeout(
-          () => {
 
-            toast.classList.remove(
-              "show"
+    function showApp() {
+
+      $("authScreen")
+        .classList.add(
+          "hidden"
+        );
+
+      $("appScreen")
+        .classList.remove(
+          "hidden"
+        );
+
+      startNotificationPolling();
+    }
+
+
+    $("showRegisterBtn")
+      .addEventListener(
+        "click",
+        () => {
+
+          $("loginBox")
+            .classList.add(
+              "hidden"
             );
 
-          },
-          2500
-        );
-    }
+          $("registerBox")
+            .classList.remove(
+              "hidden"
+            );
 
-
-    /* =====================================================
-       AUTH UI
-    ====================================================== */
-
-    function showLogin() {
-
-      document
-        .getElementById("loginForm")
-        .classList.remove("hidden");
-
-      document
-        .getElementById("registerForm")
-        .classList.add("hidden");
-
-    }
-
-
-    function showRegister() {
-
-      document
-        .getElementById("loginForm")
-        .classList.add("hidden");
-
-      document
-        .getElementById("registerForm")
-        .classList.remove("hidden");
-
-    }
-
-
-    function showError(
-      id,
-      message
-    ) {
-
-      const box =
-        document.getElementById(id);
-
-      box.textContent =
-        message;
-
-      box.classList.remove(
-        "hidden"
-      );
-    }
-
-
-    function hideError(id) {
-
-      document
-        .getElementById(id)
-        .classList.add("hidden");
-
-    }
-
-
-    /* =====================================================
-       REGISTER
-    ====================================================== */
-
-    async function register() {
-
-      hideError(
-        "registerError"
+        }
       );
 
-      const name =
-        document
-          .getElementById(
-            "registerName"
-          )
-          .value
-          .trim();
+
+    $("showLoginBtn")
+      .addEventListener(
+        "click",
+        () => {
+
+          $("registerBox")
+            .classList.add(
+              "hidden"
+            );
+
+          $("loginBox")
+            .classList.remove(
+              "hidden"
+            );
+
+        }
+      );
+
+
+    $("loginBtn")
+      .addEventListener(
+        "click",
+        login
+      );
+
+
+    $("registerBtn")
+      .addEventListener(
+        "click",
+        register
+      );
+
+
+    async function login() {
 
       const email =
-        document
-          .getElementById(
-            "registerEmail"
-          )
-          .value
-          .trim();
-
-      const country =
-        document
-          .getElementById(
-            "registerCountry"
-          )
+        $("loginEmail")
           .value
           .trim();
 
       const password =
-        document
-          .getElementById(
-            "registerPassword"
-          )
+        $("loginPassword")
           .value;
 
-      if (
-        !name ||
-        !email ||
-        !password
-      ) {
+      if (!email || !password) {
 
-        showError(
-          "registerError",
-          "Please complete all required fields."
+        showToast(
+          "Please enter your email and password."
         );
 
         return;
@@ -1649,12 +1700,104 @@
 
       try {
 
+        $("loginBtn")
+          .disabled = true;
+
+        $("loginBtn")
+          .textContent =
+          "Logging in...";
+
+        const data =
+          await api(
+            "/api/auth/login",
+            {
+              method: "POST",
+              body: JSON.stringify({
+                email,
+                password
+              })
+            }
+          );
+
+        token =
+          data.token;
+
+        localStorage.setItem(
+          "token",
+          token
+        );
+
+        currentUser =
+          data.user;
+
+        await afterLogin();
+
+      } catch (error) {
+
+        showToast(
+          error.message
+        );
+
+      } finally {
+
+        $("loginBtn")
+          .disabled = false;
+
+        $("loginBtn")
+          .textContent =
+          "Login";
+      }
+    }
+
+
+    async function register() {
+
+      const name =
+        $("registerName")
+          .value
+          .trim();
+
+      const email =
+        $("registerEmail")
+          .value
+          .trim();
+
+      const password =
+        $("registerPassword")
+          .value;
+
+      const country =
+        $("registerCountry")
+          .value
+          .trim();
+
+      if (
+        !name ||
+        !email ||
+        !password
+      ) {
+
+        showToast(
+          "Please complete the required fields."
+        );
+
+        return;
+      }
+
+      try {
+
+        $("registerBtn")
+          .disabled = true;
+
+        $("registerBtn")
+          .textContent =
+          "Creating account...";
+
         const data =
           await api(
             "/api/auth/register",
             {
               method: "POST",
-
               body: JSON.stringify({
                 name,
                 email,
@@ -1675,103 +1818,54 @@
         currentUser =
           data.user;
 
-        showApp();
+        await afterLogin();
+
+      } catch (error) {
 
         showToast(
-          "Account created successfully!"
-        );
-
-      } catch (error) {
-
-        showError(
-          "registerError",
           error.message
         );
 
+      } finally {
+
+        $("registerBtn")
+          .disabled = false;
+
+        $("registerBtn")
+          .textContent =
+          "Create Account";
       }
     }
 
 
-    /* =====================================================
-       LOGIN
-    ====================================================== */
+    async function afterLogin() {
 
-    async function login() {
+      showApp();
 
-      hideError(
-        "loginError"
+      updateUserUI();
+
+      await loadMyProfile();
+
+      await loadFeed();
+
+      await loadNotifications(
+        false
+      );
+    }
+
+
+    $("logoutBtn")
+      .addEventListener(
+        "click",
+        logout
       );
 
-      const email =
-        document
-          .getElementById(
-            "loginEmail"
-          )
-          .value
-          .trim();
+    $("controlLogoutBtn")
+      .addEventListener(
+        "click",
+        logout
+      );
 
-      const password =
-        document
-          .getElementById(
-            "loginPassword"
-          )
-          .value;
-
-      if (
-        !email ||
-        !password
-      ) {
-
-        showError(
-          "loginError",
-          "Please enter your email and password."
-        );
-
-        return;
-      }
-
-      try {
-
-        const data =
-          await api(
-            "/api/auth/login",
-            {
-              method: "POST",
-
-              body: JSON.stringify({
-                email,
-                password
-              })
-            }
-          );
-
-        token =
-          data.token;
-
-        localStorage.setItem(
-          "token",
-          token
-        );
-
-        currentUser =
-          data.user;
-
-        showApp();
-
-      } catch (error) {
-
-        showError(
-          "loginError",
-          error.message
-        );
-
-      }
-    }
-
-
-    /* =====================================================
-       LOGOUT
-    ====================================================== */
 
     function logout() {
 
@@ -1783,60 +1877,24 @@
         "token"
       );
 
-      document
-        .getElementById(
-          "appScreen"
-        )
-        .classList.add("hidden");
+      $("notificationPanel")
+        .classList.add(
+          "hidden"
+        );
 
-      document
-        .getElementById(
-          "authScreen"
-        )
-        .classList.remove("hidden");
-
-      showLogin();
+      showAuth();
 
       showToast(
-        "Logged out."
+        "You have been logged out."
       );
     }
 
 
     /* =====================================================
-       SHOW APP
+       USER UI
     ====================================================== */
 
-    async function showApp() {
-
-      document
-        .getElementById(
-          "authScreen"
-        )
-        .classList.add("hidden");
-
-      document
-        .getElementById(
-          "appScreen"
-        )
-        .classList.remove("hidden");
-
-      updateProfileUI();
-
-      await loadMyProfile();
-
-      await loadFeed();
-
-      await loadDiscover();
-
-    }
-
-
-    /* =====================================================
-       PROFILE UI
-    ====================================================== */
-
-    function updateProfileUI() {
+    function updateUserUI() {
 
       if (!currentUser) {
         return;
@@ -1846,261 +1904,197 @@
         currentUser.name ||
         "User";
 
-      const email =
-        currentUser.email ||
-        "";
-
       const country =
         currentUser.country ||
-        "🌎";
+        "World";
 
-      document
-        .getElementById(
-          "miniName"
-        )
+      $("sidebarName")
+        .textContent = name;
+
+      $("sidebarCountry")
+        .textContent = country;
+
+      $("rightProfileName")
+        .textContent = name;
+
+      $("rightProfileCountry")
+        .textContent = country;
+
+      $("myProfileName")
+        .textContent = name;
+
+      $("myProfileEmail")
         .textContent =
-        name;
+        currentUser.email || "";
 
-      document
-        .getElementById(
-          "miniEmail"
-        )
+      $("myProfileCountry")
         .textContent =
-        email;
-
-      document
-        .getElementById(
-          "profileName"
-        )
-        .textContent =
-        name;
-
-      document
-        .getElementById(
-          "profileEmail"
-        )
-        .textContent =
-        email;
-
-      document
-        .getElementById(
-          "profileCountry"
-        )
-        .textContent =
-        `🌎 ${country}`;
-
-      const initial =
-        name
-          .charAt(0)
-          .toUpperCase();
-
-      document
-        .getElementById(
-          "miniAvatar"
-        )
-        .textContent =
-        initial;
-
-      document
-        .getElementById(
-          "profileAvatar"
-        )
-        .textContent =
-        initial;
-
+        country;
     }
 
 
-    /* =====================================================
-       LOAD MY PROFILE
-    ====================================================== */
-
     async function loadMyProfile() {
+
+      if (!currentUser) {
+        return;
+      }
 
       try {
 
         const data =
           await api(
-            "/api/users/" +
-            currentUser.id
+            `/api/users/${currentUser.id}`
           );
 
-        if (data.user) {
+        const user =
+          data.user;
 
-          currentUser =
-            {
-              ...currentUser,
-              ...data.user
-            };
+        currentUser = {
+          ...currentUser,
+          ...user
+        };
 
-          updateProfileUI();
+        updateUserUI();
 
-          const followers =
-            Number(
-              data.user.follower_count ||
-              0
-            );
+        $("myFollowers")
+          .textContent =
+          user.follower_count || 0;
 
-          const following =
-            Number(
-              data.user.following_count ||
-              0
-            );
+        $("myFollowing")
+          .textContent =
+          user.following_count || 0;
 
-          document
-            .getElementById(
-              "myFollowers"
-            )
-            .textContent =
-            followers;
+        $("rightFollowers")
+          .textContent =
+          user.follower_count || 0;
 
-          document
-            .getElementById(
-              "myFollowing"
-            )
-            .textContent =
-            following;
-
-          document
-            .getElementById(
-              "connectFollowers"
-            )
-            .textContent =
-            followers;
-
-          document
-            .getElementById(
-              "connectFollowing"
-            )
-            .textContent =
-            following;
-
-        }
+        $("rightFollowing")
+          .textContent =
+          user.following_count || 0;
 
       } catch (error) {
 
         console.error(
+          "PROFILE ERROR:",
           error
         );
-
       }
     }
 
 
     /* =====================================================
-       SECTION NAVIGATION
+       NAVIGATION
     ====================================================== */
 
-    function showSection(
-      sectionId,
-      button
-    ) {
+    const sections = [
+      "feed",
+      "space",
+      "moments",
+      "converse",
+      "connect",
+      "discover",
+      "control"
+    ];
+
+
+    function showSection(name) {
+
+      sections.forEach(
+        (section) => {
+
+          const element =
+            $(
+              `${section}Section`
+            );
+
+          if (!element) {
+            return;
+          }
+
+          element.classList.toggle(
+            "hidden",
+            section !== name
+          );
+        }
+      );
+
 
       document
         .querySelectorAll(
-          ".section"
+          ".nav-btn[data-section]"
         )
         .forEach(
-          section => {
+          (button) => {
 
-            section.classList.remove(
-              "active"
+            button.classList.toggle(
+              "active",
+              button.dataset.section ===
+                name
             );
 
           }
         );
 
-      const section =
-        document.getElementById(
-          sectionId
-        );
 
-      if (section) {
-
-        section.classList.add(
-          "active"
-        );
-
+      if (name === "feed") {
+        loadFeed();
       }
 
-      document
-        .querySelectorAll(
-          ".nav-btn"
-        )
-        .forEach(
-          btn => {
-
-            btn.classList.remove(
-              "active"
-            );
-
-          }
-        );
-
-      if (button) {
-
-        button.classList.add(
-          "active"
-        );
-
-      }
-
-
-      if (
-        sectionId ===
-        "discoverSection"
-      ) {
-
-        loadDiscover();
-
-      }
-
-
-      if (
-        sectionId ===
-        "connectSection"
-      ) {
-
-        loadDiscover();
-
+      if (name === "space") {
         loadMyProfile();
-
       }
 
-    }
-
-
-    /* =====================================================
-       CHARACTER COUNT
-    ====================================================== */
-
-    function updateCharCount() {
-
-      const textarea =
-        document.getElementById(
-          "postBody"
+      if (name === "discover") {
+        loadDiscover(
+          "discoverList"
         );
+      }
 
-      document
-        .getElementById(
-          "charCount"
-        )
-        .textContent =
-        `${textarea.value.length} / 5000`;
-
+      if (name === "connect") {
+        loadDiscover(
+          "connectList"
+        );
+      }
     }
+
+
+    document
+      .querySelectorAll(
+        ".nav-btn[data-section]"
+      )
+      .forEach(
+        (button) => {
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              showSection(
+                button.dataset.section
+              );
+
+            }
+          );
+
+        }
+      );
 
 
     /* =====================================================
        CREATE POST
     ====================================================== */
 
+    $("createPostBtn")
+      .addEventListener(
+        "click",
+        createPost
+      );
+
+
     async function createPost() {
 
       const textarea =
-        document.getElementById(
-          "postBody"
-        );
+        $("postInput");
 
       const body =
         textarea.value.trim();
@@ -2108,7 +2102,7 @@
       if (!body) {
 
         showToast(
-          "Please write something first."
+          "Write something first."
         );
 
         return;
@@ -2116,26 +2110,27 @@
 
       try {
 
-        await api(
-          "/api/posts",
-          {
-            method: "POST",
+        $("createPostBtn")
+          .disabled = true;
 
-            body: JSON.stringify({
-              body
-            })
-          }
-        );
+        const data =
+          await api(
+            "/api/posts",
+            {
+              method: "POST",
+              body: JSON.stringify({
+                body
+              })
+            }
+          );
 
         textarea.value = "";
-
-        updateCharCount();
-
-        await loadFeed();
 
         showToast(
           "Post published!"
         );
+
+        await loadFeed();
 
       } catch (error) {
 
@@ -2143,6 +2138,10 @@
           error.message
         );
 
+      } finally {
+
+        $("createPostBtn")
+          .disabled = false;
       }
     }
 
@@ -2153,15 +2152,19 @@
 
     async function loadFeed() {
 
-      const container =
-        document.getElementById(
-          "feedContainer"
-        );
+      if (!token) {
+        return;
+      }
 
-      container.innerHTML =
-        `<div class="loading">
-          Loading World Feed...
-        </div>`;
+      const feed =
+        $("feed");
+
+      feed.innerHTML =
+        `
+        <div class="loading">
+          Loading posts...
+        </div>
+        `;
 
       try {
 
@@ -2177,89 +2180,77 @@
           posts.length === 0
         ) {
 
-          container.innerHTML =
-            `<div class="card empty">
-              🌎 No posts yet. Be the first to post!
-            </div>`;
+          feed.innerHTML =
+            `
+            <div class="empty">
+              No posts yet. Be the first to share something!
+            </div>
+            `;
 
           return;
         }
 
-        container.innerHTML =
+        feed.innerHTML =
           posts
             .map(
-              post =>
-                renderPost(post)
+              renderPost
             )
             .join("");
 
+        attachPostEvents();
+
       } catch (error) {
 
-        container.innerHTML =
-          `<div class="card empty">
-            ❌ ${escapeHtml(
+        feed.innerHTML =
+          `
+          <div class="empty">
+            ${escapeHtml(
               error.message
             )}
-          </div>`;
-
+          </div>
+          `;
       }
     }
 
 
-    /* =====================================================
-       RENDER POST
-    ====================================================== */
-
     function renderPost(post) {
 
-      const initial =
-        (post.name || "U")
-          .charAt(0)
-          .toUpperCase();
-
-      const date =
-        formatDate(
-          post.created_at
+      const liked =
+        Boolean(
+          post.liked_by_me
         );
 
       return `
-
         <article
-          class="card"
-          id="post-${post.id}"
+          class="post-card"
+          data-post-id="${post.id}"
         >
 
-          <div class="post-header">
+          <div class="post-head">
 
-            <div class="post-user">
+            <div>
 
-              <div class="avatar">
-                ${escapeHtml(initial)}
+              <div class="post-author">
+                ${escapeHtml(
+                  post.name
+                )}
               </div>
 
-              <div>
-
-                <div class="post-name">
-                  ${escapeHtml(
-                    post.name
-                  )}
-                </div>
-
-                <div class="post-country">
-                  ${post.country
-                    ? "🌎 " +
-                      escapeHtml(
-                        post.country
-                      )
-                    : ""}
-                </div>
-
+              <div class="post-country">
+                ${escapeHtml(
+                  post.country ||
+                  "World"
+                )}
               </div>
 
             </div>
 
-            <div class="post-date">
-              ${date}
+            <div class="post-time">
+              ${escapeHtml(
+                formatDate(
+                  post.created_at
+                )
+              )}
             </div>
 
           </div>
@@ -2272,53 +2263,35 @@
           </div>
 
 
-          <div class="post-stats">
-
-            <span>
-              ❤️ ${Number(
-                post.like_count || 0
-              )}
-            </span>
-
-            <span>
-              💬 ${Number(
-                post.comment_count || 0
-              )}
-            </span>
-
-          </div>
-
-
           <div class="post-actions">
 
             <button
-              class="post-action ${
-                post.liked_by_me
+              class="post-action like-btn ${
+                liked
                   ? "liked"
                   : ""
               }"
-              onclick="toggleLike(
-                ${post.id},
-                this
-              )"
+              data-id="${post.id}"
             >
-              ❤️ Like
+              ❤️
+              <span>
+                ${post.like_count || 0}
+              </span>
             </button>
 
             <button
-              class="post-action"
-              onclick="toggleComments(
-                ${post.id}
-              )"
+              class="post-action comment-toggle-btn"
+              data-id="${post.id}"
             >
-              💬 Comment
+              💬
+              <span>
+                ${post.comment_count || 0}
+              </span>
             </button>
 
             <button
-              class="post-action"
-              onclick="sharePost(
-                ${post.id}
-              )"
+              class="post-action share-btn"
+              data-id="${post.id}"
             >
               ↗️ Share
             </button>
@@ -2327,37 +2300,27 @@
 
 
           <div
+            class="comments hidden"
             id="comments-${post.id}"
-            class="comments-box hidden"
           >
 
             <div
-              id="comment-list-${post.id}"
-            >
-              <div class="loading">
-                Loading comments...
-              </div>
-            </div>
-
+              class="comments-list"
+              id="comments-list-${post.id}"
+            ></div>
 
             <div class="comment-form">
 
               <input
-                id="comment-input-${post.id}"
                 type="text"
                 maxlength="1000"
                 placeholder="Write a comment..."
-                onkeydown="
-                  if(event.key === 'Enter'){
-                    addComment(${post.id})
-                  }
-                "
+                id="comment-input-${post.id}"
               />
 
               <button
-                onclick="
-                  addComment(${post.id})
-                "
+                class="comment-submit-btn"
+                data-id="${post.id}"
               >
                 Send
               </button>
@@ -2367,8 +2330,107 @@
           </div>
 
         </article>
-
       `;
+    }
+
+
+    function attachPostEvents() {
+
+      document
+        .querySelectorAll(
+          ".like-btn"
+        )
+        .forEach(
+          (button) => {
+
+            button.addEventListener(
+              "click",
+              () => {
+
+                toggleLike(
+                  Number(
+                    button.dataset.id
+                  ),
+                  button
+                );
+
+              }
+            );
+
+          }
+        );
+
+
+      document
+        .querySelectorAll(
+          ".comment-toggle-btn"
+        )
+        .forEach(
+          (button) => {
+
+            button.addEventListener(
+              "click",
+              () => {
+
+                toggleComments(
+                  Number(
+                    button.dataset.id
+                  )
+                );
+
+              }
+            );
+
+          }
+        );
+
+
+      document
+        .querySelectorAll(
+          ".comment-submit-btn"
+        )
+        .forEach(
+          (button) => {
+
+            button.addEventListener(
+              "click",
+              () => {
+
+                addComment(
+                  Number(
+                    button.dataset.id
+                  )
+                );
+
+              }
+            );
+
+          }
+        );
+
+
+      document
+        .querySelectorAll(
+          ".share-btn"
+        )
+        .forEach(
+          (button) => {
+
+            button.addEventListener(
+              "click",
+              () => {
+
+                sharePost(
+                  Number(
+                    button.dataset.id
+                  )
+                );
+
+              }
+            );
+
+          }
+        );
     }
 
 
@@ -2391,55 +2453,36 @@
             }
           );
 
-        button.classList.toggle(
-          "liked",
-          data.liked
-        );
-
-        const post =
-          document.getElementById(
-            `post-${postId}`
+        const count =
+          button.querySelector(
+            "span"
           );
 
-        if (post) {
-
-          const stats =
-            post.querySelector(
-              ".post-stats"
-            );
-
-          if (stats) {
-
-            const spans =
-              stats.querySelectorAll(
-                "span"
-              );
-
-            if (spans[0]) {
-
-              spans[0].textContent =
-                `❤️ ${Number(
-                  data.like_count || 0
-                )}`;
-
-            }
-
-          }
-
+        if (count) {
+          count.textContent =
+            data.like_count || 0;
         }
+
+        button.classList.toggle(
+          "liked",
+          Boolean(data.liked)
+        );
+
+        await loadNotifications(
+          false
+        );
 
       } catch (error) {
 
         showToast(
           error.message
         );
-
       }
     }
 
 
     /* =====================================================
-       COMMENTS TOGGLE
+       COMMENTS
     ====================================================== */
 
     async function toggleComments(
@@ -2447,47 +2490,60 @@
     ) {
 
       const box =
-        document.getElementById(
+        $(
           `comments-${postId}`
         );
 
-      if (
+      if (!box) {
+        return;
+      }
+
+      const isHidden =
         box.classList.contains(
           "hidden"
-        )
-      ) {
-
-        box.classList.remove(
-          "hidden"
         );
+
+      box.classList.toggle(
+        "hidden"
+      );
+
+      if (isHidden) {
 
         await loadComments(
           postId
         );
 
-      } else {
+        const input =
+          $(
+            `comment-input-${postId}`
+          );
 
-        box.classList.add(
-          "hidden"
-        );
-
+        if (input) {
+          input.focus();
+        }
       }
-
     }
 
-
-    /* =====================================================
-       LOAD COMMENTS
-    ====================================================== */
 
     async function loadComments(
       postId
     ) {
 
       const list =
-        document.getElementById(
-          `comment-list-${postId}`
+        $(
+          `comments-list-${postId}`
         );
+
+      if (!list) {
+        return;
+      }
+
+      list.innerHTML =
+        `
+        <div class="loading">
+          Loading comments...
+        </div>
+        `;
 
       try {
 
@@ -2504,9 +2560,14 @@
         ) {
 
           list.innerHTML =
-            `<div class="empty">
+            `
+            <div
+              class="empty"
+              style="padding:15px"
+            >
               No comments yet.
-            </div>`;
+            </div>
+            `;
 
           return;
         }
@@ -2514,80 +2575,62 @@
         list.innerHTML =
           comments
             .map(
-              comment => {
+              (comment) => `
+                <div class="comment">
 
-                const initial =
-                  (
-                    comment.name ||
-                    "U"
-                  )
-                    .charAt(0)
-                    .toUpperCase();
-
-                return `
-
-                  <div class="comment">
-
-                    <div class="avatar">
-                      ${escapeHtml(
-                        initial
-                      )}
-                    </div>
-
-                    <div class="comment-bubble">
-
-                      <div class="comment-name">
-                        ${escapeHtml(
-                          comment.name
-                        )}
-                      </div>
-
-                      <div class="comment-text">
-                        ${escapeHtml(
-                          comment.body
-                        )}
-                      </div>
-
-                    </div>
-
+                  <div class="comment-author">
+                    ${escapeHtml(
+                      comment.name
+                    )}
                   </div>
 
-                `;
+                  <div class="comment-body">
+                    ${escapeHtml(
+                      comment.body
+                    )}
+                  </div>
 
-              }
+                </div>
+              `
             )
             .join("");
 
       } catch (error) {
 
         list.innerHTML =
-          `<div class="empty">
-            ❌ ${escapeHtml(
+          `
+          <div class="empty">
+            ${escapeHtml(
               error.message
             )}
-          </div>`;
-
+          </div>
+          `;
       }
     }
 
-
-    /* =====================================================
-       ADD COMMENT
-    ====================================================== */
 
     async function addComment(
       postId
     ) {
 
       const input =
-        document.getElementById(
+        $(
           `comment-input-${postId}`
         );
+
+      if (!input) {
+        return;
+      }
 
       const body =
         input.value.trim();
 
       if (!body) {
+
+        showToast(
+          "Write a comment first."
+        );
+
         return;
       }
 
@@ -2597,7 +2640,6 @@
           `/api/posts/${postId}/comments`,
           {
             method: "POST",
-
             body: JSON.stringify({
               body
             })
@@ -2612,12 +2654,19 @@
 
         await loadFeed();
 
+        showToast(
+          "Comment added."
+        );
+
+        await loadNotifications(
+          false
+        );
+
       } catch (error) {
 
         showToast(
           error.message
         );
-
       }
     }
 
@@ -2640,88 +2689,81 @@
             }
           );
 
-        const shareText =
-          data.share_text || "";
-
-        const url =
-          data.url || "";
+        const shareUrl =
+          data.url;
 
         if (
           navigator.share
         ) {
 
-          await navigator.share({
-            title:
-              "WorldConnect",
-            text:
-              shareText,
-            url
-          });
+          try {
 
-        } else if (
+            await navigator.share({
+              title:
+                "WorldConnect",
+              text:
+                data.share_text,
+              url:
+                shareUrl
+            });
+
+            return;
+
+          } catch {
+            // Continue to clipboard.
+          }
+        }
+
+        if (
           navigator.clipboard
         ) {
 
           await navigator.clipboard.writeText(
-            `${shareText}\n\n${url}`
+            shareUrl
           );
 
           showToast(
             "Share link copied!"
           );
 
-        } else {
-
-          window.prompt(
-            "Copy this link:",
-            url
-          );
-
-        }
-
-      } catch (error) {
-
-        if (
-          error.name ===
-          "AbortError"
-        ) {
           return;
         }
+
+        window.prompt(
+          "Copy this link:",
+          shareUrl
+        );
+
+      } catch (error) {
 
         showToast(
           error.message
         );
-
       }
     }
 
 
     /* =====================================================
-       DISCOVER USERS
+       DISCOVER
     ====================================================== */
 
-    async function loadDiscover() {
+    async function loadDiscover(
+      containerId
+    ) {
 
-      const discover =
-        document.getElementById(
-          "discoverContainer"
-        );
+      const container =
+        $(containerId);
 
-      const connect =
-        document.getElementById(
-          "connectContainer"
-        );
+      if (!container) {
+        return;
+      }
 
-      const loading =
-        `<div class="loading">
+      container.innerHTML =
+        `
+        <div class="loading">
           Loading people...
-        </div>`;
-
-      discover.innerHTML =
-        loading;
-
-      connect.innerHTML =
-        loading;
+        </div>
+        `;
 
       try {
 
@@ -2737,167 +2779,143 @@
           users.length === 0
         ) {
 
-          const empty =
-            `<div class="card empty">
-              🧭 No other users found yet.
-            </div>`;
-
-          discover.innerHTML =
-            empty;
-
-          connect.innerHTML =
-            empty;
+          container.innerHTML =
+            `
+            <div class="empty">
+              No other users found yet.
+            </div>
+            `;
 
           return;
         }
 
-        const html =
+        container.innerHTML =
           users
             .map(
-              user =>
-                renderUserCard(user)
+              renderUserCard
             )
             .join("");
 
-        discover.innerHTML =
-          html;
-
-        connect.innerHTML =
-          html;
+        attachFollowEvents();
 
       } catch (error) {
 
-        const errorHtml =
-          `<div class="card empty">
-            ❌ ${escapeHtml(
+        container.innerHTML =
+          `
+          <div class="empty">
+            ${escapeHtml(
               error.message
             )}
-          </div>`;
-
-        discover.innerHTML =
-          errorHtml;
-
-        connect.innerHTML =
-          errorHtml;
-
+          </div>
+          `;
       }
     }
 
-
-    /* =====================================================
-       RENDER USER CARD
-    ====================================================== */
 
     function renderUserCard(
       user
     ) {
 
-      const initial =
-        (
-          user.name ||
-          "U"
-        )
-          .charAt(0)
-          .toUpperCase();
-
-      const followers =
-        Number(
-          user.follower_count ||
-          0
-        );
-
       const following =
-        Number(
-          user.following_count ||
-          0
-        );
-
-      const isFollowing =
         Boolean(
           user.following_me
         );
 
       return `
-
         <div
           class="user-card"
-          id="user-card-${user.id}"
+          data-user-id="${user.id}"
         >
 
-          <div class="user-card-top">
-
-            <div class="avatar">
-              ${escapeHtml(
-                initial
-              )}
-            </div>
-
-            <div>
-
-              <div class="user-card-name">
-                ${escapeHtml(
-                  user.name
-                )}
-              </div>
-
-              <div class="user-card-country">
-                ${
-                  user.country
-                    ? "🌎 " +
-                      escapeHtml(
-                        user.country
-                      )
-                    : "🌎 WorldConnect"
-                }
-              </div>
-
-            </div>
-
+          <div class="user-avatar">
+            ${escapeHtml(
+              getInitials(
+                user.name
+              )
+            )}
           </div>
 
+          <div class="user-name">
+            ${escapeHtml(
+              user.name
+            )}
+          </div>
+
+          <div class="user-country">
+            ${escapeHtml(
+              user.country ||
+              "World"
+            )}
+          </div>
 
           <div class="user-stats">
 
             <span>
-              👥 ${followers} followers
+              👥
+              <strong
+                class="follower-count"
+              >
+                ${user.follower_count || 0}
+              </strong>
+              followers
             </span>
 
             <span>
-              ➕ ${following} following
+              ➡️
+              <strong>
+                ${user.following_count || 0}
+              </strong>
             </span>
 
           </div>
 
-
           <button
             class="follow-btn ${
-              isFollowing
+              following
                 ? "following"
                 : ""
             }"
-            onclick="
-              toggleFollow(
-                ${user.id},
-                this
-              )
-            "
+            data-id="${user.id}"
           >
             ${
-              isFollowing
+              following
                 ? "✓ Following"
                 : "🤝 Follow"
             }
           </button>
 
         </div>
-
       `;
     }
 
 
-    /* =====================================================
-       FOLLOW / UNFOLLOW
-    ====================================================== */
+    function attachFollowEvents() {
+
+      document
+        .querySelectorAll(
+          ".follow-btn"
+        )
+        .forEach(
+          (button) => {
+
+            button.addEventListener(
+              "click",
+              () => {
+
+                toggleFollow(
+                  Number(
+                    button.dataset.id
+                  ),
+                  button
+                );
+
+              }
+            );
+
+          }
+        );
+    }
+
 
     async function toggleFollow(
       userId,
@@ -2916,179 +2934,585 @@
             }
           );
 
-        const following =
-          Boolean(
-            data.following
-          );
-
-        button.classList.toggle(
-          "following",
-          following
-        );
-
-        button.textContent =
-          following
-            ? "✓ Following"
-            : "🤝 Follow";
-
-        button.disabled =
-          false;
-
-
-        /* Update card follower count */
-
         const card =
-          document.getElementById(
-            `user-card-${userId}`
+          button.closest(
+            ".user-card"
           );
 
-        if (card) {
+        const followerCount =
+          card?.querySelector(
+            ".follower-count"
+          );
 
-          const stat =
-            card.querySelector(
-              ".user-stats"
-            );
-
-          if (stat) {
-
-            const spans =
-              stat.querySelectorAll(
-                "span"
-              );
-
-            if (spans[0]) {
-
-              spans[0].textContent =
-                `👥 ${Number(
-                  data.follower_count ||
-                  0
-                )} followers`;
-
-            }
-
-          }
-
+        if (
+          followerCount
+        ) {
+          followerCount.textContent =
+            data.follower_count || 0;
         }
 
+        if (
+          data.following
+        ) {
 
-        /* Update own following count */
+          button.textContent =
+            "✓ Following";
+
+          button.classList.add(
+            "following"
+          );
+
+        } else {
+
+          button.textContent =
+            "🤝 Follow";
+
+          button.classList.remove(
+            "following"
+          );
+        }
 
         await loadMyProfile();
 
-        showToast(
-          following
-            ? "You are now following this user."
-            : "You unfollowed this user."
+        await loadNotifications(
+          false
         );
 
       } catch (error) {
-
-        button.disabled =
-          false;
 
         showToast(
           error.message
         );
 
+      } finally {
+
+        button.disabled = false;
       }
     }
 
 
     /* =====================================================
-       DATE FORMAT
+       NOTIFICATIONS
     ====================================================== */
 
-    function formatDate(
-      dateString
+    function getNotificationIcon(
+      type
     ) {
 
-      if (!dateString) {
-        return "";
+      if (type === "follow") {
+        return "🤝";
       }
 
-      const date =
-        new Date(
-          dateString
-        );
-
-      if (
-        Number.isNaN(
-          date.getTime()
-        )
-      ) {
-
-        return "";
-
+      if (type === "like") {
+        return "❤️";
       }
 
-      return date.toLocaleString(
-        undefined,
-        {
-          dateStyle: "medium",
-          timeStyle: "short"
-        }
-      );
+      if (type === "comment") {
+        return "💬";
+      }
+
+      return "🔔";
     }
 
 
-    /* =====================================================
-       HTML ESCAPE
-    ====================================================== */
-
-    function escapeHtml(
-      value
+    async function loadNotifications(
+      openPanel = false
     ) {
-
-      return String(
-        value ?? ""
-      )
-        .replace(
-          /&/g,
-          "&amp;"
-        )
-        .replace(
-          /</g,
-          "&lt;"
-        )
-        .replace(
-          />/g,
-          "&gt;"
-        )
-        .replace(
-          /"/g,
-          "&quot;"
-        )
-        .replace(
-          /'/g,
-          "&#039;"
-        );
-
-    }
-
-
-    /* =====================================================
-       INITIAL APP CHECK
-    ====================================================== */
-
-    async function checkSession() {
 
       if (!token) {
+        return;
+      }
 
-        document
-          .getElementById(
-            "authScreen"
-          )
-          .classList.remove(
-            "hidden"
+      try {
+
+        const data =
+          await api(
+            "/api/notifications"
           );
 
-        document
-          .getElementById(
-            "appScreen"
+        const notifications =
+          data.notifications || [];
+
+        const unreadCount =
+          Number(
+            data.unread_count || 0
+          );
+
+        updateNotificationBadge(
+          unreadCount
+        );
+
+        renderNotifications(
+          notifications
+        );
+
+        updateNotificationSummary(
+          unreadCount,
+          notifications.length
+        );
+
+        if (openPanel) {
+
+          $("notificationPanel")
+            .classList.remove(
+              "hidden"
+            );
+        }
+
+      } catch (error) {
+
+        console.error(
+          "NOTIFICATIONS ERROR:",
+          error
+        );
+
+        if (openPanel) {
+
+          showToast(
+            error.message
+          );
+        }
+      }
+    }
+
+
+    function updateNotificationBadge(
+      count
+    ) {
+
+      const badge =
+        $("notificationBadge");
+
+      if (!badge) {
+        return;
+      }
+
+      if (
+        count > 0
+      ) {
+
+        badge.textContent =
+          count > 99
+            ? "99+"
+            : count;
+
+        badge.classList.remove(
+          "hidden"
+        );
+
+      } else {
+
+        badge.classList.add(
+          "hidden"
+        );
+      }
+    }
+
+
+    function updateNotificationSummary(
+      unreadCount,
+      totalCount
+    ) {
+
+      const element =
+        $("notificationSummary");
+
+      if (!element) {
+        return;
+      }
+
+      if (
+        unreadCount > 0
+      ) {
+
+        element.textContent =
+          `${unreadCount} unread notification${
+            unreadCount === 1
+              ? ""
+              : "s"
+          }.`;
+
+      } else if (
+        totalCount > 0
+      ) {
+
+        element.textContent =
+          "You're all caught up.";
+
+      } else {
+
+        element.textContent =
+          "No new notifications.";
+      }
+    }
+
+
+    function renderNotifications(
+      notifications
+    ) {
+
+      const list =
+        $("notificationList");
+
+      if (!list) {
+        return;
+      }
+
+      if (
+        notifications.length === 0
+      ) {
+
+        list.innerHTML =
+          `
+          <div class="empty-notifications">
+            <div
+              style="font-size:35px;margin-bottom:10px"
+            >
+              🔔
+            </div>
+
+            <div>
+              No notifications yet.
+            </div>
+
+            <div
+              style="font-size:12px;margin-top:5px"
+            >
+              Follow, like, or comment to create notifications.
+            </div>
+          </div>
+          `;
+
+        return;
+      }
+
+      list.innerHTML =
+        notifications
+          .map(
+            (notification) => {
+
+              const unread =
+                !notification.is_read;
+
+              return `
+                <div
+                  class="notification-item ${
+                    unread
+                      ? "unread"
+                      : ""
+                  }"
+                  data-notification-id="${notification.id}"
+                >
+
+                  <div class="notification-icon">
+                    ${getNotificationIcon(
+                      notification.type
+                    )}
+                  </div>
+
+                  <div class="notification-content">
+
+                    <div class="notification-message">
+                      ${escapeHtml(
+                        notification.message
+                      )}
+                    </div>
+
+                    <div class="notification-time">
+                      ${escapeHtml(
+                        formatDate(
+                          notification.created_at
+                        )
+                      )}
+                    </div>
+
+                    ${
+                      unread
+                        ? `
+                          <button
+                            class="notification-read"
+                            data-id="${notification.id}"
+                          >
+                            Mark as read
+                          </button>
+                        `
+                        : ""
+                    }
+
+                  </div>
+
+                </div>
+              `;
+            }
           )
+          .join("");
+
+
+      document
+        .querySelectorAll(
+          ".notification-read"
+        )
+        .forEach(
+          (button) => {
+
+            button.addEventListener(
+              "click",
+              (event) => {
+
+                event.stopPropagation();
+
+                markNotificationRead(
+                  Number(
+                    button.dataset.id
+                  )
+                );
+
+              }
+            );
+
+          }
+        );
+    }
+
+
+    async function markNotificationRead(
+      notificationId
+    ) {
+
+      try {
+
+        await api(
+          `/api/notifications/${notificationId}/read`,
+          {
+            method: "POST"
+          }
+        );
+
+        await loadNotifications(
+          true
+        );
+
+      } catch (error) {
+
+        showToast(
+          error.message
+        );
+      }
+    }
+
+
+    async function markAllNotificationsRead() {
+
+      try {
+
+        await api(
+          "/api/notifications/read-all",
+          {
+            method: "POST"
+          }
+        );
+
+        await loadNotifications(
+          true
+        );
+
+        showToast(
+          "All notifications marked as read."
+        );
+
+      } catch (error) {
+
+        showToast(
+          error.message
+        );
+      }
+    }
+
+
+    $("notificationBtn")
+      .addEventListener(
+        "click",
+        async (event) => {
+
+          event.stopPropagation();
+
+          const panel =
+            $("notificationPanel");
+
+          const willOpen =
+            panel.classList.contains(
+              "hidden"
+            );
+
+          if (willOpen) {
+
+            await loadNotifications(
+              true
+            );
+
+          } else {
+
+            panel.classList.add(
+              "hidden"
+            );
+          }
+        }
+      );
+
+
+    $("openNotificationsBtn")
+      .addEventListener(
+        "click",
+        async () => {
+
+          await loadNotifications(
+            true
+          );
+
+        }
+      );
+
+
+    $("markAllReadBtn")
+      .addEventListener(
+        "click",
+        (event) => {
+
+          event.stopPropagation();
+
+          markAllNotificationsRead();
+
+        }
+      );
+
+
+    $("notificationPanel")
+      .addEventListener(
+        "click",
+        (event) => {
+
+          event.stopPropagation();
+
+        }
+      );
+
+
+    document.addEventListener(
+      "click",
+      () => {
+
+        $("notificationPanel")
           .classList.add(
             "hidden"
           );
+
+      }
+    );
+
+
+    function startNotificationPolling() {
+
+      if (
+        notificationTimer
+      ) {
+        clearInterval(
+          notificationTimer
+        );
+      }
+
+      notificationTimer =
+        setInterval(
+          () => {
+
+            if (token) {
+              loadNotifications(
+                false
+              );
+            }
+
+          },
+          15000
+        );
+    }
+
+
+    /* =====================================================
+       MESSAGES PLACEHOLDER
+    ====================================================== */
+
+    $("messagesBtn")
+      .addEventListener(
+        "click",
+        () => {
+
+          showToast(
+            "Messaging is coming soon."
+          );
+
+        }
+      );
+
+
+    /* =====================================================
+       ENTER KEY FOR COMMENTS
+    ====================================================== */
+
+    document.addEventListener(
+      "keydown",
+      (event) => {
+
+        if (
+          event.key !== "Enter" ||
+          event.shiftKey
+        ) {
+          return;
+        }
+
+        const target =
+          event.target;
+
+        if (
+          !target ||
+          !target.id ||
+          !target.id.startsWith(
+            "comment-input-"
+          )
+        ) {
+          return;
+        }
+
+        event.preventDefault();
+
+        const postId =
+          Number(
+            target.id.replace(
+              "comment-input-",
+              ""
+            )
+          );
+
+        if (
+          Number.isInteger(
+            postId
+          )
+        ) {
+          addComment(
+            postId
+          );
+        }
+      }
+    );
+
+
+    /* =====================================================
+       INITIALIZE
+    ====================================================== */
+
+    async function initialize() {
+
+      if (!token) {
+
+        showAuth();
 
         return;
       }
@@ -3103,11 +3527,12 @@
         currentUser =
           data.user;
 
-        await showApp();
+        await afterLogin();
 
       } catch (error) {
 
         console.error(
+          "INITIALIZE ERROR:",
           error
         );
 
@@ -3117,33 +3542,12 @@
           "token"
         );
 
-        document
-          .getElementById(
-            "authScreen"
-          )
-          .classList.remove(
-            "hidden"
-          );
-
-        document
-          .getElementById(
-            "appScreen"
-          )
-          .classList.add(
-            "hidden"
-          );
-
+        showAuth();
       }
-
     }
 
 
-    /* =====================================================
-       START
-    ====================================================== */
-
-    checkSession();
-
+    initialize();
   </script>
 
 </body>
