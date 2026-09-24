@@ -46,7 +46,6 @@ function createToken(user) {
   );
 }
 
-
 function getTokenFromRequest(req) {
   const auth = req.headers.authorization || "";
 
@@ -56,7 +55,6 @@ function getTokenFromRequest(req) {
 
   return auth.substring(7);
 }
-
 
 function requireAuth(req, res, next) {
   try {
@@ -1236,9 +1234,6 @@ app.post(
         });
       }
 
-      const targetUser =
-        userResult.rows[0];
-
       const existing =
         await client.query(
           `
@@ -1294,48 +1289,43 @@ app.post(
 
         following = true;
 
-        if (
-          Number(targetId) !==
-          Number(req.user.id)
-        ) {
-          const actorResult =
-            await client.query(
-              `
-              SELECT name
-              FROM users
-              WHERE id = $1
-              `,
-              [req.user.id]
-            );
-
-          const actorName =
-            actorResult.rows[0]?.name ||
-            "Someone";
-
+        const actorResult =
           await client.query(
             `
-            INSERT INTO notifications
-              (
-                user_id,
-                actor_id,
-                type,
-                message
-              )
-            VALUES
-              (
-                $1,
-                $2,
-                'follow',
-                $3
-              )
+            SELECT name
+            FROM users
+            WHERE id = $1
             `,
-            [
-              targetId,
-              req.user.id,
-              `${actorName} started following you.`
-            ]
+            [req.user.id]
           );
-        }
+
+        const actorName =
+          actorResult.rows[0]?.name ||
+          "Someone";
+
+        await client.query(
+          `
+          INSERT INTO notifications
+            (
+              user_id,
+              actor_id,
+              type,
+              message
+            )
+          VALUES
+            (
+              $1,
+              $2,
+              'follow',
+              $3
+            )
+          `,
+          [
+            targetId,
+            req.user.id,
+            `${actorName} started following you.`
+          ]
+        );
       }
 
       const followersResult =
@@ -1665,6 +1655,7 @@ app.post(
   "/api/conversations",
   requireAuth,
   async (req, res) => {
+
     const client =
       await pool.connect();
 
@@ -1718,11 +1709,6 @@ app.post(
         });
       }
 
-      /*
-        Find an existing private conversation
-        that contains exactly these two users.
-      */
-
       const existingResult =
         await client.query(
           `
@@ -1738,7 +1724,6 @@ app.post(
           GROUP BY c.id
 
           HAVING COUNT(DISTINCT cm.user_id) = 2
-
              AND COUNT(*) = 2
 
           ORDER BY c.id ASC
@@ -1796,13 +1781,27 @@ app.post(
         "COMMIT"
       );
 
+      const targetUser =
+        targetResult.rows[0];
+
       res.status(200).json({
         conversation: {
-          id: conversationId
+          id: Number(conversationId),
+
+          other_user_id:
+            Number(targetUser.id),
+
+          other_user_name:
+            targetUser.name,
+
+          other_user_email:
+            targetUser.email,
+
+          other_user_country:
+            targetUser.country
         },
 
-        user:
-          targetResult.rows[0]
+        user: targetUser
       });
 
     } catch (error) {
@@ -1833,6 +1832,10 @@ app.post(
 /* =====================================================
    CONVERSE
    GET MY CONVERSATIONS
+
+   IMPORTANT:
+   The response names here must match
+   the frontend index.html.
 ===================================================== */
 
 app.get(
@@ -1840,16 +1843,17 @@ app.get(
   requireAuth,
   async (req, res) => {
     try {
+
       const result =
         await pool.query(
           `
           SELECT
-            c.id AS conversation_id,
+            c.id AS id,
 
-            u.id AS user_id,
-            u.name,
-            u.email,
-            u.country,
+            u.id AS other_user_id,
+            u.name AS other_user_name,
+            u.email AS other_user_email,
+            u.country AS other_user_country,
 
             lm.body AS last_message,
             lm.created_at AS last_message_at,
@@ -1905,12 +1909,45 @@ app.get(
           [req.user.id]
         );
 
+      const conversations =
+        result.rows.map(
+          row => ({
+            id: Number(row.id),
+
+            other_user_id:
+              Number(row.other_user_id),
+
+            other_user_name:
+              row.other_user_name ||
+              "User",
+
+            other_user_email:
+              row.other_user_email ||
+              "",
+
+            other_user_country:
+              row.other_user_country ||
+              "World",
+
+            last_message:
+              row.last_message ||
+              "",
+
+            last_message_at:
+              row.last_message_at ||
+              null,
+
+            unread_count:
+              Number(row.unread_count || 0)
+          })
+        );
+
       res.json({
-        conversations:
-          result.rows
+        conversations
       });
 
     } catch (error) {
+
       console.error(
         "GET CONVERSATIONS ERROR:",
         error
@@ -1934,11 +1971,18 @@ app.get(
   "/api/conversations/:id/messages",
   requireAuth,
   async (req, res) => {
+
     try {
+
       const conversationId =
         Number(req.params.id);
 
-      if (!Number.isInteger(conversationId)) {
+      if (
+        !Number.isInteger(
+          conversationId
+        ) ||
+        conversationId <= 0
+      ) {
         return res.status(400).json({
           error:
             "Invalid conversation ID."
@@ -1948,7 +1992,9 @@ app.get(
       const access =
         await pool.query(
           `
-          SELECT 1
+          SELECT
+            conversation_id,
+            user_id
           FROM conversation_members
           WHERE conversation_id = $1
             AND user_id = $2
@@ -1960,9 +2006,10 @@ app.get(
         );
 
       if (access.rows.length === 0) {
-        return res.status(403).json({
+
+        return res.status(404).json({
           error:
-            "You do not have access to this conversation."
+            "Conversation not found."
         });
       }
 
@@ -1995,11 +2042,15 @@ app.get(
         );
 
       res.json({
+        conversation_id:
+          conversationId,
+
         messages:
           result.rows
       });
 
     } catch (error) {
+
       console.error(
         "GET MESSAGES ERROR:",
         error
@@ -2023,10 +2074,12 @@ app.post(
   "/api/conversations/:id/messages",
   requireAuth,
   async (req, res) => {
+
     const client =
       await pool.connect();
 
     try {
+
       const conversationId =
         Number(req.params.id);
 
@@ -2035,7 +2088,12 @@ app.post(
           req.body.body || ""
         ).trim();
 
-      if (!Number.isInteger(conversationId)) {
+      if (
+        !Number.isInteger(
+          conversationId
+        ) ||
+        conversationId <= 0
+      ) {
         return res.status(400).json({
           error:
             "Invalid conversation ID."
@@ -2066,12 +2124,16 @@ app.post(
           SELECT
             cm.user_id
           FROM conversation_members cm
+
           WHERE cm.conversation_id = $1
           `,
           [conversationId]
         );
 
-      if (memberResult.rows.length === 0) {
+      if (
+        memberResult.rows.length !== 2
+      ) {
+
         await client.query(
           "ROLLBACK"
         );
@@ -2090,6 +2152,7 @@ app.post(
         );
 
       if (!isMember) {
+
         await client.query(
           "ROLLBACK"
         );
@@ -2181,7 +2244,9 @@ app.post(
       await client.query(
         `
         UPDATE conversation_members
+
         SET last_read_at = NOW()
+
         WHERE conversation_id = $1
           AND user_id = $2
         `,
@@ -2234,11 +2299,18 @@ app.post(
   "/api/conversations/:id/read",
   requireAuth,
   async (req, res) => {
+
     try {
+
       const conversationId =
         Number(req.params.id);
 
-      if (!Number.isInteger(conversationId)) {
+      if (
+        !Number.isInteger(
+          conversationId
+        ) ||
+        conversationId <= 0
+      ) {
         return res.status(400).json({
           error:
             "Invalid conversation ID."
@@ -2267,19 +2339,22 @@ app.post(
         );
 
       if (result.rows.length === 0) {
-        return res.status(403).json({
+
+        return res.status(404).json({
           error:
-            "You do not have access to this conversation."
+            "Conversation not found."
         });
       }
 
       res.json({
         ok: true,
+
         conversation:
           result.rows[0]
       });
 
     } catch (error) {
+
       console.error(
         "MARK CONVERSATION READ ERROR:",
         error
@@ -2316,6 +2391,7 @@ app.use(
 app.get(
   "/{*splat}",
   (req, res) => {
+
     res.sendFile(
       path.join(
         __dirname,
@@ -2331,6 +2407,7 @@ app.get(
 ===================================================== */
 
 async function startServer() {
+
   try {
 
     await initDb();
@@ -2339,9 +2416,11 @@ async function startServer() {
       PORT,
       "0.0.0.0",
       () => {
+
         console.log(
           `WorldConnect running on port ${PORT}`
         );
+
       }
     );
 
