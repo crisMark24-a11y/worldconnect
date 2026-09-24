@@ -1802,11 +1802,50 @@
 
     function showComingSoon(feature) {
 
-      alert(
-        `${feature} is coming soon!`
-      );
+  if (feature === "Notifications") {
+    showMoments();
+    return;
+  }
 
-    }
+  alert(
+    `${feature} is coming soon!`
+  );
+
+}
+
+function showMoments() {
+
+  const main = document.querySelector(".main-content");
+
+  if (!main) return;
+
+  main.innerHTML = `
+    <section class="card">
+      <div class="section-header">
+        <div>
+          <h2>✨ Moments</h2>
+          <p>Your latest WorldConnect activity</p>
+        </div>
+      </div>
+
+      <div style="
+        padding:40px 20px;
+        text-align:center;
+        color:#777;
+      ">
+        <div style="font-size:48px;">✨</div>
+
+        <h3>No new moments yet</h3>
+
+        <p>
+          When someone interacts with you,
+          your moments will appear here.
+        </p>
+      </div>
+    </section>
+  `;
+
+}
 
 
     // =========================
@@ -1851,6 +1890,7 @@
     }
 
 
+    
     // =========================
     // REGISTER
     // =========================
