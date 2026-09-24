@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
   <title>WorldConnect</title>
 
@@ -27,7 +30,11 @@
 
     body {
       margin: 0;
-      font-family: Inter, Arial, Helvetica, sans-serif;
+      font-family:
+        Inter,
+        Arial,
+        Helvetica,
+        sans-serif;
       background: var(--bg);
       color: var(--text);
     }
@@ -57,7 +64,11 @@
       justify-content: center;
       padding: 20px;
       background:
-        radial-gradient(circle at top left, #dbeafe, transparent 40%),
+        radial-gradient(
+          circle at top left,
+          #dbeafe,
+          transparent 40%
+        ),
         var(--bg);
     }
 
@@ -109,10 +120,12 @@
 
     .field input:focus,
     textarea:focus,
-    .chat-input:focus,
-    .user-search-input:focus {
+    .message-input:focus,
+    .conversation-search:focus,
+    .user-search:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.1);
     }
 
     .primary-btn {
@@ -488,7 +501,11 @@
 
     .discover-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      grid-template-columns:
+        repeat(
+          auto-fill,
+          minmax(220px, 1fr)
+        );
       gap: 15px;
     }
 
@@ -545,21 +562,6 @@
       border: 1px solid #bbf7d0;
     }
 
-    .message-user-btn {
-      width: 100%;
-      margin-top: 8px;
-      border: 1px solid var(--line);
-      background: white;
-      color: var(--primary);
-      padding: 9px;
-      border-radius: 10px;
-      font-weight: 700;
-    }
-
-    .message-user-btn:hover {
-      background: var(--soft);
-    }
-
     /* =========================
        NOTIFICATIONS
     ========================= */
@@ -572,7 +574,8 @@
       max-height: 75vh;
       background: white;
       border-radius: 18px;
-      box-shadow: 0 20px 60px rgba(15, 23, 42, 0.2);
+      box-shadow:
+        0 20px 60px rgba(15, 23, 42, 0.2);
       z-index: 200;
       overflow: hidden;
       border: 1px solid var(--line);
@@ -672,9 +675,10 @@
       border-radius: 18px;
       box-shadow: var(--shadow);
       overflow: hidden;
-      min-height: 650px;
+      border: 1px solid var(--line);
       display: grid;
-      grid-template-columns: 300px minmax(0, 1fr);
+      grid-template-columns: 310px minmax(0, 1fr);
+      min-height: 620px;
     }
 
     .conversation-sidebar {
@@ -686,7 +690,7 @@
     }
 
     .conversation-sidebar-header {
-      padding: 15px;
+      padding: 16px;
       border-bottom: 1px solid var(--line);
     }
 
@@ -694,39 +698,45 @@
       margin: 0 0 12px;
     }
 
+    .conversation-search,
     .user-search {
-      position: relative;
-    }
-
-    .user-search-input {
       width: 100%;
-      padding: 11px 12px;
       border: 1px solid var(--line);
-      border-radius: 10px;
+      border-radius: 11px;
+      padding: 10px 12px;
       outline: none;
       background: white;
     }
 
-    .search-results {
-      margin-top: 8px;
+    .new-chat-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin: 14px 0 8px;
+      font-weight: 700;
+    }
+
+    .search-users {
       max-height: 210px;
       overflow-y: auto;
     }
 
-    .search-result {
+    .search-user {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      padding: 9px;
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 9px;
+      text-align: left;
       border-radius: 10px;
-      cursor: pointer;
     }
 
-    .search-result:hover {
+    .search-user:hover {
       background: var(--soft);
     }
 
-    .mini-avatar {
+    .search-user-avatar {
       width: 38px;
       height: 38px;
       min-width: 38px;
@@ -740,16 +750,20 @@
       font-weight: 800;
     }
 
-    .search-result-info {
+    .search-user-info {
       min-width: 0;
+      flex: 1;
     }
 
-    .search-result-name {
+    .search-user-name {
       font-weight: 700;
       font-size: 14px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
-    .search-result-country {
+    .search-user-country {
       color: var(--muted);
       font-size: 11px;
       margin-top: 2px;
@@ -762,11 +776,14 @@
 
     .conversation-item {
       display: flex;
+      align-items: center;
       gap: 11px;
       padding: 13px 15px;
+      border: 0;
+      width: 100%;
+      background: transparent;
+      text-align: left;
       border-bottom: 1px solid #f1f5f9;
-      cursor: pointer;
-      transition: background 0.2s;
     }
 
     .conversation-item:hover {
@@ -777,20 +794,29 @@
       background: var(--soft);
     }
 
-    .conversation-avatar-wrap {
-      position: relative;
+    .conversation-avatar {
+      width: 45px;
+      height: 45px;
+      min-width: 45px;
+      border-radius: 50%;
+      background: var(--soft);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
     }
 
     .conversation-info {
-      flex: 1;
       min-width: 0;
+      flex: 1;
     }
 
-    .conversation-top {
+    .conversation-name-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 6px;
+      gap: 5px;
     }
 
     .conversation-name {
@@ -807,49 +833,92 @@
       white-space: nowrap;
     }
 
+    .conversation-preview-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
     .conversation-preview {
       color: var(--muted);
       font-size: 12px;
-      margin-top: 4px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      flex: 1;
     }
 
     .unread-count {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 20px;
-      height: 20px;
-      padding: 0 6px;
-      border-radius: 20px;
       background: var(--primary);
       color: white;
+      min-width: 19px;
+      height: 19px;
+      padding: 0 5px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-size: 10px;
       font-weight: 800;
-      margin-top: 5px;
     }
 
-    .conversation-main {
+    .chat-area {
+      min-width: 0;
       display: flex;
       flex-direction: column;
-      min-width: 0;
       background: white;
     }
 
+    .chat-empty {
+      height: 100%;
+      min-height: 620px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 30px;
+      color: var(--muted);
+    }
+
+    .chat-empty-icon {
+      font-size: 55px;
+      margin-bottom: 12px;
+    }
+
+    .chat-empty h3 {
+      color: var(--text);
+      margin: 0 0 8px;
+    }
+
     .chat-header {
-      padding: 14px 18px;
-      border-bottom: 1px solid var(--line);
       display: flex;
       align-items: center;
-      gap: 12px;
-      min-height: 72px;
+      gap: 11px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      min-height: 70px;
+    }
+
+    .chat-header-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--soft);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+    }
+
+    .chat-header-info {
+      min-width: 0;
     }
 
     .chat-header-name {
       font-weight: 800;
-      font-size: 16px;
     }
 
     .chat-header-country {
@@ -858,96 +927,91 @@
       margin-top: 2px;
     }
 
-    .chat-messages {
+    .messages-list {
       flex: 1;
-      min-height: 480px;
-      max-height: 520px;
       overflow-y: auto;
       padding: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
       background:
         linear-gradient(
-          rgba(244, 247, 251, 0.65),
-          rgba(244, 247, 251, 0.65)
+          rgba(244, 247, 251, 0.7),
+          rgba(244, 247, 251, 0.7)
         );
-    }
-
-    .chat-empty {
-      margin: auto;
-      text-align: center;
-      color: var(--muted);
-      padding: 30px;
+      min-height: 450px;
     }
 
     .message-row {
       display: flex;
-      width: 100%;
+      margin-bottom: 10px;
     }
 
     .message-row.mine {
       justify-content: flex-end;
     }
 
-    .message-row.theirs {
-      justify-content: flex-start;
-    }
-
     .message-bubble {
-      max-width: min(75%, 520px);
+      max-width: min(75%, 560px);
       padding: 10px 13px;
-      border-radius: 16px;
-      line-height: 1.45;
-      word-break: break-word;
-      white-space: pre-wrap;
+      border-radius: 15px;
+      background: white;
+      border: 1px solid var(--line);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
     }
 
     .message-row.mine .message-bubble {
       background: var(--primary);
       color: white;
+      border-color: var(--primary);
       border-bottom-right-radius: 5px;
     }
 
-    .message-row.theirs .message-bubble {
-      background: #eef2f7;
-      color: var(--text);
+    .message-row:not(.mine) .message-bubble {
       border-bottom-left-radius: 5px;
     }
 
-    .message-time {
-      font-size: 9px;
-      margin-top: 4px;
-      opacity: 0.7;
-      text-align: right;
+    .message-body {
+      white-space: pre-wrap;
+      word-break: break-word;
+      line-height: 1.45;
+      font-size: 14px;
     }
 
-    .chat-input-area {
-      border-top: 1px solid var(--line);
-      padding: 12px;
+    .message-time {
+      margin-top: 4px;
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .message-row.mine .message-time {
+      color: rgba(255, 255, 255, 0.78);
+    }
+
+    .message-composer {
       display: flex;
-      gap: 8px;
+      align-items: flex-end;
+      gap: 9px;
+      padding: 12px;
+      border-top: 1px solid var(--line);
       background: white;
     }
 
-    .chat-input {
+    .message-input {
       flex: 1;
-      min-width: 0;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 11px 13px;
-      outline: none;
       resize: none;
-      min-height: 45px;
-      max-height: 120px;
+      min-height: 44px;
+      max-height: 130px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      padding: 11px 12px;
+      outline: none;
     }
 
     .send-message-btn {
       border: 0;
       background: var(--primary);
       color: white;
-      border-radius: 12px;
+      height: 44px;
       padding: 0 17px;
+      border-radius: 12px;
       font-weight: 700;
     }
 
@@ -955,16 +1019,22 @@
       background: var(--primary-dark);
     }
 
-    .no-conversation {
-      margin: auto;
-      text-align: center;
-      color: var(--muted);
-      padding: 30px;
+    .send-message-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
 
-    .no-conversation-icon {
-      font-size: 55px;
-      margin-bottom: 10px;
+    .conversation-empty {
+      padding: 35px 20px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .search-empty {
+      padding: 12px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
     }
 
     /* =========================
@@ -1004,11 +1074,34 @@
 
     @media (max-width: 1050px) {
       .layout {
-        grid-template-columns: 210px minmax(0, 1fr);
+        grid-template-columns:
+          210px
+          minmax(0, 1fr);
       }
 
       .right-panel {
         display: none;
+      }
+    }
+
+    @media (max-width: 820px) {
+      .converse-card {
+        grid-template-columns: 1fr;
+        min-height: 650px;
+      }
+
+      .conversation-sidebar {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+        max-height: 330px;
+      }
+
+      .chat-empty {
+        min-height: 400px;
+      }
+
+      .messages-list {
+        min-height: 400px;
       }
     }
 
@@ -1062,31 +1155,23 @@
       }
 
       .converse-card {
-        grid-template-columns: 1fr;
-        min-height: auto;
+        border-radius: 14px;
       }
 
       .conversation-sidebar {
-        border-right: 0;
-        border-bottom: 1px solid var(--line);
-        max-height: 330px;
-      }
-
-      .conversation-list {
-        max-height: 210px;
-      }
-
-      .conversation-main {
-        min-height: 580px;
-      }
-
-      .chat-messages {
-        min-height: 430px;
-        max-height: 430px;
+        max-height: 360px;
       }
 
       .message-bubble {
         max-width: 85%;
+      }
+
+      .message-composer {
+        padding: 9px;
+      }
+
+      .send-message-btn {
+        padding: 0 13px;
       }
     }
   </style>
@@ -1144,7 +1229,9 @@
         <div class="switch-auth">
           Don't have an account?
 
-          <button id="showRegisterBtn">
+          <button
+            id="showRegisterBtn"
+          >
             Create one
           </button>
         </div>
@@ -1154,7 +1241,10 @@
 
       <!-- REGISTER -->
 
-      <div id="registerBox" class="hidden">
+      <div
+        id="registerBox"
+        class="hidden"
+      >
 
         <h2>Create account</h2>
 
@@ -1204,7 +1294,9 @@
         <div class="switch-auth">
           Already have an account?
 
-          <button id="showLoginBtn">
+          <button
+            id="showLoginBtn"
+          >
             Login
           </button>
         </div>
@@ -1220,7 +1312,10 @@
        APP SCREEN
   ====================================================== -->
 
-  <div id="appScreen" class="hidden">
+  <div
+    id="appScreen"
+    class="hidden"
+  >
 
     <!-- TOPBAR -->
 
@@ -1280,7 +1375,9 @@
           🔔 Notifications
         </h3>
 
-        <button id="markAllReadBtn">
+        <button
+          id="markAllReadBtn"
+        >
           Mark all as read
         </button>
 
@@ -1327,6 +1424,7 @@
             </div>
 
           </div>
+
 
           <button
             class="nav-btn active"
@@ -1395,7 +1493,9 @@
 
         <!-- FEED -->
 
-        <section id="feedSection">
+        <section
+          id="feedSection"
+        >
 
           <h1 class="section-title">
             🌎 World Feed
@@ -1404,6 +1504,7 @@
           <p class="section-subtitle">
             See what people around the world are sharing.
           </p>
+
 
           <div class="create-card">
 
@@ -1426,12 +1527,13 @@
 
           </div>
 
-          <div id="feed">
 
+          <div
+            id="feed"
+          >
             <div class="loading">
               Loading posts...
             </div>
-
           </div>
 
         </section>
@@ -1464,7 +1566,9 @@
             <div class="profile-stats">
 
               <div class="stat">
-                <strong id="myFollowers">
+                <strong
+                  id="myFollowers"
+                >
                   0
                 </strong>
 
@@ -1474,7 +1578,9 @@
               </div>
 
               <div class="stat">
-                <strong id="myFollowing">
+                <strong
+                  id="myFollowing"
+                >
                   0
                 </strong>
 
@@ -1533,6 +1639,7 @@
             Chat privately with people on WorldConnect.
           </p>
 
+
           <div class="converse-card">
 
             <!-- CONVERSATION SIDEBAR -->
@@ -1542,27 +1649,35 @@
               <div class="conversation-sidebar-header">
 
                 <h3>
-                  Messages
+                  💬 Chats
                 </h3>
 
-                <div class="user-search">
+                <input
+                  id="conversationSearch"
+                  class="conversation-search"
+                  type="text"
+                  placeholder="Search your chats..."
+                />
 
-                  <input
-                    id="userSearchInput"
-                    class="user-search-input"
-                    type="text"
-                    placeholder="🔎 Search people..."
-                    autocomplete="off"
-                  />
 
-                  <div
-                    id="searchResults"
-                    class="search-results"
-                  ></div>
-
+                <div class="new-chat-label">
+                  🔎 Find someone to message
                 </div>
 
+                <input
+                  id="userSearch"
+                  class="user-search"
+                  type="text"
+                  placeholder="Search name, email or country..."
+                />
+
+                <div
+                  id="searchUsers"
+                  class="search-users"
+                ></div>
+
               </div>
+
 
               <div
                 id="conversationList"
@@ -1580,81 +1695,94 @@
 
             <!-- CHAT AREA -->
 
-            <div class="conversation-main">
+            <div class="chat-area">
 
               <div
-                id="chatHeader"
-                class="chat-header hidden"
+                id="chatEmpty"
+                class="chat-empty"
               >
 
-                <div class="mini-avatar" id="chatAvatar">
-                  U
+                <div class="chat-empty-icon">
+                  💬
                 </div>
 
-                <div>
+                <h3>
+                  Start a conversation
+                </h3>
 
-                  <div
-                    class="chat-header-name"
-                    id="chatHeaderName"
-                  >
-                    User
-                  </div>
-
-                  <div
-                    class="chat-header-country"
-                    id="chatHeaderCountry"
-                  >
-                    World
-                  </div>
-
-                </div>
+                <p>
+                  Search for a WorldConnect user on the left and choose them to start chatting.
+                </p>
 
               </div>
 
 
               <div
-                id="chatMessages"
-                class="chat-messages"
+                id="chatWindow"
+                class="hidden"
+                style="height:100%;display:flex;flex-direction:column;min-height:620px;"
               >
 
-                <div class="no-conversation">
+                <div class="chat-header">
 
-                  <div class="no-conversation-icon">
-                    💬
+                  <div
+                    id="chatHeaderAvatar"
+                    class="chat-header-avatar"
+                  >
+                    U
                   </div>
 
-                  <strong>
-                    Start a conversation
-                  </strong>
+                  <div class="chat-header-info">
 
-                  <p>
-                    Select a conversation or search for someone to message.
-                  </p>
+                    <div
+                      id="chatHeaderName"
+                      class="chat-header-name"
+                    >
+                      User
+                    </div>
+
+                    <div
+                      id="chatHeaderCountry"
+                      class="chat-header-country"
+                    >
+                      World
+                    </div>
+
+                  </div>
 
                 </div>
 
-              </div>
 
-
-              <div
-                id="chatInputArea"
-                class="chat-input-area hidden"
-              >
-
-                <textarea
-                  id="chatInput"
-                  class="chat-input"
-                  maxlength="5000"
-                  placeholder="Write a message..."
-                  rows="1"
-                ></textarea>
-
-                <button
-                  id="sendMessageBtn"
-                  class="send-message-btn"
+                <div
+                  id="messagesList"
+                  class="messages-list"
                 >
-                  Send
-                </button>
+
+                  <div class="loading">
+                    Loading messages...
+                  </div>
+
+                </div>
+
+
+                <div class="message-composer">
+
+                  <textarea
+                    id="messageInput"
+                    class="message-input"
+                    maxlength="5000"
+                    rows="1"
+                    placeholder="Write a message..."
+                  ></textarea>
+
+                  <button
+                    id="sendMessageBtn"
+                    class="send-message-btn"
+                  >
+                    Send
+                  </button>
+
+                </div>
 
               </div>
 
@@ -1776,7 +1904,9 @@
 
             <div class="stat">
 
-              <strong id="rightFollowers">
+              <strong
+                id="rightFollowers"
+              >
                 0
               </strong>
 
@@ -1788,7 +1918,9 @@
 
             <div class="stat">
 
-              <strong id="rightFollowing">
+              <strong
+                id="rightFollowing"
+              >
                 0
               </strong>
 
@@ -1809,7 +1941,9 @@
             🔔 Notifications
           </h3>
 
-          <p id="notificationSummary">
+          <p
+            id="notificationSummary"
+          >
             No new notifications.
           </p>
 
@@ -1851,13 +1985,13 @@
 
     let conversationTimer = null;
 
-    let searchTimer = null;
+    let currentConversationId = null;
 
-    let conversations = [];
+    let currentChatUser = null;
 
-    let selectedConversationId = null;
+    let allConversations = [];
 
-    let selectedChatUser = null;
+    let allDiscoverUsers = [];
 
 
     /* =====================================================
@@ -1870,29 +2004,56 @@
 
     function showToast(message) {
 
-      const toast = $("toast");
+      const toast =
+        $("toast");
 
-      toast.textContent = message;
+      toast.textContent =
+        message;
 
-      toast.classList.remove("hidden");
+      toast.classList.remove(
+        "hidden"
+      );
 
-      clearTimeout(showToast.timer);
+      clearTimeout(
+        showToast.timer
+      );
 
       showToast.timer =
         setTimeout(() => {
-          toast.classList.add("hidden");
+
+          toast.classList.add(
+            "hidden"
+          );
+
         }, 3000);
     }
 
 
     function escapeHtml(value) {
 
-      return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+      return String(
+        value ?? ""
+      )
+        .replaceAll(
+          "&",
+          "&amp;"
+        )
+        .replaceAll(
+          "<",
+          "&lt;"
+        )
+        .replaceAll(
+          ">",
+          "&gt;"
+        )
+        .replaceAll(
+          '"',
+          "&quot;"
+        )
+        .replaceAll(
+          "'",
+          "&#039;"
+        );
     }
 
 
@@ -1902,9 +2063,14 @@
         return "";
       }
 
-      const date = new Date(value);
+      const date =
+        new Date(value);
 
-      if (Number.isNaN(date.getTime())) {
+      if (
+        Number.isNaN(
+          date.getTime()
+        )
+      ) {
         return "";
       }
 
@@ -1918,34 +2084,12 @@
     }
 
 
-    function formatShortDate(value) {
-
-      if (!value) {
-        return "";
-      }
-
-      const date = new Date(value);
-
-      if (Number.isNaN(date.getTime())) {
-        return "";
-      }
-
-      return date.toLocaleString(
-        undefined,
-        {
-          month: "short",
-          day: "numeric",
-          hour: "numeric",
-          minute: "2-digit"
-        }
-      );
-    }
-
-
     function getInitials(name) {
 
       const text =
-        String(name || "U").trim();
+        String(
+          name || "U"
+        ).trim();
 
       if (!text) {
         return "U";
@@ -1978,7 +2122,8 @@
 
       options.headers = {
         ...(options.headers || {}),
-        "Content-Type": "application/json"
+        "Content-Type":
+          "application/json"
       };
 
       if (token) {
@@ -2001,11 +2146,15 @@
         data = {};
       }
 
-      if (response.status === 401) {
+      if (
+        response.status === 401
+      ) {
 
         token = null;
 
-        localStorage.removeItem("token");
+        localStorage.removeItem(
+          "token"
+        );
 
         currentUser = null;
 
@@ -2035,42 +2184,44 @@
     function showAuth() {
 
       $("authScreen")
-        .classList.remove("hidden");
+        .classList.remove(
+          "hidden"
+        );
 
       $("appScreen")
-        .classList.add("hidden");
+        .classList.add(
+          "hidden"
+        );
 
-      if (notificationTimer) {
+      if (
+        notificationTimer
+      ) {
 
         clearInterval(
           notificationTimer
         );
 
-        notificationTimer = null;
+        notificationTimer =
+          null;
       }
 
-      if (conversationTimer) {
-
-        clearInterval(
-          conversationTimer
-        );
-
-        conversationTimer = null;
-      }
+      stopConversationPolling();
     }
 
 
     function showApp() {
 
       $("authScreen")
-        .classList.add("hidden");
+        .classList.add(
+          "hidden"
+        );
 
       $("appScreen")
-        .classList.remove("hidden");
+        .classList.remove(
+          "hidden"
+        );
 
       startNotificationPolling();
-
-      startConversationPolling();
     }
 
 
@@ -2080,10 +2231,14 @@
         () => {
 
           $("loginBox")
-            .classList.add("hidden");
+            .classList.add(
+              "hidden"
+            );
 
           $("registerBox")
-            .classList.remove("hidden");
+            .classList.remove(
+              "hidden"
+            );
 
         }
       );
@@ -2095,10 +2250,14 @@
         () => {
 
           $("registerBox")
-            .classList.add("hidden");
+            .classList.add(
+              "hidden"
+            );
 
           $("loginBox")
-            .classList.remove("hidden");
+            .classList.remove(
+              "hidden"
+            );
 
         }
       );
@@ -2140,9 +2299,11 @@
 
       try {
 
-        $("loginBtn").disabled = true;
+        $("loginBtn")
+          .disabled = true;
 
-        $("loginBtn").textContent =
+        $("loginBtn")
+          .textContent =
           "Logging in...";
 
         const data =
@@ -2157,26 +2318,32 @@
             }
           );
 
-        token = data.token;
+        token =
+          data.token;
 
         localStorage.setItem(
           "token",
           token
         );
 
-        currentUser = data.user;
+        currentUser =
+          data.user;
 
         await afterLogin();
 
       } catch (error) {
 
-        showToast(error.message);
+        showToast(
+          error.message
+        );
 
       } finally {
 
-        $("loginBtn").disabled = false;
+        $("loginBtn")
+          .disabled = false;
 
-        $("loginBtn").textContent =
+        $("loginBtn")
+          .textContent =
           "Login";
       }
     }
@@ -2218,9 +2385,11 @@
 
       try {
 
-        $("registerBtn").disabled = true;
+        $("registerBtn")
+          .disabled = true;
 
-        $("registerBtn").textContent =
+        $("registerBtn")
+          .textContent =
           "Creating account...";
 
         const data =
@@ -2237,26 +2406,32 @@
             }
           );
 
-        token = data.token;
+        token =
+          data.token;
 
         localStorage.setItem(
           "token",
           token
         );
 
-        currentUser = data.user;
+        currentUser =
+          data.user;
 
         await afterLogin();
 
       } catch (error) {
 
-        showToast(error.message);
+        showToast(
+          error.message
+        );
 
       } finally {
 
-        $("registerBtn").disabled = false;
+        $("registerBtn")
+          .disabled = false;
 
-        $("registerBtn").textContent =
+        $("registerBtn")
+          .textContent =
           "Create Account";
       }
     }
@@ -2272,9 +2447,9 @@
 
       await loadFeed();
 
-      await loadNotifications(false);
-
-      await loadConversations();
+      await loadNotifications(
+        false
+      );
     }
 
 
@@ -2298,16 +2473,28 @@
 
       currentUser = null;
 
-      selectedConversationId = null;
+      localStorage.removeItem(
+        "token"
+      );
 
-      selectedChatUser = null;
+      currentConversationId =
+        null;
 
-      conversations = [];
+      currentChatUser =
+        null;
 
-      localStorage.removeItem("token");
+      allConversations =
+        [];
+
+      allDiscoverUsers =
+        [];
 
       $("notificationPanel")
-        .classList.add("hidden");
+        .classList.add(
+          "hidden"
+        );
+
+      stopConversationPolling();
 
       showAuth();
 
@@ -2328,10 +2515,12 @@
       }
 
       const name =
-        currentUser.name || "User";
+        currentUser.name ||
+        "User";
 
       const country =
-        currentUser.country || "World";
+        currentUser.country ||
+        "World";
 
       $("sidebarName")
         .textContent = name;
@@ -2353,7 +2542,8 @@
         currentUser.email || "";
 
       $("myProfileCountry")
-        .textContent = country;
+        .textContent =
+        country;
     }
 
 
@@ -2370,7 +2560,8 @@
             `/api/users/${currentUser.id}`
           );
 
-        const user = data.user;
+        const user =
+          data.user;
 
         currentUser = {
           ...currentUser,
@@ -2426,7 +2617,9 @@
         (section) => {
 
           const element =
-            $(`${section}Section`);
+            $(
+              `${section}Section`
+            );
 
           if (!element) {
             return;
@@ -2436,7 +2629,6 @@
             "hidden",
             section !== name
           );
-
         }
       );
 
@@ -2450,7 +2642,8 @@
 
             button.classList.toggle(
               "active",
-              button.dataset.section === name
+              button.dataset.section ===
+                name
             );
 
           }
@@ -2466,15 +2659,23 @@
       }
 
       if (name === "discover") {
-        loadDiscover("discoverList");
+        loadDiscover(
+          "discoverList"
+        );
       }
 
       if (name === "connect") {
-        loadDiscover("connectList");
+        loadDiscover(
+          "connectList"
+        );
       }
 
       if (name === "converse") {
         loadConversations();
+        loadDiscoverUsersForChat();
+        startConversationPolling();
+      } else {
+        stopConversationPolling();
       }
     }
 
@@ -2555,7 +2756,9 @@
 
       } catch (error) {
 
-        showToast(error.message);
+        showToast(
+          error.message
+        );
 
       } finally {
 
@@ -2575,7 +2778,8 @@
         return;
       }
 
-      const feed = $("feed");
+      const feed =
+        $("feed");
 
       feed.innerHTML =
         `
@@ -2587,12 +2791,16 @@
       try {
 
         const data =
-          await api("/api/posts");
+          await api(
+            "/api/posts"
+          );
 
         const posts =
           data.posts || [];
 
-        if (posts.length === 0) {
+        if (
+          posts.length === 0
+        ) {
 
           feed.innerHTML =
             `
@@ -2606,7 +2814,9 @@
 
         feed.innerHTML =
           posts
-            .map(renderPost)
+            .map(
+              renderPost
+            )
             .join("");
 
         attachPostEvents();
@@ -2616,7 +2826,9 @@
         feed.innerHTML =
           `
           <div class="empty">
-            ${escapeHtml(error.message)}
+            ${escapeHtml(
+              error.message
+            )}
           </div>
           `;
       }
@@ -2626,7 +2838,9 @@
     function renderPost(post) {
 
       const liked =
-        Boolean(post.liked_by_me);
+        Boolean(
+          post.liked_by_me
+        );
 
       return `
         <article
@@ -2639,12 +2853,15 @@
             <div>
 
               <div class="post-author">
-                ${escapeHtml(post.name)}
+                ${escapeHtml(
+                  post.name
+                )}
               </div>
 
               <div class="post-country">
                 ${escapeHtml(
-                  post.country || "World"
+                  post.country ||
+                  "World"
                 )}
               </div>
 
@@ -2652,7 +2869,9 @@
 
             <div class="post-time">
               ${escapeHtml(
-                formatDate(post.created_at)
+                formatDate(
+                  post.created_at
+                )
               )}
             </div>
 
@@ -2660,7 +2879,9 @@
 
 
           <div class="post-body">
-            ${escapeHtml(post.body)}
+            ${escapeHtml(
+              post.body
+            )}
           </div>
 
 
@@ -2668,7 +2889,9 @@
 
             <button
               class="post-action like-btn ${
-                liked ? "liked" : ""
+                liked
+                  ? "liked"
+                  : ""
               }"
               data-id="${post.id}"
             >
@@ -2736,7 +2959,9 @@
     function attachPostEvents() {
 
       document
-        .querySelectorAll(".like-btn")
+        .querySelectorAll(
+          ".like-btn"
+        )
         .forEach(
           (button) => {
 
@@ -2745,7 +2970,9 @@
               () => {
 
                 toggleLike(
-                  Number(button.dataset.id),
+                  Number(
+                    button.dataset.id
+                  ),
                   button
                 );
 
@@ -2768,7 +2995,9 @@
               () => {
 
                 toggleComments(
-                  Number(button.dataset.id)
+                  Number(
+                    button.dataset.id
+                  )
                 );
 
               }
@@ -2790,7 +3019,9 @@
               () => {
 
                 addComment(
-                  Number(button.dataset.id)
+                  Number(
+                    button.dataset.id
+                  )
                 );
 
               }
@@ -2801,7 +3032,9 @@
 
 
       document
-        .querySelectorAll(".share-btn")
+        .querySelectorAll(
+          ".share-btn"
+        )
         .forEach(
           (button) => {
 
@@ -2810,7 +3043,9 @@
               () => {
 
                 sharePost(
-                  Number(button.dataset.id)
+                  Number(
+                    button.dataset.id
+                  )
                 );
 
               }
@@ -2841,7 +3076,9 @@
           );
 
         const count =
-          button.querySelector("span");
+          button.querySelector(
+            "span"
+          );
 
         if (count) {
           count.textContent =
@@ -2853,11 +3090,15 @@
           Boolean(data.liked)
         );
 
-        await loadNotifications(false);
+        await loadNotifications(
+          false
+        );
 
       } catch (error) {
 
-        showToast(error.message);
+        showToast(
+          error.message
+        );
       }
     }
 
@@ -2866,26 +3107,38 @@
        COMMENTS
     ====================================================== */
 
-    async function toggleComments(postId) {
+    async function toggleComments(
+      postId
+    ) {
 
       const box =
-        $(`comments-${postId}`);
+        $(
+          `comments-${postId}`
+        );
 
       if (!box) {
         return;
       }
 
       const isHidden =
-        box.classList.contains("hidden");
+        box.classList.contains(
+          "hidden"
+        );
 
-      box.classList.toggle("hidden");
+      box.classList.toggle(
+        "hidden"
+      );
 
       if (isHidden) {
 
-        await loadComments(postId);
+        await loadComments(
+          postId
+        );
 
         const input =
-          $(`comment-input-${postId}`);
+          $(
+            `comment-input-${postId}`
+          );
 
         if (input) {
           input.focus();
@@ -2894,10 +3147,14 @@
     }
 
 
-    async function loadComments(postId) {
+    async function loadComments(
+      postId
+    ) {
 
       const list =
-        $(`comments-list-${postId}`);
+        $(
+          `comments-list-${postId}`
+        );
 
       if (!list) {
         return;
@@ -2920,7 +3177,9 @@
         const comments =
           data.comments || [];
 
-        if (comments.length === 0) {
+        if (
+          comments.length === 0
+        ) {
 
           list.innerHTML =
             `
@@ -2942,11 +3201,15 @@
                 <div class="comment">
 
                   <div class="comment-author">
-                    ${escapeHtml(comment.name)}
+                    ${escapeHtml(
+                      comment.name
+                    )}
                   </div>
 
                   <div class="comment-body">
-                    ${escapeHtml(comment.body)}
+                    ${escapeHtml(
+                      comment.body
+                    )}
                   </div>
 
                 </div>
@@ -2959,17 +3222,23 @@
         list.innerHTML =
           `
           <div class="empty">
-            ${escapeHtml(error.message)}
+            ${escapeHtml(
+              error.message
+            )}
           </div>
           `;
       }
     }
 
 
-    async function addComment(postId) {
+    async function addComment(
+      postId
+    ) {
 
       const input =
-        $(`comment-input-${postId}`);
+        $(
+          `comment-input-${postId}`
+        );
 
       if (!input) {
         return;
@@ -3001,7 +3270,9 @@
 
         input.value = "";
 
-        await loadComments(postId);
+        await loadComments(
+          postId
+        );
 
         await loadFeed();
 
@@ -3009,11 +3280,15 @@
           "Comment added."
         );
 
-        await loadNotifications(false);
+        await loadNotifications(
+          false
+        );
 
       } catch (error) {
 
-        showToast(error.message);
+        showToast(
+          error.message
+        );
       }
     }
 
@@ -3022,7 +3297,9 @@
        SHARE
     ====================================================== */
 
-    async function sharePost(postId) {
+    async function sharePost(
+      postId
+    ) {
 
       try {
 
@@ -3037,14 +3314,19 @@
         const shareUrl =
           data.url;
 
-        if (navigator.share) {
+        if (
+          navigator.share
+        ) {
 
           try {
 
             await navigator.share({
-              title: "WorldConnect",
-              text: data.share_text,
-              url: shareUrl
+              title:
+                "WorldConnect",
+              text:
+                data.share_text,
+              url:
+                shareUrl
             });
 
             return;
@@ -3054,7 +3336,9 @@
           }
         }
 
-        if (navigator.clipboard) {
+        if (
+          navigator.clipboard
+        ) {
 
           await navigator.clipboard.writeText(
             shareUrl
@@ -3074,7 +3358,9 @@
 
       } catch (error) {
 
-        showToast(error.message);
+        showToast(
+          error.message
+        );
       }
     }
 
@@ -3083,7 +3369,9 @@
        DISCOVER
     ====================================================== */
 
-    async function loadDiscover(containerId) {
+    async function loadDiscover(
+      containerId
+    ) {
 
       const container =
         $(containerId);
@@ -3109,7 +3397,9 @@
         const users =
           data.users || [];
 
-        if (users.length === 0) {
+        if (
+          users.length === 0
+        ) {
 
           container.innerHTML =
             `
@@ -3123,29 +3413,35 @@
 
         container.innerHTML =
           users
-            .map(renderUserCard)
+            .map(
+              renderUserCard
+            )
             .join("");
 
         attachFollowEvents();
-
-        attachMessageUserEvents();
 
       } catch (error) {
 
         container.innerHTML =
           `
           <div class="empty">
-            ${escapeHtml(error.message)}
+            ${escapeHtml(
+              error.message
+            )}
           </div>
           `;
       }
     }
 
 
-    function renderUserCard(user) {
+    function renderUserCard(
+      user
+    ) {
 
       const following =
-        Boolean(user.following_me);
+        Boolean(
+          user.following_me
+        );
 
       return `
         <div
@@ -3155,17 +3451,22 @@
 
           <div class="user-avatar">
             ${escapeHtml(
-              getInitials(user.name)
+              getInitials(
+                user.name
+              )
             )}
           </div>
 
           <div class="user-name">
-            ${escapeHtml(user.name)}
+            ${escapeHtml(
+              user.name
+            )}
           </div>
 
           <div class="user-country">
             ${escapeHtml(
-              user.country || "World"
+              user.country ||
+              "World"
             )}
           </div>
 
@@ -3173,7 +3474,9 @@
 
             <span>
               👥
-              <strong class="follower-count">
+              <strong
+                class="follower-count"
+              >
                 ${user.follower_count || 0}
               </strong>
               followers
@@ -3190,7 +3493,9 @@
 
           <button
             class="follow-btn ${
-              following ? "following" : ""
+              following
+                ? "following"
+                : ""
             }"
             data-id="${user.id}"
           >
@@ -3201,17 +3506,6 @@
             }
           </button>
 
-          <button
-            class="message-user-btn"
-            data-id="${user.id}"
-            data-name="${escapeHtml(user.name)}"
-            data-country="${escapeHtml(
-              user.country || "World"
-            )}"
-          >
-            💬 Message
-          </button>
-
         </div>
       `;
     }
@@ -3220,7 +3514,9 @@
     function attachFollowEvents() {
 
       document
-        .querySelectorAll(".follow-btn")
+        .querySelectorAll(
+          ".follow-btn"
+        )
         .forEach(
           (button) => {
 
@@ -3229,33 +3525,10 @@
               () => {
 
                 toggleFollow(
-                  Number(button.dataset.id),
+                  Number(
+                    button.dataset.id
+                  ),
                   button
-                );
-
-              }
-            );
-
-          }
-        );
-    }
-
-
-    function attachMessageUserEvents() {
-
-      document
-        .querySelectorAll(".message-user-btn")
-        .forEach(
-          (button) => {
-
-            button.addEventListener(
-              "click",
-              () => {
-
-                startConversationWithUser(
-                  Number(button.dataset.id),
-                  button.dataset.name,
-                  button.dataset.country
                 );
 
               }
@@ -3284,20 +3557,25 @@
           );
 
         const card =
-          button.closest(".user-card");
+          button.closest(
+            ".user-card"
+          );
 
         const followerCount =
           card?.querySelector(
             ".follower-count"
           );
 
-        if (followerCount) {
-
+        if (
+          followerCount
+        ) {
           followerCount.textContent =
             data.follower_count || 0;
         }
 
-        if (data.following) {
+        if (
+          data.following
+        ) {
 
           button.textContent =
             "✓ Following";
@@ -3318,11 +3596,15 @@
 
         await loadMyProfile();
 
-        await loadNotifications(false);
+        await loadNotifications(
+          false
+        );
 
       } catch (error) {
 
-        showToast(error.message);
+        showToast(
+          error.message
+        );
 
       } finally {
 
@@ -3335,7 +3617,9 @@
        NOTIFICATIONS
     ====================================================== */
 
-    function getNotificationIcon(type) {
+    function getNotificationIcon(
+      type
+    ) {
 
       if (type === "follow") {
         return "🤝";
@@ -3396,7 +3680,9 @@
         if (openPanel) {
 
           $("notificationPanel")
-            .classList.remove("hidden");
+            .classList.remove(
+              "hidden"
+            );
         }
 
       } catch (error) {
@@ -3408,13 +3694,17 @@
 
         if (openPanel) {
 
-          showToast(error.message);
+          showToast(
+            error.message
+          );
         }
       }
     }
 
 
-    function updateNotificationBadge(count) {
+    function updateNotificationBadge(
+      count
+    ) {
 
       const badge =
         $("notificationBadge");
@@ -3423,16 +3713,24 @@
         return;
       }
 
-      if (count > 0) {
+      if (
+        count > 0
+      ) {
 
         badge.textContent =
-          count > 99 ? "99+" : count;
+          count > 99
+            ? "99+"
+            : count;
 
-        badge.classList.remove("hidden");
+        badge.classList.remove(
+          "hidden"
+        );
 
       } else {
 
-        badge.classList.add("hidden");
+        badge.classList.add(
+          "hidden"
+        );
       }
     }
 
@@ -3449,14 +3747,20 @@
         return;
       }
 
-      if (unreadCount > 0) {
+      if (
+        unreadCount > 0
+      ) {
 
         element.textContent =
           `${unreadCount} unread notification${
-            unreadCount === 1 ? "" : "s"
+            unreadCount === 1
+              ? ""
+              : "s"
           }.`;
 
-      } else if (totalCount > 0) {
+      } else if (
+        totalCount > 0
+      ) {
 
         element.textContent =
           "You're all caught up.";
@@ -3480,12 +3784,13 @@
         return;
       }
 
-      if (notifications.length === 0) {
+      if (
+        notifications.length === 0
+      ) {
 
         list.innerHTML =
           `
           <div class="empty-notifications">
-
             <div
               style="font-size:35px;margin-bottom:10px"
             >
@@ -3499,9 +3804,8 @@
             <div
               style="font-size:12px;margin-top:5px"
             >
-              Follow, like, comment, or message someone.
+              Follow, like, comment, or message someone to create notifications.
             </div>
-
           </div>
           `;
 
@@ -3519,7 +3823,9 @@
               return `
                 <div
                   class="notification-item ${
-                    unread ? "unread" : ""
+                    unread
+                      ? "unread"
+                      : ""
                   }"
                   data-notification-id="${notification.id}"
                 >
@@ -3582,45 +3888,10 @@
                 event.stopPropagation();
 
                 markNotificationRead(
-                  Number(button.dataset.id)
+                  Number(
+                    button.dataset.id
+                  )
                 );
-
-              }
-            );
-
-          }
-        );
-
-
-      document
-        .querySelectorAll(
-          ".notification-item"
-        )
-        .forEach(
-          (item) => {
-
-            item.addEventListener(
-              "click",
-              () => {
-
-                const notification =
-                  notifications.find(
-                    (n) =>
-                      String(n.id) ===
-                      String(
-                        item.dataset.notificationId
-                      )
-                  );
-
-                if (
-                  notification &&
-                  notification.type === "message"
-                ) {
-
-                  openConverseFromNotification(
-                    notification
-                  );
-                }
 
               }
             );
@@ -3643,11 +3914,15 @@
           }
         );
 
-        await loadNotifications(true);
+        await loadNotifications(
+          true
+        );
 
       } catch (error) {
 
-        showToast(error.message);
+        showToast(
+          error.message
+        );
       }
     }
 
@@ -3663,7 +3938,9 @@
           }
         );
 
-        await loadNotifications(true);
+        await loadNotifications(
+          true
+        );
 
         showToast(
           "All notifications marked as read."
@@ -3671,7 +3948,9 @@
 
       } catch (error) {
 
-        showToast(error.message);
+        showToast(
+          error.message
+        );
       }
     }
 
@@ -3693,11 +3972,15 @@
 
           if (willOpen) {
 
-            await loadNotifications(true);
+            await loadNotifications(
+              true
+            );
 
           } else {
 
-            panel.classList.add("hidden");
+            panel.classList.add(
+              "hidden"
+            );
           }
         }
       );
@@ -3708,7 +3991,9 @@
         "click",
         async () => {
 
-          await loadNotifications(true);
+          await loadNotifications(
+            true
+          );
 
         }
       );
@@ -3743,7 +4028,9 @@
       () => {
 
         $("notificationPanel")
-          .classList.add("hidden");
+          .classList.add(
+            "hidden"
+          );
 
       }
     );
@@ -3751,8 +4038,9 @@
 
     function startNotificationPolling() {
 
-      if (notificationTimer) {
-
+      if (
+        notificationTimer
+      ) {
         clearInterval(
           notificationTimer
         );
@@ -3763,9 +4051,9 @@
           () => {
 
             if (token) {
-
-              loadNotifications(false);
-
+              loadNotifications(
+                false
+              );
             }
 
           },
@@ -3778,9 +4066,7 @@
        CONVERSE / MESSAGING
     ====================================================== */
 
-    async function loadConversations(
-      keepSelected = true
-    ) {
+    async function loadConversations() {
 
       if (!token) {
         return;
@@ -3800,43 +4086,14 @@
             "/api/conversations"
           );
 
-        conversations =
+        allConversations =
           data.conversations || [];
 
-        updateMessageBadge(
-          conversations.reduce(
-            (total, conversation) =>
-              total +
-              Number(
-                conversation.unread_count || 0
-              ),
-            0
-          )
+        renderConversationList(
+          allConversations
         );
 
-        renderConversations();
-
-        if (
-          keepSelected &&
-          selectedConversationId
-        ) {
-
-          const stillExists =
-            conversations.some(
-              (conversation) =>
-                Number(conversation.id) ===
-                Number(selectedConversationId)
-            );
-
-          if (!stillExists) {
-
-            selectedConversationId = null;
-
-            selectedChatUser = null;
-
-            showEmptyChat();
-          }
-        }
+        updateMessageBadge();
 
       } catch (error) {
 
@@ -3847,15 +4104,19 @@
 
         list.innerHTML =
           `
-          <div class="empty">
-            ${escapeHtml(error.message)}
+          <div class="conversation-empty">
+            ${escapeHtml(
+              error.message
+            )}
           </div>
           `;
       }
     }
 
 
-    function renderConversations() {
+    function renderConversationList(
+      conversations
+    ) {
 
       const list =
         $("conversationList");
@@ -3864,13 +4125,28 @@
         return;
       }
 
-      if (conversations.length === 0) {
+      if (
+        conversations.length === 0
+      ) {
 
         list.innerHTML =
           `
-          <div class="empty">
-            No conversations yet.<br />
-            Search for someone above to start chatting.
+          <div class="conversation-empty">
+            <div
+              style="font-size:35px;margin-bottom:10px"
+            >
+              💬
+            </div>
+
+            <div>
+              No conversations yet.
+            </div>
+
+            <div
+              style="font-size:12px;margin-top:6px"
+            >
+              Search for someone above to start a chat.
+            </div>
           </div>
           `;
 
@@ -3887,7 +4163,7 @@
                   conversation.id
                 ) ===
                 Number(
-                  selectedConversationId
+                  currentConversationId
                 );
 
               const unread =
@@ -3896,72 +4172,77 @@
                 );
 
               return `
-                <div
+                <button
                   class="conversation-item ${
-                    active ? "active" : ""
+                    active
+                      ? "active"
+                      : ""
                   }"
                   data-conversation-id="${conversation.id}"
                 >
 
-                  <div class="conversation-avatar-wrap">
-
-                    <div class="mini-avatar">
-                      ${escapeHtml(
-                        getInitials(
-                          conversation.other_user_name
-                        )
-                      )}
-                    </div>
-
+                  <div class="conversation-avatar">
+                    ${escapeHtml(
+                      getInitials(
+                        conversation.other_user_name
+                      )
+                    )}
                   </div>
 
                   <div class="conversation-info">
 
-                    <div class="conversation-top">
+                    <div class="conversation-name-row">
 
                       <div class="conversation-name">
                         ${escapeHtml(
-                          conversation.other_user_name
+                          conversation.other_user_name ||
+                          "User"
                         )}
                       </div>
 
                       <div class="conversation-time">
                         ${escapeHtml(
-                          formatShortDate(
-                            conversation.last_message_at
-                          )
+                          conversation.last_message_at
+                            ? formatDate(
+                                conversation.last_message_at
+                              )
+                            : ""
                         )}
                       </div>
 
                     </div>
 
-                    <div class="conversation-preview">
-                      ${
-                        conversation.last_message
-                          ? escapeHtml(
-                              conversation.last_message
-                            )
-                          : "No messages yet."
-                      }
-                    </div>
+                    <div class="conversation-preview-row">
 
-                    ${
-                      unread > 0
-                        ? `
-                          <span class="unread-count">
-                            ${
-                              unread > 99
-                                ? "99+"
-                                : unread
-                            }
-                          </span>
-                        `
-                        : ""
-                    }
+                      <div class="conversation-preview">
+                        ${
+                          conversation.last_message
+                            ? escapeHtml(
+                                conversation.last_message
+                              )
+                            : "No messages yet."
+                        }
+                      </div>
+
+                      ${
+                        unread > 0
+                          ? `
+                            <span class="unread-count">
+                              ${
+                                unread > 99
+                                  ? "99+"
+                                  : unread
+                              }
+                            </span>
+                          `
+                          : ""
+                      }
+
+                    </div>
 
                   </div>
 
-                </div>
+                </button>
               `;
             }
           )
@@ -3973,15 +4254,15 @@
           ".conversation-item"
         )
         .forEach(
-          (item) => {
+          (button) => {
 
-            item.addEventListener(
+            button.addEventListener(
               "click",
               () => {
 
                 openConversation(
                   Number(
-                    item.dataset.conversationId
+                    button.dataset.conversationId
                   )
                 );
 
@@ -3993,359 +4274,7 @@
     }
 
 
-    async function openConversation(
-      conversationId
-    ) {
-
-      const conversation =
-        conversations.find(
-          (item) =>
-            Number(item.id) ===
-            Number(conversationId)
-        );
-
-      if (!conversation) {
-        return;
-      }
-
-      selectedConversationId =
-        Number(conversationId);
-
-      selectedChatUser = {
-        id:
-          conversation.other_user_id,
-        name:
-          conversation.other_user_name,
-        country:
-          conversation.other_user_country
-      };
-
-      renderConversations();
-
-      renderChatHeader();
-
-      $("chatInputArea")
-        .classList.remove("hidden");
-
-      await markConversationRead(
-        conversationId
-      );
-
-      await loadMessages(
-        conversationId,
-        true
-      );
-
-      await loadConversations(true);
-
-      renderConversations();
-    }
-
-
-    function renderChatHeader() {
-
-      if (!selectedChatUser) {
-        return;
-      }
-
-      $("chatHeader")
-        .classList.remove("hidden");
-
-      $("chatAvatar")
-        .textContent =
-        getInitials(
-          selectedChatUser.name
-        );
-
-      $("chatHeaderName")
-        .textContent =
-        selectedChatUser.name ||
-        "User";
-
-      $("chatHeaderCountry")
-        .textContent =
-        selectedChatUser.country ||
-        "World";
-    }
-
-
-    function showEmptyChat() {
-
-      $("chatHeader")
-        .classList.add("hidden");
-
-      $("chatInputArea")
-        .classList.add("hidden");
-
-      $("chatMessages")
-        .innerHTML =
-        `
-        <div class="no-conversation">
-
-          <div class="no-conversation-icon">
-            💬
-          </div>
-
-          <strong>
-            Start a conversation
-          </strong>
-
-          <p>
-            Select a conversation or search for someone to message.
-          </p>
-
-        </div>
-        `;
-    }
-
-
-    async function loadMessages(
-      conversationId,
-      scrollToBottom = false
-    ) {
-
-      const container =
-        $("chatMessages");
-
-      if (!container) {
-        return;
-      }
-
-      try {
-
-        const data =
-          await api(
-            `/api/conversations/${conversationId}/messages`
-          );
-
-        const messages =
-          data.messages || [];
-
-        if (messages.length === 0) {
-
-          container.innerHTML =
-            `
-            <div class="chat-empty">
-              No messages yet.<br />
-              Say hello! 👋
-            </div>
-            `;
-
-          return;
-        }
-
-        container.innerHTML =
-          messages
-            .map(renderMessage)
-            .join("");
-
-        if (scrollToBottom) {
-
-          requestAnimationFrame(
-            () => {
-
-              container.scrollTop =
-                container.scrollHeight;
-
-            }
-          );
-        }
-
-      } catch (error) {
-
-        container.innerHTML =
-          `
-          <div class="chat-empty">
-            ${escapeHtml(error.message)}
-          </div>
-          `;
-      }
-    }
-
-
-    function renderMessage(message) {
-
-      const mine =
-        Number(message.sender_id) ===
-        Number(currentUser?.id);
-
-      return `
-        <div
-          class="message-row ${
-            mine ? "mine" : "theirs"
-          }"
-        >
-
-          <div class="message-bubble">
-
-            ${escapeHtml(message.body)}
-
-            <div class="message-time">
-              ${escapeHtml(
-                formatDate(message.created_at)
-              )}
-            </div>
-
-          </div>
-
-        </div>
-      `;
-    }
-
-
-    async function sendMessage() {
-
-      if (!selectedConversationId) {
-
-        showToast(
-          "Select a conversation first."
-        );
-
-        return;
-      }
-
-      const input =
-        $("chatInput");
-
-      const body =
-        input.value.trim();
-
-      if (!body) {
-        return;
-      }
-
-      try {
-
-        $("sendMessageBtn")
-          .disabled = true;
-
-        await api(
-          `/api/conversations/${selectedConversationId}/messages`,
-          {
-            method: "POST",
-            body: JSON.stringify({
-              body
-            })
-          }
-        );
-
-        input.value = "";
-
-        await loadMessages(
-          selectedConversationId,
-          true
-        );
-
-        await loadConversations(true);
-
-        await loadNotifications(false);
-
-      } catch (error) {
-
-        showToast(error.message);
-
-      } finally {
-
-        $("sendMessageBtn")
-          .disabled = false;
-
-        input.focus();
-      }
-    }
-
-
-    $("sendMessageBtn")
-      .addEventListener(
-        "click",
-        sendMessage
-      );
-
-
-    $("chatInput")
-      .addEventListener(
-        "keydown",
-        (event) => {
-
-          if (
-            event.key === "Enter" &&
-            !event.shiftKey
-          ) {
-
-            event.preventDefault();
-
-            sendMessage();
-          }
-
-        }
-      );
-
-
-    async function markConversationRead(
-      conversationId
-    ) {
-
-      try {
-
-        await api(
-          `/api/conversations/${conversationId}/read`,
-          {
-            method: "POST"
-          }
-        );
-
-        await loadNotifications(false);
-
-      } catch (error) {
-
-        console.error(
-          "MARK MESSAGE READ ERROR:",
-          error
-        );
-      }
-    }
-
-
-    function startConversationPolling() {
-
-      if (conversationTimer) {
-
-        clearInterval(
-          conversationTimer
-        );
-      }
-
-      conversationTimer =
-        setInterval(
-          async () => {
-
-            if (!token) {
-              return;
-            }
-
-            await loadConversations(
-              true
-            );
-
-            if (
-              selectedConversationId &&
-              !$("converseSection")
-                .classList.contains("hidden")
-            ) {
-
-              await loadMessages(
-                selectedConversationId,
-                false
-              );
-
-            }
-
-          },
-          4000
-        );
-    }
-
-
-    function updateMessageBadge(count) {
+    function updateMessageBadge() {
 
       const badge =
         $("messageBadge");
@@ -4354,10 +4283,27 @@
         return;
       }
 
-      if (count > 0) {
+      const total =
+        allConversations.reduce(
+          (
+            sum,
+            conversation
+          ) =>
+            sum +
+            Number(
+              conversation.unread_count || 0
+            ),
+          0
+        );
+
+      if (
+        total > 0
+      ) {
 
         badge.textContent =
-          count > 99 ? "99+" : count;
+          total > 99
+            ? "99+"
+            : total;
 
         badge.classList.remove(
           "hidden"
@@ -4372,63 +4318,11 @@
     }
 
 
-    /* =====================================================
-       SEARCH USERS FOR NEW CHAT
-    ====================================================== */
+    async function loadDiscoverUsersForChat() {
 
-    $("userSearchInput")
-      .addEventListener(
-        "input",
-        () => {
-
-          clearTimeout(searchTimer);
-
-          const value =
-            $("userSearchInput")
-              .value
-              .trim();
-
-          if (!value) {
-
-            $("searchResults")
-              .innerHTML = "";
-
-            return;
-          }
-
-          searchTimer =
-            setTimeout(
-              () => {
-                searchUsers(value);
-              },
-              350
-            );
-
-        }
-      );
-
-
-    async function searchUsers(query) {
-
-      const results =
-        $("searchResults");
-
-      if (!results) {
+      if (!token) {
         return;
       }
-
-      results.innerHTML =
-        `
-        <div
-          style="
-            color:var(--muted);
-            font-size:12px;
-            padding:8px;
-          "
-        >
-          Searching...
-        </div>
-        `;
 
       try {
 
@@ -4437,145 +4331,173 @@
             "/api/users/discover"
           );
 
-        const users =
-          (data.users || [])
-            .filter(
-              (user) =>
-                Number(user.id) !==
-                Number(currentUser?.id)
-            )
-            .filter(
-              (user) => {
+        allDiscoverUsers =
+          data.users || [];
 
-                const text =
-                  `${user.name || ""} ${
-                    user.country || ""
-                  }`
-                    .toLowerCase();
-
-                return text.includes(
-                  query.toLowerCase()
-                );
-
-              }
-            )
-            .slice(0, 10);
-
-        if (users.length === 0) {
-
-          results.innerHTML =
-            `
-            <div
-              style="
-                color:var(--muted);
-                font-size:12px;
-                padding:8px;
-              "
-            >
-              No people found.
-            </div>
-            `;
-
-          return;
-        }
-
-        results.innerHTML =
-          users
-            .map(
-              (user) => `
-                <div
-                  class="search-result"
-                  data-user-id="${user.id}"
-                  data-user-name="${escapeHtml(
-                    user.name
-                  )}"
-                  data-user-country="${escapeHtml(
-                    user.country || "World"
-                  )}"
-                >
-
-                  <div class="mini-avatar">
-                    ${escapeHtml(
-                      getInitials(user.name)
-                    )}
-                  </div>
-
-                  <div class="search-result-info">
-
-                    <div class="search-result-name">
-                      ${escapeHtml(user.name)}
-                    </div>
-
-                    <div class="search-result-country">
-                      ${escapeHtml(
-                        user.country || "World"
-                      )}
-                    </div>
-
-                  </div>
-
-                </div>
-              `
-            )
-            .join("");
-
-
-        results
-          .querySelectorAll(".search-result")
-          .forEach(
-            (item) => {
-
-              item.addEventListener(
-                "click",
-                () => {
-
-                  startConversationWithUser(
-                    Number(
-                      item.dataset.userId
-                    ),
-                    item.dataset.userName,
-                    item.dataset.userCountry
-                  );
-
-                }
-              );
-
-            }
-          );
+        renderChatUserSearch(
+          $("userSearch")?.value || ""
+        );
 
       } catch (error) {
 
-        results.innerHTML =
-          `
-          <div
-            style="
-              color:var(--danger);
-              font-size:12px;
-              padding:8px;
-            "
-          >
-            ${escapeHtml(error.message)}
-          </div>
-          `;
+        console.error(
+          "CHAT USER SEARCH ERROR:",
+          error
+        );
       }
     }
 
 
-    async function startConversationWithUser(
-      userId,
-      name,
-      country
+    function renderChatUserSearch(
+      searchTerm
     ) {
 
+      const container =
+        $("searchUsers");
+
+      if (!container) {
+        return;
+      }
+
+      const term =
+        String(
+          searchTerm || ""
+        )
+          .trim()
+          .toLowerCase();
+
+      if (!term) {
+
+        container.innerHTML = "";
+
+        return;
+      }
+
+      const users =
+        allDiscoverUsers
+          .filter(
+            (user) => {
+
+              const name =
+                String(
+                  user.name || ""
+                ).toLowerCase();
+
+              const email =
+                String(
+                  user.email || ""
+                ).toLowerCase();
+
+              const country =
+                String(
+                  user.country || ""
+                ).toLowerCase();
+
+              return (
+                name.includes(term) ||
+                email.includes(term) ||
+                country.includes(term)
+              );
+            }
+          )
+          .slice(
+            0,
+            10
+          );
+
       if (
-        !userId ||
-        Number(userId) ===
-          Number(currentUser?.id)
+        users.length === 0
       ) {
+
+        container.innerHTML =
+          `
+          <div class="search-empty">
+            No user found.
+          </div>
+          `;
+
+        return;
+      }
+
+      container.innerHTML =
+        users
+          .map(
+            (user) => `
+              <button
+                class="search-user"
+                data-user-id="${user.id}"
+              >
+
+                <div class="search-user-avatar">
+                  ${escapeHtml(
+                    getInitials(
+                      user.name
+                    )
+                  )}
+                </div>
+
+                <div class="search-user-info">
+
+                  <div class="search-user-name">
+                    ${escapeHtml(
+                      user.name
+                    )}
+                  </div>
+
+                  <div class="search-user-country">
+                    ${escapeHtml(
+                      user.country ||
+                      user.email ||
+                      "World"
+                    )}
+                  </div>
+
+                </div>
+
+              </button>
+            `
+          )
+          .join("");
+
+
+      document
+        .querySelectorAll(
+          ".search-user"
+        )
+        .forEach(
+          (button) => {
+
+            button.addEventListener(
+              "click",
+              () => {
+
+                startConversationWithUser(
+                  Number(
+                    button.dataset.userId
+                  )
+                );
+
+              }
+            );
+
+          }
+        );
+    }
+
+
+    async function startConversationWithUser(
+      userId
+    ) {
+
+      if (!userId) {
         return;
       }
 
       try {
+
+        showToast(
+          "Opening conversation..."
+        );
 
         const data =
           await api(
@@ -4588,99 +4510,569 @@
             }
           );
 
-        selectedChatUser = {
-          id: userId,
-          name:
-            name || data.user?.name || "User",
-          country:
-            country || data.user?.country || "World"
-        };
+        const conversation =
+          data.conversation;
 
-        $("userSearchInput").value = "";
+        if (!conversation) {
 
-        $("searchResults").innerHTML = "";
+          throw new Error(
+            "Conversation could not be created."
+          );
+        }
 
-        showSection("converse");
+        $("userSearch").value = "";
 
-        await loadConversations(false);
+        $("searchUsers").innerHTML =
+          "";
 
-        selectedConversationId =
-          Number(data.conversation.id);
+        await loadConversations();
 
-        renderConversations();
-
-        renderChatHeader();
-
-        $("chatInputArea")
-          .classList.remove("hidden");
-
-        await markConversationRead(
-          selectedConversationId
-        );
-
-        await loadMessages(
-          selectedConversationId,
-          true
+        await openConversation(
+          Number(
+            conversation.id
+          )
         );
 
       } catch (error) {
 
-        showToast(error.message);
+        showToast(
+          error.message
+        );
       }
     }
 
 
-    async function openConverseFromNotification(
-      notification
+    async function openConversation(
+      conversationId
     ) {
 
-      $("notificationPanel")
-        .classList.add("hidden");
+      if (!conversationId) {
+        return;
+      }
 
-      showSection("converse");
+      const conversation =
+        allConversations.find(
+          (item) =>
+            Number(item.id) ===
+            Number(conversationId)
+        );
 
-      await loadConversations(false);
+      currentConversationId =
+        Number(
+          conversationId
+        );
+
+      if (conversation) {
+
+        currentChatUser = {
+          id:
+            conversation.other_user_id,
+          name:
+            conversation.other_user_name,
+          email:
+            conversation.other_user_email,
+          country:
+            conversation.other_user_country
+        };
+
+        updateChatHeader(
+          currentChatUser
+        );
+
+      }
+
+      $("chatEmpty")
+        .classList.add(
+          "hidden"
+        );
+
+      $("chatWindow")
+        .classList.remove(
+          "hidden"
+        );
+
+      $("chatWindow")
+        .style.display =
+        "flex";
+
+      renderConversationList(
+        allConversations
+      );
+
+      try {
+
+        await api(
+          `/api/conversations/${conversationId}/read`,
+          {
+            method: "POST"
+          }
+        );
+
+      } catch (error) {
+
+        console.error(
+          "MARK CHAT READ ERROR:",
+          error
+        );
+      }
+
+      await loadMessages(
+        conversationId,
+        true
+      );
+
+      await loadConversations();
+
+      startConversationPolling();
+    }
+
+
+    function updateChatHeader(
+      user
+    ) {
+
+      if (!user) {
+        return;
+      }
+
+      $("chatHeaderAvatar")
+        .textContent =
+        getInitials(
+          user.name
+        );
+
+      $("chatHeaderName")
+        .textContent =
+        user.name ||
+        "User";
+
+      $("chatHeaderCountry")
+        .textContent =
+        user.country ||
+        user.email ||
+        "World";
+    }
+
+
+    async function loadMessages(
+      conversationId,
+      scrollToBottom = false
+    ) {
+
+      if (!conversationId) {
+        return;
+      }
+
+      const list =
+        $("messagesList");
+
+      if (!list) {
+        return;
+      }
+
+      try {
+
+        const data =
+          await api(
+            `/api/conversations/${conversationId}/messages`
+          );
+
+        const messages =
+          data.messages || [];
+
+        renderMessages(
+          messages,
+          scrollToBottom
+        );
+
+      } catch (error) {
+
+        console.error(
+          "MESSAGES ERROR:",
+          error
+        );
+
+        list.innerHTML =
+          `
+          <div class="empty">
+            ${escapeHtml(
+              error.message
+            )}
+          </div>
+          `;
+      }
+    }
+
+
+    function renderMessages(
+      messages,
+      scrollToBottom = false
+    ) {
+
+      const list =
+        $("messagesList");
+
+      if (!list) {
+        return;
+      }
 
       if (
-        notification.actor_id
+        messages.length === 0
       ) {
 
-        const conversation =
-          conversations.find(
-            (item) =>
-              Number(
-                item.other_user_id
-              ) ===
-              Number(
-                notification.actor_id
-              )
+        list.innerHTML =
+          `
+          <div class="empty">
+            No messages yet. Say hello! 👋
+          </div>
+          `;
+
+        return;
+      }
+
+      const wasNearBottom =
+        list.scrollHeight -
+          list.scrollTop -
+          list.clientHeight <
+        100;
+
+      list.innerHTML =
+        messages
+          .map(
+            (message) => {
+
+              const mine =
+                Number(
+                  message.sender_id
+                ) ===
+                Number(
+                  currentUser?.id
+                );
+
+              return `
+                <div
+                  class="message-row ${
+                    mine
+                      ? "mine"
+                      : ""
+                  }"
+                >
+
+                  <div class="message-bubble">
+
+                    <div class="message-body">
+                      ${escapeHtml(
+                        message.body
+                      )}
+                    </div>
+
+                    <div class="message-time">
+                      ${escapeHtml(
+                        formatDate(
+                          message.created_at
+                        )
+                      )}
+                    </div>
+
+                  </div>
+
+                </div>
+              `;
+            }
+          )
+          .join("");
+
+
+      if (
+        scrollToBottom ||
+        wasNearBottom
+      ) {
+
+        requestAnimationFrame(
+          () => {
+
+            list.scrollTop =
+              list.scrollHeight;
+
+          }
+        );
+      }
+    }
+
+
+    async function sendMessage() {
+
+      if (
+        !currentConversationId
+      ) {
+
+        showToast(
+          "Choose someone to chat with first."
+        );
+
+        return;
+      }
+
+      const input =
+        $("messageInput");
+
+      const body =
+        input.value.trim();
+
+      if (!body) {
+
+        return;
+      }
+
+      try {
+
+        $("sendMessageBtn")
+          .disabled = true;
+
+        const data =
+          await api(
+            `/api/conversations/${currentConversationId}/messages`,
+            {
+              method: "POST",
+              body: JSON.stringify({
+                body
+              })
+            }
           );
 
-        if (conversation) {
+        input.value = "";
 
-          await openConversation(
-            conversation.id
-          );
-        }
+        input.style.height =
+          "44px";
+
+        await loadMessages(
+          currentConversationId,
+          true
+        );
+
+        await loadConversations();
+
+        await loadNotifications(
+          false
+        );
+
+      } catch (error) {
+
+        showToast(
+          error.message
+        );
+
+      } finally {
+
+        $("sendMessageBtn")
+          .disabled = false;
+
+        input.focus();
+      }
+    }
+
+
+    function startConversationPolling() {
+
+      stopConversationPolling();
+
+      conversationTimer =
+        setInterval(
+          async () => {
+
+            if (
+              !token ||
+              $("converseSection")
+                .classList
+                .contains("hidden")
+            ) {
+              return;
+            }
+
+            await loadConversations();
+
+            if (
+              currentConversationId
+            ) {
+
+              await loadMessages(
+                currentConversationId,
+                false
+              );
+
+              try {
+
+                await api(
+                  `/api/conversations/${currentConversationId}/read`,
+                  {
+                    method: "POST"
+                  }
+                );
+
+              } catch {
+                // Ignore polling read errors.
+              }
+            }
+
+          },
+          4000
+        );
+    }
+
+
+    function stopConversationPolling() {
+
+      if (
+        conversationTimer
+      ) {
+
+        clearInterval(
+          conversationTimer
+        );
+
+        conversationTimer =
+          null;
       }
     }
 
 
     /* =====================================================
-       TOPBAR MESSAGES BUTTON
+       CONVERSE SEARCH
+    ====================================================== */
+
+    $("userSearch")
+      .addEventListener(
+        "input",
+        (event) => {
+
+          renderChatUserSearch(
+            event.target.value
+          );
+
+        }
+      );
+
+
+    $("conversationSearch")
+      .addEventListener(
+        "input",
+        (event) => {
+
+          const term =
+            event.target.value
+              .trim()
+              .toLowerCase();
+
+          if (!term) {
+
+            renderConversationList(
+              allConversations
+            );
+
+            return;
+          }
+
+          const filtered =
+            allConversations.filter(
+              (conversation) => {
+
+                const name =
+                  String(
+                    conversation.other_user_name ||
+                    ""
+                  ).toLowerCase();
+
+                const preview =
+                  String(
+                    conversation.last_message ||
+                    ""
+                  ).toLowerCase();
+
+                return (
+                  name.includes(term) ||
+                  preview.includes(term)
+                );
+              }
+            );
+
+          renderConversationList(
+            filtered
+          );
+        }
+      );
+
+
+    $("sendMessageBtn")
+      .addEventListener(
+        "click",
+        sendMessage
+      );
+
+
+    $("messageInput")
+      .addEventListener(
+        "keydown",
+        (event) => {
+
+          if (
+            event.key === "Enter" &&
+            !event.shiftKey
+          ) {
+
+            event.preventDefault();
+
+            sendMessage();
+
+          }
+
+        }
+      );
+
+
+    $("messageInput")
+      .addEventListener(
+        "input",
+        (event) => {
+
+          const input =
+            event.target;
+
+          input.style.height =
+            "44px";
+
+          input.style.height =
+            Math.min(
+              input.scrollHeight,
+              130
+            ) +
+            "px";
+
+        }
+      );
+
+
+    /* =====================================================
+       TOP MESSAGE BUTTON
     ====================================================== */
 
     $("messagesBtn")
       .addEventListener(
         "click",
-        async () => {
+        () => {
 
           $("notificationPanel")
-            .classList.add("hidden");
+            .classList.add(
+              "hidden"
+            );
 
-          showSection("converse");
+          showSection(
+            "converse"
+          );
 
-          await loadConversations();
+          window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+          });
 
         }
       );
@@ -4725,11 +5117,14 @@
           );
 
         if (
-          Number.isInteger(postId)
+          Number.isInteger(
+            postId
+          )
         ) {
 
-          addComment(postId);
-
+          addComment(
+            postId
+          );
         }
       }
     );
@@ -4751,7 +5146,9 @@
       try {
 
         const data =
-          await api("/api/me");
+          await api(
+            "/api/me"
+          );
 
         currentUser =
           data.user;
