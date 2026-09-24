@@ -14,7 +14,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const JWT_SECRET =
-  process.env.JWT_SECRET || "worldconnect-development-secret";
+  process.env.JWT_SECRET ||
+  "worldconnect-development-secret";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -77,7 +78,6 @@ function requireAuth(req, res, next) {
     next();
 
   } catch (error) {
-
     return res.status(401).json({
       error: "Invalid or expired token."
     });
@@ -86,33 +86,83 @@ function requireAuth(req, res, next) {
 
 
 /* =====================================================
+   NOTIFICATION HELPER
+===================================================== */
+
+async function createNotification({
+  userId,
+  actorId,
+  type,
+  postId = null,
+  message
+}) {
+  if (
+    !userId ||
+    !actorId ||
+    Number(userId) === Number(actorId)
+  ) {
+    return;
+  }
+
+  await pool.query(
+    `
+    INSERT INTO notifications
+      (
+        user_id,
+        actor_id,
+        type,
+        post_id,
+        message
+      )
+    VALUES
+      (
+        $1,
+        $2,
+        $3,
+        $4,
+        $5
+      )
+    `,
+    [
+      userId,
+      actorId,
+      type,
+      postId,
+      message
+    ]
+  );
+}
+
+
+/* =====================================================
    HEALTH
 ===================================================== */
 
-app.get("/api/health", async (req, res) => {
+app.get(
+  "/api/health",
+  async (req, res) => {
+    try {
+      await pool.query("SELECT 1");
 
-  try {
+      res.json({
+        ok: true,
+        service: "WorldConnect API"
+      });
 
-    await pool.query("SELECT 1");
+    } catch (error) {
+      console.error(
+        "HEALTH ERROR:",
+        error
+      );
 
-    res.json({
-      ok: true,
-      service: "WorldConnect API"
-    });
-
-  } catch (error) {
-
-    console.error(
-      "HEALTH ERROR:",
-      error
-    );
-
-    res.status(500).json({
-      ok: false,
-      error: "Database connection failed."
-    });
+      res.status(500).json({
+        ok: false,
+        error:
+          "Database connection failed."
+      });
+    }
   }
-});
+);
 
 
 /* =====================================================
@@ -122,9 +172,7 @@ app.get("/api/health", async (req, res) => {
 app.post(
   "/api/auth/register",
   async (req, res) => {
-
     try {
-
       const {
         name,
         email,
@@ -133,7 +181,6 @@ app.post(
       } = req.body;
 
       if (!name || !email || !password) {
-
         return res.status(400).json({
           error:
             "Name, email and password are required."
@@ -141,7 +188,6 @@ app.post(
       }
 
       if (password.length < 6) {
-
         return res.status(400).json({
           error:
             "Password must be at least 6 characters."
@@ -167,7 +213,6 @@ app.post(
         );
 
       if (existing.rows.length > 0) {
-
         return res.status(409).json({
           error:
             "Email is already registered."
@@ -226,7 +271,6 @@ app.post(
       });
 
     } catch (error) {
-
       console.error(
         "REGISTER ERROR:",
         error
@@ -248,16 +292,13 @@ app.post(
 app.post(
   "/api/auth/login",
   async (req, res) => {
-
     try {
-
       const {
         email,
         password
       } = req.body;
 
       if (!email || !password) {
-
         return res.status(400).json({
           error:
             "Email and password are required."
@@ -286,7 +327,6 @@ app.post(
         );
 
       if (result.rows.length === 0) {
-
         return res.status(401).json({
           error:
             "Invalid email or password."
@@ -303,7 +343,6 @@ app.post(
         );
 
       if (!valid) {
-
         return res.status(401).json({
           error:
             "Invalid email or password."
@@ -321,7 +360,6 @@ app.post(
       });
 
     } catch (error) {
-
       console.error(
         "LOGIN ERROR:",
         error
@@ -344,9 +382,7 @@ app.get(
   "/api/me",
   requireAuth,
   async (req, res) => {
-
     try {
-
       const result =
         await pool.query(
           `
@@ -363,7 +399,6 @@ app.get(
         );
 
       if (result.rows.length === 0) {
-
         return res.status(404).json({
           error:
             "User not found."
@@ -376,7 +411,6 @@ app.get(
       });
 
     } catch (error) {
-
       console.error(
         "ME ERROR:",
         error
@@ -392,16 +426,14 @@ app.get(
 
 
 /* =====================================================
-   GET WORLD FEED
+   WORLD FEED
 ===================================================== */
 
 app.get(
   "/api/posts",
   requireAuth,
   async (req, res) => {
-
     try {
-
       const result =
         await pool.query(
           `
@@ -462,7 +494,6 @@ app.get(
       });
 
     } catch (error) {
-
       console.error(
         "GET POSTS ERROR:",
         error
@@ -485,16 +516,13 @@ app.post(
   "/api/posts",
   requireAuth,
   async (req, res) => {
-
     try {
-
       const body =
         String(
           req.body.body || ""
         ).trim();
 
       if (!body) {
-
         return res.status(400).json({
           error:
             "Post cannot be empty."
@@ -502,7 +530,6 @@ app.post(
       }
 
       if (body.length > 5000) {
-
         return res.status(400).json({
           error:
             "Post is too long."
@@ -540,7 +567,6 @@ app.post(
       });
 
     } catch (error) {
-
       console.error(
         "CREATE POST ERROR:",
         error
@@ -568,12 +594,10 @@ app.post(
       await pool.connect();
 
     try {
-
       const postId =
         Number(req.params.id);
 
       if (!Number.isInteger(postId)) {
-
         return res.status(400).json({
           error:
             "Invalid post ID."
@@ -596,10 +620,7 @@ app.post(
           [postId]
         );
 
-      if (
-        postResult.rows.length === 0
-      ) {
-
+      if (postResult.rows.length === 0) {
         await client.query(
           "ROLLBACK"
         );
@@ -609,6 +630,9 @@ app.post(
             "Post not found."
         });
       }
+
+      const postOwnerId =
+        postResult.rows[0].user_id;
 
       const existing =
         await client.query(
@@ -626,9 +650,7 @@ app.post(
 
       let liked;
 
-      if (
-        existing.rows.length > 0
-      ) {
+      if (existing.rows.length > 0) {
 
         await client.query(
           `
@@ -666,6 +688,52 @@ app.post(
         );
 
         liked = true;
+
+        if (
+          Number(postOwnerId) !==
+          Number(req.user.id)
+        ) {
+          const actorResult =
+            await client.query(
+              `
+              SELECT name
+              FROM users
+              WHERE id = $1
+              `,
+              [req.user.id]
+            );
+
+          const actorName =
+            actorResult.rows[0]?.name ||
+            "Someone";
+
+          await client.query(
+            `
+            INSERT INTO notifications
+              (
+                user_id,
+                actor_id,
+                type,
+                post_id,
+                message
+              )
+            VALUES
+              (
+                $1,
+                $2,
+                'like',
+                $3,
+                $4
+              )
+            `,
+            [
+              postOwnerId,
+              req.user.id,
+              postId,
+              `${actorName} liked your post.`
+            ]
+          );
+        }
       }
 
       const countResult =
@@ -691,9 +759,11 @@ app.post(
 
     } catch (error) {
 
-      await client.query(
-        "ROLLBACK"
-      );
+      try {
+        await client.query(
+          "ROLLBACK"
+        );
+      } catch {}
 
       console.error(
         "LIKE ERROR:",
@@ -706,7 +776,6 @@ app.post(
       });
 
     } finally {
-
       client.release();
     }
   }
@@ -721,14 +790,11 @@ app.get(
   "/api/posts/:id/comments",
   requireAuth,
   async (req, res) => {
-
     try {
-
       const postId =
         Number(req.params.id);
 
       if (!Number.isInteger(postId)) {
-
         return res.status(400).json({
           error:
             "Invalid post ID."
@@ -768,7 +834,6 @@ app.get(
       });
 
     } catch (error) {
-
       console.error(
         "GET COMMENTS ERROR:",
         error
@@ -791,9 +856,7 @@ app.post(
   "/api/posts/:id/comments",
   requireAuth,
   async (req, res) => {
-
     try {
-
       const postId =
         Number(req.params.id);
 
@@ -803,7 +866,6 @@ app.post(
         ).trim();
 
       if (!Number.isInteger(postId)) {
-
         return res.status(400).json({
           error:
             "Invalid post ID."
@@ -811,7 +873,6 @@ app.post(
       }
 
       if (!body) {
-
         return res.status(400).json({
           error:
             "Comment cannot be empty."
@@ -819,7 +880,6 @@ app.post(
       }
 
       if (body.length > 1000) {
-
         return res.status(400).json({
           error:
             "Comment is too long."
@@ -829,22 +889,24 @@ app.post(
       const post =
         await pool.query(
           `
-          SELECT id
+          SELECT
+            id,
+            user_id
           FROM posts
           WHERE id = $1
           `,
           [postId]
         );
 
-      if (
-        post.rows.length === 0
-      ) {
-
+      if (post.rows.length === 0) {
         return res.status(404).json({
           error:
             "Post not found."
         });
       }
+
+      const postOwnerId =
+        post.rows[0].user_id;
 
       const result =
         await pool.query(
@@ -875,6 +937,52 @@ app.post(
           ]
         );
 
+      if (
+        Number(postOwnerId) !==
+        Number(req.user.id)
+      ) {
+        const actorResult =
+          await pool.query(
+            `
+            SELECT name
+            FROM users
+            WHERE id = $1
+            `,
+            [req.user.id]
+          );
+
+        const actorName =
+          actorResult.rows[0]?.name ||
+          "Someone";
+
+        await pool.query(
+          `
+          INSERT INTO notifications
+            (
+              user_id,
+              actor_id,
+              type,
+              post_id,
+              message
+            )
+          VALUES
+            (
+              $1,
+              $2,
+              'comment',
+              $3,
+              $4
+            )
+          `,
+          [
+            postOwnerId,
+            req.user.id,
+            postId,
+            `${actorName} commented on your post.`
+          ]
+        );
+      }
+
       const countResult =
         await pool.query(
           `
@@ -895,7 +1003,6 @@ app.post(
       });
 
     } catch (error) {
-
       console.error(
         "ADD COMMENT ERROR:",
         error
@@ -918,14 +1025,11 @@ app.post(
   "/api/posts/:id/share",
   requireAuth,
   async (req, res) => {
-
     try {
-
       const postId =
         Number(req.params.id);
 
       if (!Number.isInteger(postId)) {
-
         return res.status(400).json({
           error:
             "Invalid post ID."
@@ -949,10 +1053,7 @@ app.post(
           [postId]
         );
 
-      if (
-        result.rows.length === 0
-      ) {
-
+      if (result.rows.length === 0) {
         return res.status(404).json({
           error:
             "Post not found."
@@ -982,7 +1083,6 @@ app.post(
       });
 
     } catch (error) {
-
       console.error(
         "SHARE ERROR:",
         error
@@ -1005,9 +1105,7 @@ app.get(
   "/api/users/discover",
   requireAuth,
   async (req, res) => {
-
     try {
-
       const result =
         await pool.query(
           `
@@ -1064,7 +1162,6 @@ app.get(
       });
 
     } catch (error) {
-
       console.error(
         "DISCOVER USERS ERROR:",
         error
@@ -1092,12 +1189,10 @@ app.post(
       await pool.connect();
 
     try {
-
       const targetId =
         Number(req.params.id);
 
       if (!Number.isInteger(targetId)) {
-
         return res.status(400).json({
           error:
             "Invalid user ID."
@@ -1108,7 +1203,6 @@ app.post(
         targetId ===
         Number(req.user.id)
       ) {
-
         return res.status(400).json({
           error:
             "You cannot follow yourself."
@@ -1122,17 +1216,16 @@ app.post(
       const userResult =
         await client.query(
           `
-          SELECT id
+          SELECT
+            id,
+            name
           FROM users
           WHERE id = $1
           `,
           [targetId]
         );
 
-      if (
-        userResult.rows.length === 0
-      ) {
-
+      if (userResult.rows.length === 0) {
         await client.query(
           "ROLLBACK"
         );
@@ -1142,6 +1235,9 @@ app.post(
             "User not found."
         });
       }
+
+      const targetUser =
+        userResult.rows[0];
 
       const existing =
         await client.query(
@@ -1159,9 +1255,7 @@ app.post(
 
       let following;
 
-      if (
-        existing.rows.length > 0
-      ) {
+      if (existing.rows.length > 0) {
 
         await client.query(
           `
@@ -1199,6 +1293,49 @@ app.post(
         );
 
         following = true;
+
+        if (
+          Number(targetId) !==
+          Number(req.user.id)
+        ) {
+          const actorResult =
+            await client.query(
+              `
+              SELECT name
+              FROM users
+              WHERE id = $1
+              `,
+              [req.user.id]
+            );
+
+          const actorName =
+            actorResult.rows[0]?.name ||
+            "Someone";
+
+          await client.query(
+            `
+            INSERT INTO notifications
+              (
+                user_id,
+                actor_id,
+                type,
+                message
+              )
+            VALUES
+              (
+                $1,
+                $2,
+                'follow',
+                $3
+              )
+            `,
+            [
+              targetId,
+              req.user.id,
+              `${actorName} started following you.`
+            ]
+          );
+        }
       }
 
       const followersResult =
@@ -1239,9 +1376,11 @@ app.post(
 
     } catch (error) {
 
-      await client.query(
-        "ROLLBACK"
-      );
+      try {
+        await client.query(
+          "ROLLBACK"
+        );
+      } catch {}
 
       console.error(
         "FOLLOW ERROR:",
@@ -1254,7 +1393,6 @@ app.post(
       });
 
     } finally {
-
       client.release();
     }
   }
@@ -1262,21 +1400,18 @@ app.post(
 
 
 /* =====================================================
-   GET USER PROFILE
+   USER PROFILE
 ===================================================== */
 
 app.get(
   "/api/users/:id",
   requireAuth,
   async (req, res) => {
-
     try {
-
       const userId =
         Number(req.params.id);
 
       if (!Number.isInteger(userId)) {
-
         return res.status(400).json({
           error:
             "Invalid user ID."
@@ -1322,10 +1457,7 @@ app.get(
           ]
         );
 
-      if (
-        result.rows.length === 0
-      ) {
-
+      if (result.rows.length === 0) {
         return res.status(404).json({
           error:
             "User not found."
@@ -1338,7 +1470,6 @@ app.get(
       });
 
     } catch (error) {
-
       console.error(
         "GET USER PROFILE ERROR:",
         error
@@ -1347,6 +1478,178 @@ app.get(
       res.status(500).json({
         error:
           "Unable to load profile."
+      });
+    }
+  }
+);
+
+
+/* =====================================================
+   NOTIFICATIONS
+===================================================== */
+
+app.get(
+  "/api/notifications",
+  requireAuth,
+  async (req, res) => {
+    try {
+      const result =
+        await pool.query(
+          `
+          SELECT
+            n.id,
+            n.type,
+            n.message,
+            n.post_id,
+            n.is_read,
+            n.created_at,
+
+            a.id AS actor_id,
+            a.name AS actor_name,
+            a.country AS actor_country
+
+          FROM notifications n
+
+          LEFT JOIN users a
+            ON a.id = n.actor_id
+
+          WHERE n.user_id = $1
+
+          ORDER BY
+            n.created_at DESC
+
+          LIMIT 100
+          `,
+          [req.user.id]
+        );
+
+      const unreadResult =
+        await pool.query(
+          `
+          SELECT
+            COUNT(*)::int AS count
+
+          FROM notifications
+
+          WHERE user_id = $1
+            AND is_read = FALSE
+          `,
+          [req.user.id]
+        );
+
+      res.json({
+        notifications:
+          result.rows,
+
+        unread_count:
+          unreadResult.rows[0].count
+      });
+
+    } catch (error) {
+      console.error(
+        "GET NOTIFICATIONS ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Unable to load notifications."
+      });
+    }
+  }
+);
+
+
+/* =====================================================
+   MARK ONE NOTIFICATION AS READ
+===================================================== */
+
+app.post(
+  "/api/notifications/:id/read",
+  requireAuth,
+  async (req, res) => {
+    try {
+      const notificationId =
+        Number(req.params.id);
+
+      if (
+        !Number.isInteger(
+          notificationId
+        )
+      ) {
+        return res.status(400).json({
+          error:
+            "Invalid notification ID."
+        });
+      }
+
+      await pool.query(
+        `
+        UPDATE notifications
+
+        SET is_read = TRUE
+
+        WHERE id = $1
+          AND user_id = $2
+        `,
+        [
+          notificationId,
+          req.user.id
+        ]
+      );
+
+      res.json({
+        ok: true
+      });
+
+    } catch (error) {
+      console.error(
+        "MARK NOTIFICATION READ ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Unable to mark notification as read."
+      });
+    }
+  }
+);
+
+
+/* =====================================================
+   MARK ALL NOTIFICATIONS AS READ
+===================================================== */
+
+app.post(
+  "/api/notifications/read-all",
+  requireAuth,
+  async (req, res) => {
+    try {
+      await pool.query(
+        `
+        UPDATE notifications
+
+        SET is_read = TRUE
+
+        WHERE user_id = $1
+        `,
+        [req.user.id]
+      );
+
+      res.json({
+        ok: true
+      });
+
+    } catch (error) {
+      console.error(
+        "MARK ALL NOTIFICATIONS READ ERROR:",
+        error
+      );
+
+      res.status(500).json({
+        error:
+          "Unable to mark notifications as read."
       });
     }
   }
@@ -1375,14 +1678,12 @@ app.use(
 app.get(
   "/{*splat}",
   (req, res) => {
-
     res.sendFile(
       path.join(
         __dirname,
         "../public/index.html"
       )
     );
-
   }
 );
 
@@ -1392,7 +1693,6 @@ app.get(
 ===================================================== */
 
 async function startServer() {
-
   try {
 
     await initDb();
@@ -1401,11 +1701,9 @@ async function startServer() {
       PORT,
       "0.0.0.0",
       () => {
-
         console.log(
           `WorldConnect running on port ${PORT}`
         );
-
       }
     );
 
