@@ -2863,7 +2863,22 @@ async function loadMyProfile() {
     };
 
     updateUserUI();
+    
+const profilePhoto =
+  $("myProfilePhoto");
 
+if (profilePhoto) {
+
+  if (user.profile_photo_url) {
+
+    profilePhoto.src =
+      user.profile_photo_url;
+
+  } else {
+
+    profilePhoto.removeAttribute("src");
+  }
+}
     $("myPostCount")
       .textContent =
       user.post_count || 0;
