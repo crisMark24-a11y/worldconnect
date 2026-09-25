@@ -2964,6 +2964,37 @@ $("cancelEditProfile")
    SAVE PROFILE
    ========================================================= */
 
+  $("uploadProfilePhotoBtn")
+  .addEventListener(
+    "click",
+    () => {
+
+      const file =
+        $("profilePhotoFile")
+          .files[0];
+
+      uploadProfilePhoto(
+        "profile",
+        file
+      );
+    }
+  );
+
+$("uploadCoverPhotoBtn")
+  .addEventListener(
+    "click",
+    () => {
+
+      const file =
+        $("coverPhotoFile")
+          .files[0];
+
+      uploadProfilePhoto(
+        "cover",
+        file
+      );
+    }
+  );
 $("saveEditProfile")
   .addEventListener(
     "click",
