@@ -2939,6 +2939,104 @@ $("cancelEditProfile")
     }
   );
   /* =========================================================
+   SAVE PROFILE
+   ========================================================= */
+
+$("saveEditProfile")
+  .addEventListener(
+    "click",
+    async () => {
+
+      try {
+
+        const name =
+          $("editProfileName")
+            .value
+            .trim();
+
+        const country =
+          $("editProfileCountry")
+            .value
+            .trim();
+
+        const bio =
+          $("editProfileBio")
+            .value
+            .trim();
+
+        const profile_photo_url =
+          $("editProfilePhoto")
+            .value
+            .trim();
+
+        const cover_photo_url =
+          $("editCoverPhoto")
+            .value
+            .trim();
+
+        if (!name) {
+
+          showToast(
+            "Please enter your name."
+          );
+
+          return;
+        }
+
+        $("saveEditProfile")
+          .disabled = true;
+
+        const data =
+          await api(
+            "/api/users/me",
+            {
+              method: "PUT",
+              body: JSON.stringify({
+                name,
+                country,
+                bio,
+                profile_photo_url,
+                cover_photo_url
+              })
+            }
+          );
+
+        currentUser = {
+          ...currentUser,
+          ...data.user
+        };
+
+        updateUserUI();
+
+        $("editProfileModal")
+          .classList.add("hidden");
+
+        await loadMyProfile();
+
+        showToast(
+          "Profile updated successfully!"
+        );
+
+      } catch (error) {
+
+        console.error(
+          "SAVE PROFILE ERROR:",
+          error
+        );
+
+        showToast(
+          error.message ||
+          "Could not update profile."
+        );
+
+      } finally {
+
+        $("saveEditProfile")
+          .disabled = false;
+      }
+    }
+  );
+  /* =========================================================
      NAVIGATION
      ========================================================= */
 
