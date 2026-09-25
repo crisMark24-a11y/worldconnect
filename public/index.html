@@ -1882,25 +1882,47 @@
       rows="4"
     ></textarea>
 
-    <label>
-      Profile Photo URL
-    </label>
+    <label>Profile Photo</label>
 
-    <input
-      id="editProfilePhoto"
-      type="url"
-      placeholder="https://..."
-    />
+<input
+  id="profilePhotoFile"
+  type="file"
+  accept="image/jpeg,image/png,image/webp"
+/>
 
-    <label>
-      Cover Photo URL
-    </label>
+<button
+  id="uploadProfilePhotoBtn"
+  type="button"
+  class="small-primary"
+>
+  📷 Upload Profile Photo
+</button>
 
-    <input
-      id="editCoverPhoto"
-      type="url"
-      placeholder="https://..."
-    />
+<input
+  id="editProfilePhoto"
+  type="hidden"
+/>
+
+<label>Cover Photo</label>
+
+<input
+  id="coverPhotoFile"
+  type="file"
+  accept="image/jpeg,image/png,image/webp"
+/>
+
+<button
+  id="uploadCoverPhotoBtn"
+  type="button"
+  class="small-primary"
+>
+  🖼️ Upload Cover Photo
+</button>
+
+<input
+  id="editCoverPhoto"
+  type="hidden"
+/>
 
     <div class="profile-modal-actions">
 
