@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
 import { pool, initDb } from "./db.js";
@@ -11,11 +12,27 @@ dotenv.config();
 
 const app = express();
 
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 5 * 1024 * 1024
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 
 const JWT_SECRET =
   process.env.JWT_SECRET ||
   "worldconnect-development-secret";
+
+const SUPABASE_URL =
+  process.env.SUPABASE_URL;
+
+const SUPABASE_SERVICE_ROLE_KEY =
+  process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+const PROFILE_IMAGES_BUCKET =
+  "profile-images";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -81,7 +98,127 @@ function requireAuth(req, res, next) {
     });
   }
 }
+app.post(
+  "/api/users/me/upload-photo",
+  requireAuth,
+  upload.single("image"),
+  async (req, res) => {
+    try {
+      if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+        return res.status(500).json({
+          error: "Supabase Storage is not configured."
+        });
+      }
 
+      if (!req.file) {
+        return res.status(400).json({
+          error: "Please select an image."
+        });
+      }
+
+      const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/webp"
+      ];
+
+      if (!allowedTypes.includes(req.file.mimetype)) {
+        return res.status(400).json({
+          error: "Only JPG, PNG, and WebP images are allowed."
+        });
+      }
+
+      const type =
+        req.body.type === "cover"
+          ? "cover"
+          : "profile";
+
+      const extension =
+        req.file.mimetype === "image/png"
+          ? "png"
+          : req.file.mimetype === "image/webp"
+            ? "webp"
+            : "jpg";
+
+      const filePath =
+        `${req.user.id}/${type}-${Date.now()}.${extension}`;
+
+      const uploadUrl =
+        `${SUPABASE_URL}/storage/v1/object/${PROFILE_IMAGES_BUCKET}/${filePath}`;
+
+      const response =
+        await fetch(uploadUrl, {
+          method: "POST",
+          headers: {
+            Authorization:
+              `Bearer ${SUPABASE_SERVICE_ROLE_KEY}`,
+            apikey:
+              SUPABASE_SERVICE_ROLE_KEY,
+            "Content-Type":
+              req.file.mimetype,
+            "x-upsert":
+              "true"
+          },
+          body: req.file.buffer
+        });
+
+      if (!response.ok) {
+        const errorText =
+          await response.text();
+
+        console.error(
+          "SUPABASE UPLOAD ERROR:",
+          errorText
+        );
+
+        return res.status(500).json({
+          error: "Image upload failed."
+        });
+      }
+
+      const publicUrl =
+        `${SUPABASE_URL}/storage/v1/object/public/${PROFILE_IMAGES_BUCKET}/${filePath}`;
+
+      const column =
+        type === "cover"
+          ? "cover_photo_url"
+          : "profile_photo_url";
+
+      const result =
+        await pool.query(
+          `UPDATE users
+           SET ${column} = $1
+           WHERE id = $2
+           RETURNING id, name, email, country,
+                     bio, profile_photo_url,
+                     cover_photo_url,
+                     created_at`,
+          [
+            publicUrl,
+            req.user.id
+          ]
+        );
+
+      return res.json({
+        ok: true,
+        type,
+        url: publicUrl,
+        user: result.rows[0]
+      });
+
+    } catch (error) {
+
+      console.error(
+        "UPLOAD PHOTO ERROR:",
+        error
+      );
+
+      return res.status(500).json({
+        error: "Could not upload image."
+      });
+    }
+  }
+);
 
 /* =====================================================
    PROFILE DATABASE MIGRATION
