@@ -39,6 +39,8 @@ export async function initDb() {
     ALTER TABLE users
       ADD COLUMN IF NOT EXISTS cover_photo_url TEXT;
 
+    ALTER TABLE users
+      ADD COLUMN IF NOT EXISTS last_seen TIMESTAMPTZ;
 
     CREATE TABLE IF NOT EXISTS posts (
       id BIGSERIAL PRIMARY KEY,
